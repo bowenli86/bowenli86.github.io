@@ -3,8 +3,85 @@
 
 
     
+  <url>
+    <loc>https://bowenli86.github.io/2016/09/29/hexo/Hexo-How-to-backup-configs-and-blogs-of-Github-Pages-in-a-Github-repository/</loc>
+    <lastmod>2018-04-10T05:08:19.859Z</lastmod>
+    <data>
+        <display>
+        <title>Hexo - How to backup configs and blogs of Github Pages in a Github repository</title>
+        <pubTime>2016-09-30T00:50:02.000Z</pubTime>
+        
+        <tag>hexo backup</tag>
+         
+        <tag>hexo github integration</tag>
+         
+         
+           
+             
+              <breadCrumb title="hexo" url="https://bowenli86.github.io/categories/hexo/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/01/23/hexo/Hexo-How-to-install-hexo-on-Mac-with-github-pages/</loc>
+    <lastmod>2018-04-10T05:04:11.282Z</lastmod>
+    <data>
+        <display>
+        <title>Hexo - How to install Hexo on Mac with github pages</title>
+        <pubTime>2016-01-24T04:46:21.000Z</pubTime>
+        
+        <tag>hexo</tag>
+         
+        <tag>hexo and github pages</tag>
+         
+        <tag>hexo on mac</tag>
+         
+        <tag>hexo mac github</tag>
+         
+        <tag>hexo with github pages</tag>
+         
+         
+           
+             
+              <breadCrumb title="hexo" url="https://bowenli86.github.io/categories/hexo/"/>
+          
+        </display>
+    </data>
+    </url>
+
     
     
+    
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/05/18/web%20development/webhook/What-is-Callback-and-Webhook/</loc>
+    <lastmod>2018-04-10T04:29:25.555Z</lastmod>
+    <data>
+        <display>
+        <title>What is Callback and Webhook</title>
+        <pubTime>2016-05-19T06:05:32.000Z</pubTime>
+        
+        <tag>what is webhook</tag>
+         
+        <tag>what is callback</tag>
+         
+        <tag>callback and webhook</tag>
+         
+         
+           
+             
+              <breadCrumb title="web development" url="https://bowenli86.github.io/categories/web-development/"/>
+          
+             
+              <breadCrumb title="webhook" url="https://bowenli86.github.io/categories/web-development/webhook/"/>
+          
+        </display>
+    </data>
+    </url>
+
     
   <url>
     <loc>https://bowenli86.github.io/2016/06/05/web%20development/rest/RESTful-What-is-Idempotent/</loc>
@@ -50,33 +127,6 @@
           
              
               <breadCrumb title="rest" url="https://bowenli86.github.io/categories/web-development/rest/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/05/18/web%20development/webhook/What-is-Callback-and-Webhook/</loc>
-    <lastmod>2018-04-10T04:29:25.555Z</lastmod>
-    <data>
-        <display>
-        <title>What is Callback and Webhook</title>
-        <pubTime>2016-05-19T06:05:32.000Z</pubTime>
-        
-        <tag>what is webhook</tag>
-         
-        <tag>what is callback</tag>
-         
-        <tag>callback and webhook</tag>
-         
-         
-           
-             
-              <breadCrumb title="web development" url="https://bowenli86.github.io/categories/web-development/"/>
-          
-             
-              <breadCrumb title="webhook" url="https://bowenli86.github.io/categories/web-development/webhook/"/>
           
         </display>
     </data>
@@ -195,6 +245,31 @@
 
     
   <url>
+    <loc>https://bowenli86.github.io/2016/12/19/tools/mac/bash-profile-and-how-to-permenantly-set-environment-variables-on-Mac/</loc>
+    <lastmod>2018-04-10T04:29:25.552Z</lastmod>
+    <data>
+        <display>
+        <title>.bash_profile and how to permenantly set environment variables on Mac</title>
+        <pubTime>2016-12-19T21:44:55.000Z</pubTime>
+        
+        <tag>.bash_profile</tag>
+         
+        <tag>mac environment variable</tag>
+         
+         
+           
+             
+              <breadCrumb title="tools" url="https://bowenli86.github.io/categories/tools/"/>
+          
+             
+              <breadCrumb title="mac" url="https://bowenli86.github.io/categories/tools/mac/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://bowenli86.github.io/2016/03/28/tools/markdown/Markdown-Markdown-tutorial-how-to-write-in-Markdown/</loc>
     <lastmod>2018-04-10T04:29:25.552Z</lastmod>
     <data>
@@ -217,31 +292,6 @@
           
              
               <breadCrumb title="markdown" url="https://bowenli86.github.io/categories/tools/markdown/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/12/19/tools/mac/bash-profile-and-how-to-permenantly-set-environment-variables-on-Mac/</loc>
-    <lastmod>2018-04-10T04:29:25.552Z</lastmod>
-    <data>
-        <display>
-        <title>.bash_profile and how to permenantly set environment variables on Mac</title>
-        <pubTime>2016-12-19T21:44:55.000Z</pubTime>
-        
-        <tag>.bash_profile</tag>
-         
-        <tag>mac environment variable</tag>
-         
-         
-           
-             
-              <breadCrumb title="tools" url="https://bowenli86.github.io/categories/tools/"/>
-          
-             
-              <breadCrumb title="mac" url="https://bowenli86.github.io/categories/tools/mac/"/>
           
         </display>
     </data>
@@ -757,26 +807,6 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/06/28/system%20design/SNAKE-System-Design-Principles-to-crack-a-system-design-in-5-steps/</loc>
-    <lastmod>2018-04-10T04:29:25.544Z</lastmod>
-    <data>
-        <display>
-        <title>SNAKE - System Design Principles to crack a system design in 5 steps</title>
-        <pubTime>2016-06-29T06:07:46.000Z</pubTime>
-        
-        <tag>SNAKE principles of system design</tag>
-         
-         
-           
-             
-              <breadCrumb title="system design" url="https://bowenli86.github.io/categories/system-design/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://bowenli86.github.io/2016/07/04/spring/hibernate%20integration/Spring-Spring-Hibernate-Integration-Configuration-for-DataSource-and-EntityManager/</loc>
     <lastmod>2018-04-10T04:29:25.544Z</lastmod>
     <data>
@@ -793,6 +823,26 @@
           
              
               <breadCrumb title="hibernate integration" url="https://bowenli86.github.io/categories/spring/hibernate-integration/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/06/28/system%20design/SNAKE-System-Design-Principles-to-crack-a-system-design-in-5-steps/</loc>
+    <lastmod>2018-04-10T04:29:25.544Z</lastmod>
+    <data>
+        <display>
+        <title>SNAKE - System Design Principles to crack a system design in 5 steps</title>
+        <pubTime>2016-06-29T06:07:46.000Z</pubTime>
+        
+        <tag>SNAKE principles of system design</tag>
+         
+         
+           
+             
+              <breadCrumb title="system design" url="https://bowenli86.github.io/categories/system-design/"/>
           
         </display>
     </data>
@@ -823,13 +873,15 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/08/21/spring/Spring-What-is-dependency-injection-and-how-it-works-in-Spring/</loc>
+    <loc>https://bowenli86.github.io/2016/07/09/spring/Spring-Wiring-Beans/</loc>
     <lastmod>2018-04-10T04:29:25.543Z</lastmod>
     <data>
         <display>
-        <title>Spring - What is dependency injection and how it works in Spring</title>
-        <pubTime>2016-08-22T06:18:28.000Z</pubTime>
+        <title>Spring - Wiring Beans</title>
+        <pubTime>2016-07-10T06:14:21.000Z</pubTime>
         
+        <tag>spring bean wiring</tag>
+         
          
            
              
@@ -865,14 +917,36 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/07/09/spring/Spring-Wiring-Beans/</loc>
+    <loc>https://bowenli86.github.io/2016/08/21/spring/Spring-What-is-dependency-injection-and-how-it-works-in-Spring/</loc>
     <lastmod>2018-04-10T04:29:25.543Z</lastmod>
     <data>
         <display>
-        <title>Spring - Wiring Beans</title>
-        <pubTime>2016-07-10T06:14:21.000Z</pubTime>
+        <title>Spring - What is dependency injection and how it works in Spring</title>
+        <pubTime>2016-08-22T06:18:28.000Z</pubTime>
         
-        <tag>spring bean wiring</tag>
+         
+           
+             
+              <breadCrumb title="spring" url="https://bowenli86.github.io/categories/spring/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/05/10/spring/Spring-Set-up-and-Enable-Scheduled-Tasks/</loc>
+    <lastmod>2018-04-10T04:29:25.542Z</lastmod>
+    <data>
+        <display>
+        <title>Spring - Set up and Enable Scheduled Tasks</title>
+        <pubTime>2016-05-10T18:25:40.000Z</pubTime>
+        
+        <tag>scheduled task</tag>
+         
+        <tag>spring task</tag>
+         
+        <tag>enable scheduling</tag>
          
          
            
@@ -927,76 +1001,6 @@
         <tag>spring combining config</tag>
          
         <tag>spring config styles</tag>
-         
-         
-           
-             
-              <breadCrumb title="spring" url="https://bowenli86.github.io/categories/spring/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/05/10/spring/Spring-Set-up-and-Enable-Scheduled-Tasks/</loc>
-    <lastmod>2018-04-10T04:29:25.542Z</lastmod>
-    <data>
-        <display>
-        <title>Spring - Set up and Enable Scheduled Tasks</title>
-        <pubTime>2016-05-10T18:25:40.000Z</pubTime>
-        
-        <tag>scheduled task</tag>
-         
-        <tag>spring task</tag>
-         
-        <tag>enable scheduling</tag>
-         
-         
-           
-             
-              <breadCrumb title="spring" url="https://bowenli86.github.io/categories/spring/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/03/27/spring/Spring-Factory-Pattern/</loc>
-    <lastmod>2018-04-10T04:29:25.541Z</lastmod>
-    <data>
-        <display>
-        <title>Spring - Factory Pattern</title>
-        <pubTime>2016-03-27T23:01:17.000Z</pubTime>
-        
-        <tag>spring</tag>
-         
-        <tag>spring factory</tag>
-         
-        <tag>spring factory pattern</tag>
-         
-         
-           
-             
-              <breadCrumb title="spring" url="https://bowenli86.github.io/categories/spring/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/06/07/spring/Spring-Conditional-Annotation-and-Condition-Interface-in-Action/</loc>
-    <lastmod>2018-04-10T04:29:25.541Z</lastmod>
-    <data>
-        <display>
-        <title>Spring - @Conditional Annotation and Condition Interface in Action</title>
-        <pubTime>2016-06-07T23:03:09.000Z</pubTime>
-        
-        <tag>spring condition</tag>
-         
-        <tag>spring conditional</tag>
          
          
            
@@ -1065,6 +1069,52 @@
 
     
   <url>
+    <loc>https://bowenli86.github.io/2016/03/27/spring/Spring-Factory-Pattern/</loc>
+    <lastmod>2018-04-10T04:29:25.541Z</lastmod>
+    <data>
+        <display>
+        <title>Spring - Factory Pattern</title>
+        <pubTime>2016-03-27T23:01:17.000Z</pubTime>
+        
+        <tag>spring</tag>
+         
+        <tag>spring factory</tag>
+         
+        <tag>spring factory pattern</tag>
+         
+         
+           
+             
+              <breadCrumb title="spring" url="https://bowenli86.github.io/categories/spring/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/06/07/spring/Spring-Conditional-Annotation-and-Condition-Interface-in-Action/</loc>
+    <lastmod>2018-04-10T04:29:25.541Z</lastmod>
+    <data>
+        <display>
+        <title>Spring - @Conditional Annotation and Condition Interface in Action</title>
+        <pubTime>2016-06-07T23:03:09.000Z</pubTime>
+        
+        <tag>spring condition</tag>
+         
+        <tag>spring conditional</tag>
+         
+         
+           
+             
+              <breadCrumb title="spring" url="https://bowenli86.github.io/categories/spring/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://bowenli86.github.io/2016/06/20/ruby/Ruby-attr-accessor-attr-reader-and-attr-writer/</loc>
     <lastmod>2018-04-10T04:29:25.540Z</lastmod>
     <data>
@@ -1075,28 +1125,6 @@
         <tag>ruby accessors</tag>
          
         <tag>attribute accessors</tag>
-         
-         
-           
-             
-              <breadCrumb title="ruby" url="https://bowenli86.github.io/categories/ruby/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/07/10/ruby/Ruby-Understanding-class-eval-and-instance-eval/</loc>
-    <lastmod>2018-04-10T04:29:25.540Z</lastmod>
-    <data>
-        <display>
-        <title>Ruby - Understanding class_eval and instance_eval</title>
-        <pubTime>2016-07-10T15:16:40.000Z</pubTime>
-        
-        <tag>ruby class_eval</tag>
-         
-        <tag>ruby intance_eval</tag>
          
          
            
@@ -1131,6 +1159,28 @@
 
     
   <url>
+    <loc>https://bowenli86.github.io/2016/07/10/ruby/Ruby-Understanding-class-eval-and-instance-eval/</loc>
+    <lastmod>2018-04-10T04:29:25.540Z</lastmod>
+    <data>
+        <display>
+        <title>Ruby - Understanding class_eval and instance_eval</title>
+        <pubTime>2016-07-10T15:16:40.000Z</pubTime>
+        
+        <tag>ruby class_eval</tag>
+         
+        <tag>ruby intance_eval</tag>
+         
+         
+           
+             
+              <breadCrumb title="ruby" url="https://bowenli86.github.io/categories/ruby/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://bowenli86.github.io/2016/07/08/ruby/Ruby-Ruby-blocks-and-yield-statement/</loc>
     <lastmod>2018-04-10T04:29:25.539Z</lastmod>
     <data>
@@ -1150,16 +1200,14 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/07/16/ruby/Ruby-How-to-write-Singleton-in-Ruby/</loc>
+    <loc>https://bowenli86.github.io/2016/06/21/ruby/Ruby-Methods-in-Ruby/</loc>
     <lastmod>2018-04-10T04:29:25.539Z</lastmod>
     <data>
         <display>
-        <title>Ruby - How to write Singleton in Ruby</title>
-        <pubTime>2016-07-17T06:50:44.000Z</pubTime>
+        <title>Ruby - Methods in Ruby</title>
+        <pubTime>2016-06-22T06:54:37.000Z</pubTime>
         
-        <tag>ruby singleton</tag>
-         
-        <tag>jruby singleton</tag>
+        <tag>ruby methods</tag>
          
          
            
@@ -1172,14 +1220,16 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/06/21/ruby/Ruby-Methods-in-Ruby/</loc>
+    <loc>https://bowenli86.github.io/2016/07/16/ruby/Ruby-How-to-write-Singleton-in-Ruby/</loc>
     <lastmod>2018-04-10T04:29:25.539Z</lastmod>
     <data>
         <display>
-        <title>Ruby - Methods in Ruby</title>
-        <pubTime>2016-06-22T06:54:37.000Z</pubTime>
+        <title>Ruby - How to write Singleton in Ruby</title>
+        <pubTime>2016-07-17T06:50:44.000Z</pubTime>
         
-        <tag>ruby methods</tag>
+        <tag>ruby singleton</tag>
+         
+        <tag>jruby singleton</tag>
          
          
            
@@ -1380,22 +1430,20 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/02/01/java/java%208/lambda/Java-8-Lambda-Expression/</loc>
+    <loc>https://bowenli86.github.io/2016/02/01/java/java%208/lambda/Java-8-Functional-Interface/</loc>
     <lastmod>2018-04-10T04:29:25.535Z</lastmod>
     <data>
         <display>
-        <title>Java 8 Lambda Expression</title>
-        <pubTime>2016-02-02T05:32:18.000Z</pubTime>
+        <title>Java 8 Functional Interface</title>
+        <pubTime>2016-02-02T01:00:03.000Z</pubTime>
         
         <tag>java lambda</tag>
          
         <tag>lambda</tag>
          
+        <tag>functional interface</tag>
+         
         <tag>java 8</tag>
-         
-        <tag>lambda expression</tag>
-         
-        <tag>java 8 lambda</tag>
          
          
            
@@ -1446,54 +1494,22 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/02/01/java/java%208/lambda/Java-8-Functional-Interface/</loc>
+    <loc>https://bowenli86.github.io/2016/02/01/java/java%208/lambda/Java-8-Lambda-Expression/</loc>
     <lastmod>2018-04-10T04:29:25.535Z</lastmod>
     <data>
         <display>
-        <title>Java 8 Functional Interface</title>
-        <pubTime>2016-02-02T01:00:03.000Z</pubTime>
+        <title>Java 8 Lambda Expression</title>
+        <pubTime>2016-02-02T05:32:18.000Z</pubTime>
         
         <tag>java lambda</tag>
          
         <tag>lambda</tag>
-         
-        <tag>functional interface</tag>
          
         <tag>java 8</tag>
          
+        <tag>lambda expression</tag>
          
-           
-             
-              <breadCrumb title="java" url="https://bowenli86.github.io/categories/java/"/>
-          
-             
-              <breadCrumb title="java 8" url="https://bowenli86.github.io/categories/java/java-8/"/>
-          
-             
-              <breadCrumb title="lambda" url="https://bowenli86.github.io/categories/java/java-8/lambda/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/01/31/java/java%208/lambda/Java-8-Functional-Interface-Predicate-and-BiPredicate/</loc>
-    <lastmod>2018-04-10T04:29:25.534Z</lastmod>
-    <data>
-        <display>
-        <title>Java 8 Functional Interface - Predicate and BiPredicate</title>
-        <pubTime>2016-01-31T23:35:16.000Z</pubTime>
-        
-        <tag>java lambda</tag>
-         
-        <tag>lambda</tag>
-         
-        <tag>functional interface</tag>
-         
-        <tag>predicate</tag>
-         
-        <tag>bipredicate</tag>
+        <tag>java 8 lambda</tag>
          
          
            
@@ -1580,6 +1596,73 @@
 
     
   <url>
+    <loc>https://bowenli86.github.io/2016/01/31/java/java%208/lambda/Java-8-Functional-Interface-Predicate-and-BiPredicate/</loc>
+    <lastmod>2018-04-10T04:29:25.534Z</lastmod>
+    <data>
+        <display>
+        <title>Java 8 Functional Interface - Predicate and BiPredicate</title>
+        <pubTime>2016-01-31T23:35:16.000Z</pubTime>
+        
+        <tag>java lambda</tag>
+         
+        <tag>lambda</tag>
+         
+        <tag>functional interface</tag>
+         
+        <tag>predicate</tag>
+         
+        <tag>bipredicate</tag>
+         
+         
+           
+             
+              <breadCrumb title="java" url="https://bowenli86.github.io/categories/java/"/>
+          
+             
+              <breadCrumb title="java 8" url="https://bowenli86.github.io/categories/java/java-8/"/>
+          
+             
+              <breadCrumb title="lambda" url="https://bowenli86.github.io/categories/java/java-8/lambda/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/01/29/java/guava/Guava-EventBus/</loc>
+    <lastmod>2018-04-10T04:29:25.533Z</lastmod>
+    <data>
+        <display>
+        <title>Google Guava EventBus - an Easy and Elegant Way for Your Publisher - Subscriber Use Cases</title>
+        <pubTime>2016-01-30T06:46:21.000Z</pubTime>
+        
+        <tag>java</tag>
+         
+        <tag>guava</tag>
+         
+        <tag>eventbus</tag>
+         
+        <tag>guava eventbus</tag>
+         
+        <tag>google guava</tag>
+         
+        <tag>google eventbus</tag>
+         
+         
+           
+             
+              <breadCrumb title="java" url="https://bowenli86.github.io/categories/java/"/>
+          
+             
+              <breadCrumb title="guava" url="https://bowenli86.github.io/categories/java/guava/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://bowenli86.github.io/2016/03/30/java/guava/Guava-Cache/</loc>
     <lastmod>2018-04-10T04:29:25.533Z</lastmod>
     <data>
@@ -1640,39 +1723,6 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/01/29/java/guava/Guava-EventBus/</loc>
-    <lastmod>2018-04-10T04:29:25.533Z</lastmod>
-    <data>
-        <display>
-        <title>Google Guava EventBus - an Easy and Elegant Way for Your Publisher - Subscriber Use Cases</title>
-        <pubTime>2016-01-30T06:46:21.000Z</pubTime>
-        
-        <tag>java</tag>
-         
-        <tag>guava</tag>
-         
-        <tag>eventbus</tag>
-         
-        <tag>guava eventbus</tag>
-         
-        <tag>google guava</tag>
-         
-        <tag>google eventbus</tag>
-         
-         
-           
-             
-              <breadCrumb title="java" url="https://bowenli86.github.io/categories/java/"/>
-          
-             
-              <breadCrumb title="guava" url="https://bowenli86.github.io/categories/java/guava/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://bowenli86.github.io/2016/07/04/java/exception%20and%20error/Java%20-%20Exception%20-%20Principles%20to%20Handle%20Exception/</loc>
     <lastmod>2018-04-10T04:29:25.532Z</lastmod>
     <data>
@@ -1711,6 +1761,37 @@
         
          
            
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/04/03/java/concurrency/Java-Concurrency-java-util-concurrent-atomic-package/</loc>
+    <lastmod>2018-04-10T04:29:25.531Z</lastmod>
+    <data>
+        <display>
+        <title>Java Concurrency - java.util.concurrent.atomic package</title>
+        <pubTime>2016-04-04T06:55:46.000Z</pubTime>
+        
+        <tag>java concurrency</tag>
+         
+        <tag>java atomic</tag>
+         
+        <tag>atomicboolean</tag>
+         
+        <tag>atomicinteger</tag>
+         
+        <tag>java atomic actions</tag>
+         
+         
+           
+             
+              <breadCrumb title="java" url="https://bowenli86.github.io/categories/java/"/>
+          
+             
+              <breadCrumb title="concurrency" url="https://bowenli86.github.io/categories/java/concurrency/"/>
+          
         </display>
     </data>
     </url>
@@ -1769,37 +1850,6 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/04/03/java/concurrency/Java-Concurrency-java-util-concurrent-atomic-package/</loc>
-    <lastmod>2018-04-10T04:29:25.531Z</lastmod>
-    <data>
-        <display>
-        <title>Java Concurrency - java.util.concurrent.atomic package</title>
-        <pubTime>2016-04-04T06:55:46.000Z</pubTime>
-        
-        <tag>java concurrency</tag>
-         
-        <tag>java atomic</tag>
-         
-        <tag>atomicboolean</tag>
-         
-        <tag>atomicinteger</tag>
-         
-        <tag>java atomic actions</tag>
-         
-         
-           
-             
-              <breadCrumb title="java" url="https://bowenli86.github.io/categories/java/"/>
-          
-             
-              <breadCrumb title="concurrency" url="https://bowenli86.github.io/categories/java/concurrency/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://bowenli86.github.io/2016/04/03/java/concurrency/Java-Concurrency-Executor-and-Thread-Pools/</loc>
     <lastmod>2018-04-10T04:29:25.530Z</lastmod>
     <data>
@@ -1812,35 +1862,6 @@
         <tag>java executor</tag>
          
         <tag>thread pools</tag>
-         
-         
-           
-             
-              <breadCrumb title="java" url="https://bowenli86.github.io/categories/java/"/>
-          
-             
-              <breadCrumb title="concurrency" url="https://bowenli86.github.io/categories/java/concurrency/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/08/23/java/concurrency/Java-Concurrency-Multi-Thread-1-Implements-Runnable-or-Extends-Thread/</loc>
-    <lastmod>2018-04-10T04:29:25.530Z</lastmod>
-    <data>
-        <display>
-        <title>Java - Concurrency - Multi-Thread 1 - Implements Runnable or Extends Thread</title>
-        <pubTime>2016-08-23T21:37:24.000Z</pubTime>
-        
-        <tag>java concurrency</tag>
-         
-        <tag>multiple threads</tag>
-         
-        <tag>implements runnable</tag>
-         
-        <tag>extends thread</tag>
          
          
            
@@ -1885,16 +1906,20 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/04/20/java/concurrency/Java-Concurrency-BlockingQueue/</loc>
-    <lastmod>2018-04-10T04:29:25.529Z</lastmod>
+    <loc>https://bowenli86.github.io/2016/08/23/java/concurrency/Java-Concurrency-Multi-Thread-1-Implements-Runnable-or-Extends-Thread/</loc>
+    <lastmod>2018-04-10T04:29:25.530Z</lastmod>
     <data>
         <display>
-        <title>Java Concurrency - BlockingQueue</title>
-        <pubTime>2016-04-20T23:51:31.000Z</pubTime>
+        <title>Java - Concurrency - Multi-Thread 1 - Implements Runnable or Extends Thread</title>
+        <pubTime>2016-08-23T21:37:24.000Z</pubTime>
         
         <tag>java concurrency</tag>
          
-        <tag>java blockingqueue</tag>
+        <tag>multiple threads</tag>
+         
+        <tag>implements runnable</tag>
+         
+        <tag>extends thread</tag>
          
          
            
@@ -1939,21 +1964,24 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/02/04/java/Java-String-Formatting/</loc>
-    <lastmod>2018-04-10T04:29:25.528Z</lastmod>
+    <loc>https://bowenli86.github.io/2016/04/20/java/concurrency/Java-Concurrency-BlockingQueue/</loc>
+    <lastmod>2018-04-10T04:29:25.529Z</lastmod>
     <data>
         <display>
-        <title>Java - String Formatting</title>
-        <pubTime>2016-02-05T00:12:49.000Z</pubTime>
+        <title>Java Concurrency - BlockingQueue</title>
+        <pubTime>2016-04-20T23:51:31.000Z</pubTime>
         
-        <tag>java string format</tag>
+        <tag>java concurrency</tag>
          
-        <tag>java string formatting</tag>
+        <tag>java blockingqueue</tag>
          
          
            
              
               <breadCrumb title="java" url="https://bowenli86.github.io/categories/java/"/>
+          
+             
+              <breadCrumb title="concurrency" url="https://bowenli86.github.io/categories/java/concurrency/"/>
           
         </display>
     </data>
@@ -2005,6 +2033,28 @@
 
     
   <url>
+    <loc>https://bowenli86.github.io/2016/02/04/java/Java-String-Formatting/</loc>
+    <lastmod>2018-04-10T04:29:25.528Z</lastmod>
+    <data>
+        <display>
+        <title>Java - String Formatting</title>
+        <pubTime>2016-02-05T00:12:49.000Z</pubTime>
+        
+        <tag>java string format</tag>
+         
+        <tag>java string formatting</tag>
+         
+         
+           
+             
+              <breadCrumb title="java" url="https://bowenli86.github.io/categories/java/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://bowenli86.github.io/2016/01/24/hexo/Hexo-Hexo-commands/</loc>
     <lastmod>2018-04-10T04:29:25.527Z</lastmod>
     <data>
@@ -2019,56 +2069,6 @@
         <tag>hexo and github pages</tag>
          
         <tag>hexo on mac</tag>
-         
-         
-           
-             
-              <breadCrumb title="hexo" url="https://bowenli86.github.io/categories/hexo/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/09/29/hexo/Hexo-How-to-backup-configs-and-blogs-of-Github-Pages-in-a-Github-repository/</loc>
-    <lastmod>2018-04-10T04:29:25.527Z</lastmod>
-    <data>
-        <display>
-        <title>Hexo - How to backup configs and blogs of Github Pages in a Github repository</title>
-        <pubTime>2016-09-30T00:50:02.000Z</pubTime>
-        
-        <tag>hexo backup</tag>
-         
-        <tag>hexo github integration</tag>
-         
-         
-           
-             
-              <breadCrumb title="hexo" url="https://bowenli86.github.io/categories/hexo/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/01/23/hexo/Hexo-How-to-install-hexo-on-Mac-with-github-pages/</loc>
-    <lastmod>2018-04-10T04:29:25.527Z</lastmod>
-    <data>
-        <display>
-        <title>Hexo - How to install Hexo on Mac with github pages</title>
-        <pubTime>2016-01-24T04:46:21.000Z</pubTime>
-        
-        <tag>hexo</tag>
-         
-        <tag>hexo and github pages</tag>
-         
-        <tag>hexo on mac</tag>
-         
-        <tag>hexo mac github</tag>
-         
-        <tag>hexo with github pages</tag>
          
          
            
@@ -2231,6 +2231,31 @@
 
     
   <url>
+    <loc>https://bowenli86.github.io/2016/04/15/distributed%20system/thrift/Apache-Thrift-Detailed-Thrift-Examples/</loc>
+    <lastmod>2018-04-10T04:29:25.524Z</lastmod>
+    <data>
+        <display>
+        <title>Apache Thrift - Detailed Thrift Examples</title>
+        <pubTime>2016-04-15T20:44:21.000Z</pubTime>
+        
+        <tag>thrift</tag>
+         
+        <tag>apache thrift</tag>
+         
+         
+           
+             
+              <breadCrumb title="distributed system" url="https://bowenli86.github.io/categories/distributed-system/"/>
+          
+             
+              <breadCrumb title="thrift" url="https://bowenli86.github.io/categories/distributed-system/thrift/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://bowenli86.github.io/2016/02/10/distributed%20system/nosql/Cassandra-V-S-HBase/</loc>
     <lastmod>2018-04-10T04:29:25.524Z</lastmod>
     <data>
@@ -2257,31 +2282,6 @@
           
              
               <breadCrumb title="nosql" url="https://bowenli86.github.io/categories/distributed-system/nosql/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/04/15/distributed%20system/thrift/Apache-Thrift-Detailed-Thrift-Examples/</loc>
-    <lastmod>2018-04-10T04:29:25.524Z</lastmod>
-    <data>
-        <display>
-        <title>Apache Thrift - Detailed Thrift Examples</title>
-        <pubTime>2016-04-15T20:44:21.000Z</pubTime>
-        
-        <tag>thrift</tag>
-         
-        <tag>apache thrift</tag>
-         
-         
-           
-             
-              <breadCrumb title="distributed system" url="https://bowenli86.github.io/categories/distributed-system/"/>
-          
-             
-              <breadCrumb title="thrift" url="https://bowenli86.github.io/categories/distributed-system/thrift/"/>
           
         </display>
     </data>
@@ -2383,41 +2383,6 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/02/08/distributed%20system/high%20availibility/Gossip-Protocol/</loc>
-    <lastmod>2018-04-10T04:29:25.521Z</lastmod>
-    <data>
-        <display>
-        <title>Gossip Protocol</title>
-        <pubTime>2016-02-09T00:49:41.000Z</pubTime>
-        
-        <tag>cap theory</tag>
-         
-        <tag>cassandra</tag>
-         
-        <tag>apache cassandra</tag>
-         
-        <tag>high availability</tag>
-         
-        <tag>gossip protocol</tag>
-         
-        <tag>distributed system</tag>
-         
-        <tag>system design</tag>
-         
-         
-           
-             
-              <breadCrumb title="distributed system" url="https://bowenli86.github.io/categories/distributed-system/"/>
-          
-             
-              <breadCrumb title="high availability" url="https://bowenli86.github.io/categories/distributed-system/high-availability/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://bowenli86.github.io/2016/10/23/distributed%20system/data/Big-Data-and-Google-s-Three-Papers-I-GFS-and-MapReduce/</loc>
     <lastmod>2018-04-10T04:29:25.521Z</lastmod>
     <data>
@@ -2473,6 +2438,41 @@
           
              
               <breadCrumb title="data" url="https://bowenli86.github.io/categories/distributed-syste/data/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/02/08/distributed%20system/high%20availibility/Gossip-Protocol/</loc>
+    <lastmod>2018-04-10T04:29:25.521Z</lastmod>
+    <data>
+        <display>
+        <title>Gossip Protocol</title>
+        <pubTime>2016-02-09T00:49:41.000Z</pubTime>
+        
+        <tag>cap theory</tag>
+         
+        <tag>cassandra</tag>
+         
+        <tag>apache cassandra</tag>
+         
+        <tag>high availability</tag>
+         
+        <tag>gossip protocol</tag>
+         
+        <tag>distributed system</tag>
+         
+        <tag>system design</tag>
+         
+         
+           
+             
+              <breadCrumb title="distributed system" url="https://bowenli86.github.io/categories/distributed-system/"/>
+          
+             
+              <breadCrumb title="high availability" url="https://bowenli86.github.io/categories/distributed-system/high-availability/"/>
           
         </display>
     </data>
@@ -2537,6 +2537,28 @@
 
     
   <url>
+    <loc>https://bowenli86.github.io/2016/04/25/database/The-N-1-Query-Problem/</loc>
+    <lastmod>2018-04-10T04:29:25.519Z</lastmod>
+    <data>
+        <display>
+        <title>The N + 1 Query Problem</title>
+        <pubTime>2016-04-26T05:49:59.000Z</pubTime>
+        
+        <tag>n+1 query</tag>
+         
+        <tag>n+1 query problem</tag>
+         
+         
+           
+             
+              <breadCrumb title="database" url="https://bowenli86.github.io/categories/database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://bowenli86.github.io/2016/04/28/database/hibernate/Hibernate-Hibernate-Enum-and-Decoupling-Java-Class-with-Database-Record/</loc>
     <lastmod>2018-04-10T04:29:25.519Z</lastmod>
     <data>
@@ -2588,28 +2610,6 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/04/25/database/The-N-1-Query-Problem/</loc>
-    <lastmod>2018-04-10T04:29:25.519Z</lastmod>
-    <data>
-        <display>
-        <title>The N + 1 Query Problem</title>
-        <pubTime>2016-04-26T05:49:59.000Z</pubTime>
-        
-        <tag>n+1 query</tag>
-         
-        <tag>n+1 query problem</tag>
-         
-         
-           
-             
-              <breadCrumb title="database" url="https://bowenli86.github.io/categories/database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://bowenli86.github.io/2016/08/26/data%20structures%20and%20algorithms/interview/Facebook-User-Group-and-Bipartite-Graph/</loc>
     <lastmod>2018-04-10T04:29:25.518Z</lastmod>
     <data>
@@ -2651,6 +2651,29 @@
           
              
               <breadCrumb title="probability" url="https://bowenli86.github.io/categories/data-structures-and-algorithms/probability/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/10/07/data%20structures%20and%20algorithms/bloom%20filter/Bloom-Filter-Introduction/</loc>
+    <lastmod>2018-04-10T04:29:25.517Z</lastmod>
+    <data>
+        <display>
+        <title>Bloom Filter - Introduction</title>
+        <pubTime>2016-10-07T18:50:33.000Z</pubTime>
+        
+        <tag>bloom filter</tag>
+         
+         
+           
+             
+              <breadCrumb title="data structures and algorithms" url="https://bowenli86.github.io/categories/data-structures-and-algorithms/"/>
+          
+             
+              <breadCrumb title="bloom filter" url="https://bowenli86.github.io/categories/data-structures-and-algorithms/bloom-filter/"/>
           
         </display>
     </data>
@@ -2708,22 +2731,23 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/10/07/data%20structures%20and%20algorithms/bloom%20filter/Bloom-Filter-Introduction/</loc>
-    <lastmod>2018-04-10T04:29:25.517Z</lastmod>
+    <loc>https://bowenli86.github.io/2016/09/21/career%20and%20leadership/Repost-Farewell-App-Academy-Hello-Airbnb-Part-II/</loc>
+    <lastmod>2018-04-10T04:29:25.516Z</lastmod>
     <data>
         <display>
-        <title>Bloom Filter - Introduction</title>
-        <pubTime>2016-10-07T18:50:33.000Z</pubTime>
+        <title>Repost - "Farewell, App Academy. Hello, Airbnb. (Part II)"</title>
+        <pubTime>2016-09-22T06:10:23.000Z</pubTime>
         
-        <tag>bloom filter</tag>
+        <tag>career</tag>
+         
+        <tag>negotiation</tag>
+         
+        <tag>salary negotiation</tag>
          
          
            
              
-              <breadCrumb title="data structures and algorithms" url="https://bowenli86.github.io/categories/data-structures-and-algorithms/"/>
-          
-             
-              <breadCrumb title="bloom filter" url="https://bowenli86.github.io/categories/data-structures-and-algorithms/bloom-filter/"/>
+              <breadCrumb title="career and leadership" url="https://bowenli86.github.io/categories/career-and-leadership/"/>
           
         </display>
     </data>
@@ -2741,30 +2765,6 @@
         <tag>job hopping</tag>
          
         <tag>跳槽加薪</tag>
-         
-         
-           
-             
-              <breadCrumb title="career and leadership" url="https://bowenli86.github.io/categories/career-and-leadership/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/09/21/career%20and%20leadership/Repost-Farewell-App-Academy-Hello-Airbnb-Part-II/</loc>
-    <lastmod>2018-04-10T04:29:25.516Z</lastmod>
-    <data>
-        <display>
-        <title>Repost - "Farewell, App Academy. Hello, Airbnb. (Part II)"</title>
-        <pubTime>2016-09-22T06:10:23.000Z</pubTime>
-        
-        <tag>career</tag>
-         
-        <tag>negotiation</tag>
-         
-        <tag>salary negotiation</tag>
          
          
            
@@ -2804,16 +2804,20 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/04/14/best%20practices/design%20pattern/Design-Pattern-Strategy-Pattern-Program-to-an-interface-not-an-implementation/</loc>
+    <loc>https://bowenli86.github.io/2016/03/30/best%20practices/design%20pattern/Enum-and-EnumSet/</loc>
     <lastmod>2018-04-10T04:29:25.515Z</lastmod>
     <data>
         <display>
-        <title>Design Pattern - Strategy Pattern - Program to an interface, not an implementation</title>
-        <pubTime>2016-04-14T21:58:10.000Z</pubTime>
+        <title>Design Pattern - Enum and EnumSet</title>
+        <pubTime>2016-03-31T05:33:41.000Z</pubTime>
         
         <tag>design pattern</tag>
          
-        <tag>strategy pattern</tag>
+        <tag>enum</tag>
+         
+        <tag>enumset</tag>
+         
+        <tag>enumerator</tag>
          
          
            
@@ -2851,47 +2855,16 @@
 
     
   <url>
-    <loc>https://bowenli86.github.io/2016/03/30/best%20practices/design%20pattern/Enum-and-EnumSet/</loc>
+    <loc>https://bowenli86.github.io/2016/04/14/best%20practices/design%20pattern/Design-Pattern-Strategy-Pattern-Program-to-an-interface-not-an-implementation/</loc>
     <lastmod>2018-04-10T04:29:25.515Z</lastmod>
     <data>
         <display>
-        <title>Design Pattern - Enum and EnumSet</title>
-        <pubTime>2016-03-31T05:33:41.000Z</pubTime>
+        <title>Design Pattern - Strategy Pattern - Program to an interface, not an implementation</title>
+        <pubTime>2016-04-14T21:58:10.000Z</pubTime>
         
         <tag>design pattern</tag>
          
-        <tag>enum</tag>
-         
-        <tag>enumset</tag>
-         
-        <tag>enumerator</tag>
-         
-         
-           
-             
-              <breadCrumb title="best practice" url="https://bowenli86.github.io/categories/best-practice/"/>
-          
-             
-              <breadCrumb title="design pattern" url="https://bowenli86.github.io/categories/best-practice/design-pattern/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://bowenli86.github.io/2016/04/14/best%20practices/design%20pattern/Design-Pattern-Proxy-Pattern/</loc>
-    <lastmod>2018-04-10T04:29:25.514Z</lastmod>
-    <data>
-        <display>
-        <title>Design Pattern - Proxy Pattern</title>
-        <pubTime>2016-04-14T22:03:24.000Z</pubTime>
-        
-        <tag>design pattern</tag>
-         
-        <tag>proxy</tag>
-         
-        <tag>proxy pattern</tag>
+        <tag>strategy pattern</tag>
          
          
            
@@ -2946,6 +2919,33 @@
         <tag>observer</tag>
          
         <tag>observer pattern</tag>
+         
+         
+           
+             
+              <breadCrumb title="best practice" url="https://bowenli86.github.io/categories/best-practice/"/>
+          
+             
+              <breadCrumb title="design pattern" url="https://bowenli86.github.io/categories/best-practice/design-pattern/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://bowenli86.github.io/2016/04/14/best%20practices/design%20pattern/Design-Pattern-Proxy-Pattern/</loc>
+    <lastmod>2018-04-10T04:29:25.514Z</lastmod>
+    <data>
+        <display>
+        <title>Design Pattern - Proxy Pattern</title>
+        <pubTime>2016-04-14T22:03:24.000Z</pubTime>
+        
+        <tag>design pattern</tag>
+         
+        <tag>proxy</tag>
+         
+        <tag>proxy pattern</tag>
          
          
            

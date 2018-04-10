@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://bowenli86.github.io/2016/09/29/hexo/Hexo-How-to-backup-configs-and-blogs-of-Github-Pages-in-a-Github-repository/</loc>
+    
+    <lastmod>2018-04-10T05:08:19.859Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://bowenli86.github.io/2016/01/23/hexo/Hexo-How-to-install-hexo-on-Mac-with-github-pages/</loc>
+    
+    <lastmod>2018-04-10T05:04:11.282Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://bowenli86.github.io/tags/index.html</loc>
     
     <lastmod>2018-04-10T04:29:25.559Z</lastmod>
@@ -23,6 +37,13 @@
   </url>
   
   <url>
+    <loc>https://bowenli86.github.io/2016/05/18/web%20development/webhook/What-is-Callback-and-Webhook/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.555Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://bowenli86.github.io/2016/06/05/web%20development/rest/RESTful-What-is-Idempotent/</loc>
     
     <lastmod>2018-04-10T04:29:25.555Z</lastmod>
@@ -31,13 +52,6 @@
   
   <url>
     <loc>https://bowenli86.github.io/2016/05/22/web%20development/rest/What-is-REST-RESTful/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.555Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/05/18/web%20development/webhook/What-is-Callback-and-Webhook/</loc>
     
     <lastmod>2018-04-10T04:29:25.555Z</lastmod>
     
@@ -72,14 +86,14 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/03/28/tools/markdown/Markdown-Markdown-tutorial-how-to-write-in-Markdown/</loc>
+    <loc>https://bowenli86.github.io/2016/12/19/tools/mac/bash-profile-and-how-to-permenantly-set-environment-variables-on-Mac/</loc>
     
     <lastmod>2018-04-10T04:29:25.552Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/12/19/tools/mac/bash-profile-and-how-to-permenantly-set-environment-variables-on-Mac/</loc>
+    <loc>https://bowenli86.github.io/2016/03/28/tools/markdown/Markdown-Markdown-tutorial-how-to-write-in-Markdown/</loc>
     
     <lastmod>2018-04-10T04:29:25.552Z</lastmod>
     
@@ -212,14 +226,14 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/06/28/system%20design/SNAKE-System-Design-Principles-to-crack-a-system-design-in-5-steps/</loc>
+    <loc>https://bowenli86.github.io/2016/07/04/spring/hibernate%20integration/Spring-Spring-Hibernate-Integration-Configuration-for-DataSource-and-EntityManager/</loc>
     
     <lastmod>2018-04-10T04:29:25.544Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/07/04/spring/hibernate%20integration/Spring-Spring-Hibernate-Integration-Configuration-for-DataSource-and-EntityManager/</loc>
+    <loc>https://bowenli86.github.io/2016/06/28/system%20design/SNAKE-System-Design-Principles-to-crack-a-system-design-in-5-steps/</loc>
     
     <lastmod>2018-04-10T04:29:25.544Z</lastmod>
     
@@ -233,7 +247,7 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/08/21/spring/Spring-What-is-dependency-injection-and-how-it-works-in-Spring/</loc>
+    <loc>https://bowenli86.github.io/2016/07/09/spring/Spring-Wiring-Beans/</loc>
     
     <lastmod>2018-04-10T04:29:25.543Z</lastmod>
     
@@ -247,9 +261,16 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/07/09/spring/Spring-Wiring-Beans/</loc>
+    <loc>https://bowenli86.github.io/2016/08/21/spring/Spring-What-is-dependency-injection-and-how-it-works-in-Spring/</loc>
     
     <lastmod>2018-04-10T04:29:25.543Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://bowenli86.github.io/2016/05/10/spring/Spring-Set-up-and-Enable-Scheduled-Tasks/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.542Z</lastmod>
     
   </url>
   
@@ -268,9 +289,16 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/05/10/spring/Spring-Set-up-and-Enable-Scheduled-Tasks/</loc>
+    <loc>https://bowenli86.github.io/2016/03/25/spring/Spring-Dynamic-Datasource/</loc>
     
-    <lastmod>2018-04-10T04:29:25.542Z</lastmod>
+    <lastmod>2018-04-10T04:29:25.541Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://bowenli86.github.io/2016/07/10/spring/Spring-Autowired-for-List-Types/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.541Z</lastmod>
     
   </url>
   
@@ -289,28 +317,7 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/03/25/spring/Spring-Dynamic-Datasource/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.541Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/07/10/spring/Spring-Autowired-for-List-Types/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.541Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://bowenli86.github.io/2016/06/20/ruby/Ruby-attr-accessor-attr-reader-and-attr-writer/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.540Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/07/10/ruby/Ruby-Understanding-class-eval-and-instance-eval/</loc>
     
     <lastmod>2018-04-10T04:29:25.540Z</lastmod>
     
@@ -324,6 +331,13 @@
   </url>
   
   <url>
+    <loc>https://bowenli86.github.io/2016/07/10/ruby/Ruby-Understanding-class-eval-and-instance-eval/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.540Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://bowenli86.github.io/2016/07/08/ruby/Ruby-Ruby-blocks-and-yield-statement/</loc>
     
     <lastmod>2018-04-10T04:29:25.539Z</lastmod>
@@ -331,14 +345,14 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/07/16/ruby/Ruby-How-to-write-Singleton-in-Ruby/</loc>
+    <loc>https://bowenli86.github.io/2016/06/21/ruby/Ruby-Methods-in-Ruby/</loc>
     
     <lastmod>2018-04-10T04:29:25.539Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/06/21/ruby/Ruby-Methods-in-Ruby/</loc>
+    <loc>https://bowenli86.github.io/2016/07/16/ruby/Ruby-How-to-write-Singleton-in-Ruby/</loc>
     
     <lastmod>2018-04-10T04:29:25.539Z</lastmod>
     
@@ -394,7 +408,7 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/02/01/java/java%208/lambda/Java-8-Lambda-Expression/</loc>
+    <loc>https://bowenli86.github.io/2016/02/01/java/java%208/lambda/Java-8-Functional-Interface/</loc>
     
     <lastmod>2018-04-10T04:29:25.535Z</lastmod>
     
@@ -408,16 +422,9 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/02/01/java/java%208/lambda/Java-8-Functional-Interface/</loc>
+    <loc>https://bowenli86.github.io/2016/02/01/java/java%208/lambda/Java-8-Lambda-Expression/</loc>
     
     <lastmod>2018-04-10T04:29:25.535Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/01/31/java/java%208/lambda/Java-8-Functional-Interface-Predicate-and-BiPredicate/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.534Z</lastmod>
     
   </url>
   
@@ -436,6 +443,20 @@
   </url>
   
   <url>
+    <loc>https://bowenli86.github.io/2016/01/31/java/java%208/lambda/Java-8-Functional-Interface-Predicate-and-BiPredicate/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.534Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://bowenli86.github.io/2016/01/29/java/guava/Guava-EventBus/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.533Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://bowenli86.github.io/2016/03/30/java/guava/Guava-Cache/</loc>
     
     <lastmod>2018-04-10T04:29:25.533Z</lastmod>
@@ -444,13 +465,6 @@
   
   <url>
     <loc>https://bowenli86.github.io/2016/12/05/java/exception%20and%20error/OutOfMemoryError-and-StackOverflowError/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.533Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/01/29/java/guava/Guava-EventBus/</loc>
     
     <lastmod>2018-04-10T04:29:25.533Z</lastmod>
     
@@ -471,6 +485,13 @@
   </url>
   
   <url>
+    <loc>https://bowenli86.github.io/2016/04/03/java/concurrency/Java-Concurrency-java-util-concurrent-atomic-package/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.531Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://bowenli86.github.io/2016/04/20/java/concurrency/Java-Concurrency-ReentrantLock/</loc>
     
     <lastmod>2018-04-10T04:29:25.531Z</lastmod>
@@ -485,21 +506,7 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/04/03/java/concurrency/Java-Concurrency-java-util-concurrent-atomic-package/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.531Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://bowenli86.github.io/2016/04/03/java/concurrency/Java-Concurrency-Executor-and-Thread-Pools/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.530Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/08/23/java/concurrency/Java-Concurrency-Multi-Thread-1-Implements-Runnable-or-Extends-Thread/</loc>
     
     <lastmod>2018-04-10T04:29:25.530Z</lastmod>
     
@@ -513,9 +520,9 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/04/20/java/concurrency/Java-Concurrency-BlockingQueue/</loc>
+    <loc>https://bowenli86.github.io/2016/08/23/java/concurrency/Java-Concurrency-Multi-Thread-1-Implements-Runnable-or-Extends-Thread/</loc>
     
-    <lastmod>2018-04-10T04:29:25.529Z</lastmod>
+    <lastmod>2018-04-10T04:29:25.530Z</lastmod>
     
   </url>
   
@@ -527,9 +534,9 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/02/04/java/Java-String-Formatting/</loc>
+    <loc>https://bowenli86.github.io/2016/04/20/java/concurrency/Java-Concurrency-BlockingQueue/</loc>
     
-    <lastmod>2018-04-10T04:29:25.528Z</lastmod>
+    <lastmod>2018-04-10T04:29:25.529Z</lastmod>
     
   </url>
   
@@ -548,21 +555,14 @@
   </url>
   
   <url>
+    <loc>https://bowenli86.github.io/2016/02/04/java/Java-String-Formatting/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.528Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://bowenli86.github.io/2016/01/24/hexo/Hexo-Hexo-commands/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.527Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/09/29/hexo/Hexo-How-to-backup-configs-and-blogs-of-Github-Pages-in-a-Github-repository/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.527Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/01/23/hexo/Hexo-How-to-install-hexo-on-Mac-with-github-pages/</loc>
     
     <lastmod>2018-04-10T04:29:25.527Z</lastmod>
     
@@ -611,14 +611,14 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/02/10/distributed%20system/nosql/Cassandra-V-S-HBase/</loc>
+    <loc>https://bowenli86.github.io/2016/04/15/distributed%20system/thrift/Apache-Thrift-Detailed-Thrift-Examples/</loc>
     
     <lastmod>2018-04-10T04:29:25.524Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/04/15/distributed%20system/thrift/Apache-Thrift-Detailed-Thrift-Examples/</loc>
+    <loc>https://bowenli86.github.io/2016/02/10/distributed%20system/nosql/Cassandra-V-S-HBase/</loc>
     
     <lastmod>2018-04-10T04:29:25.524Z</lastmod>
     
@@ -653,13 +653,6 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/02/08/distributed%20system/high%20availibility/Gossip-Protocol/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.521Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://bowenli86.github.io/2016/10/23/distributed%20system/data/Big-Data-and-Google-s-Three-Papers-I-GFS-and-MapReduce/</loc>
     
     <lastmod>2018-04-10T04:29:25.521Z</lastmod>
@@ -668,6 +661,13 @@
   
   <url>
     <loc>https://bowenli86.github.io/2016/11/29/distributed%20system/data/Big-Data-and-Google-s-Three-Paper-II-BigTable/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.521Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://bowenli86.github.io/2016/02/08/distributed%20system/high%20availibility/Gossip-Protocol/</loc>
     
     <lastmod>2018-04-10T04:29:25.521Z</lastmod>
     
@@ -688,6 +688,13 @@
   </url>
   
   <url>
+    <loc>https://bowenli86.github.io/2016/04/25/database/The-N-1-Query-Problem/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.519Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://bowenli86.github.io/2016/04/28/database/hibernate/Hibernate-Hibernate-Enum-and-Decoupling-Java-Class-with-Database-Record/</loc>
     
     <lastmod>2018-04-10T04:29:25.519Z</lastmod>
@@ -696,13 +703,6 @@
   
   <url>
     <loc>https://bowenli86.github.io/2016/11/16/distributed%20system/CAP-and-Evetual-Consistency/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.519Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/04/25/database/The-N-1-Query-Problem/</loc>
     
     <lastmod>2018-04-10T04:29:25.519Z</lastmod>
     
@@ -723,6 +723,13 @@
   </url>
   
   <url>
+    <loc>https://bowenli86.github.io/2016/10/07/data%20structures%20and%20algorithms/bloom%20filter/Bloom-Filter-Introduction/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.517Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://bowenli86.github.io/2015/04/08/data%20structures%20and%20algorithms/Array/</loc>
     
     <lastmod>2018-04-10T04:29:25.517Z</lastmod>
@@ -737,21 +744,14 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/10/07/data%20structures%20and%20algorithms/bloom%20filter/Bloom-Filter-Introduction/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.517Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/10/10/career%20and%20leadership/Repost-Job-Hopping-and-Salary-Raise-%E8%B7%B3%E6%A7%BD%E5%8A%A0%E8%96%AA/</loc>
+    <loc>https://bowenli86.github.io/2016/09/21/career%20and%20leadership/Repost-Farewell-App-Academy-Hello-Airbnb-Part-II/</loc>
     
     <lastmod>2018-04-10T04:29:25.516Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/09/21/career%20and%20leadership/Repost-Farewell-App-Academy-Hello-Airbnb-Part-II/</loc>
+    <loc>https://bowenli86.github.io/2016/10/10/career%20and%20leadership/Repost-Job-Hopping-and-Salary-Raise-%E8%B7%B3%E6%A7%BD%E5%8A%A0%E8%96%AA/</loc>
     
     <lastmod>2018-04-10T04:29:25.516Z</lastmod>
     
@@ -765,7 +765,7 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/04/14/best%20practices/design%20pattern/Design-Pattern-Strategy-Pattern-Program-to-an-interface-not-an-implementation/</loc>
+    <loc>https://bowenli86.github.io/2016/03/30/best%20practices/design%20pattern/Enum-and-EnumSet/</loc>
     
     <lastmod>2018-04-10T04:29:25.515Z</lastmod>
     
@@ -779,16 +779,9 @@
   </url>
   
   <url>
-    <loc>https://bowenli86.github.io/2016/03/30/best%20practices/design%20pattern/Enum-and-EnumSet/</loc>
+    <loc>https://bowenli86.github.io/2016/04/14/best%20practices/design%20pattern/Design-Pattern-Strategy-Pattern-Program-to-an-interface-not-an-implementation/</loc>
     
     <lastmod>2018-04-10T04:29:25.515Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://bowenli86.github.io/2016/04/14/best%20practices/design%20pattern/Design-Pattern-Proxy-Pattern/</loc>
-    
-    <lastmod>2018-04-10T04:29:25.514Z</lastmod>
     
   </url>
   
@@ -801,6 +794,13 @@
   
   <url>
     <loc>https://bowenli86.github.io/2016/04/14/best%20practices/design%20pattern/Design-Pattern-Observer-Pattern/</loc>
+    
+    <lastmod>2018-04-10T04:29:25.514Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://bowenli86.github.io/2016/04/14/best%20practices/design%20pattern/Design-Pattern-Proxy-Pattern/</loc>
     
     <lastmod>2018-04-10T04:29:25.514Z</lastmod>
     
