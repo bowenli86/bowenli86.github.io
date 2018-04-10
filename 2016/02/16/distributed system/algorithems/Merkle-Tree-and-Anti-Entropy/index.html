@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="http://www.slideshare.net/quipo/modern-algorithms-and-data-structures-1-bloom-filters-merkle-trees http://thornydev.blogspot.com/2015/06/merkle-tree.htmlhttps://github.com/apache/cassandra/blob/4a748f">
+<meta name="keywords" content="merkle tree,anti entropy,anti-entropy,cassandra,apache cassandra,nosql,no sql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Merkle Tree and Anti-Entropy">
+<meta property="og:url" content="https://bowenli86.github.io/2016/02/16/distributed system/algorithems/Merkle-Tree-and-Anti-Entropy/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="http://www.slideshare.net/quipo/modern-algorithms-and-data-structures-1-bloom-filters-merkle-trees http://thornydev.blogspot.com/2015/06/merkle-tree.htmlhttps://github.com/apache/cassandra/blob/4a748f">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.520Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Merkle Tree and Anti-Entropy">
+<meta name="twitter:description" content="http://www.slideshare.net/quipo/modern-algorithms-and-data-structures-1-bloom-filters-merkle-trees http://thornydev.blogspot.com/2015/06/merkle-tree.htmlhttps://github.com/apache/cassandra/blob/4a748f">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/02/16/distributed system/algorithems/Merkle-Tree-and-Anti-Entropy/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Merkle Tree and Anti-Entropy | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/02/16/distributed system/algorithems/Merkle-Tree-and-Anti-Entropy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Merkle Tree and Anti-Entropy</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-02-16T16:56:25-08:00">2016-02-16</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-system/" itemprop="url" rel="index"><span itemprop="name">distributed system</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-system/algorithms/" itemprop="url" rel="index"><span itemprop="name">algorithms</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="http://www.slideshare.net/quipo/modern-algorithms-and-data-structures-1-bloom-filters-merkle-trees" target="_blank" rel="noopener">http://www.slideshare.net/quipo/modern-algorithms-and-data-structures-1-bloom-filters-merkle-trees</a></p>
+<p><a href="http://thornydev.blogspot.com/2015/06/merkle-tree.html" target="_blank" rel="noopener">http://thornydev.blogspot.com/2015/06/merkle-tree.html</a><br><a href="https://github.com/apache/cassandra/blob/4a748f31599b7add59c522e72f0b52d372351041/src/java/org/apache/cassandra/utils/MerkleTrees.java" target="_blank" rel="noopener">https://github.com/apache/cassandra/blob/4a748f31599b7add59c522e72f0b52d372351041/src/java/org/apache/cassandra/utils/MerkleTrees.java</a><br><a href="https://github.com/apache/cassandra/blob/05de664acd369d98154148dbf441accfa7f0552c/src/java/org/apache/cassandra/utils/MerkleTree.java" target="_blank" rel="noopener">https://github.com/apache/cassandra/blob/05de664acd369d98154148dbf441accfa7f0552c/src/java/org/apache/cassandra/utils/MerkleTree.java</a><br><a href="http://adc.sourceforge.net/draft-jchapweske-thex-02.html" target="_blank" rel="noopener">http://adc.sourceforge.net/draft-jchapweske-thex-02.html</a></p>
+<h1 id="1-Merkle-Tree"><a href="#1-Merkle-Tree" class="headerlink" title="1. Merkle Tree"></a>1. Merkle Tree</h1><p>Merkle trees are typically implemented as <code>binary trees</code> where<br>1) each non-leaf node is a hash of the two nodes below it<br>2) The leaves can either be the data itself or a hash/signature of the data.</p>
+<p>Thus, if any difference at the root hash is detected between systems, a binary search can be done through the tree to determine which particular subtree has the problem. Thus typically only <code>log(N)</code> nodes need to be inspected rather than all N nodes to find the problem area.</p>
+<p>Merkle trees are particularly effective in distributed systems where two separate systems can compare the data on each node via a <code>Merkle tree</code> and quickly determine which data sets (subtrees) are lacking on one or the other system. Then only the subset of missing data needs to be sent. Cassandra, based on Amazon’s Dynamo, for example, uses Merkle trees as an anti-entropy measure to detect inconsistencies between replicas.</p>
+<p>In the diagram below <code>IH=InternalHashFn</code> and <code>LH=LeafHashFn</code>.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">For example, consider a file made up of 4 segments, S1, S2, S3, and S4</span><br><span class="line">            ROOT=IH(E+F)</span><br><span class="line">                /      \</span><br><span class="line">               /        \</span><br><span class="line">        E=IH(A+B)       F=IH(C+D)</span><br><span class="line">        /     \           /    \</span><br><span class="line">       /       \         /      \</span><br><span class="line">  A=LH(S1)  B=LH(S2) C=LH(S3)  D=LH(S4)</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">For example, consider a file made up of 5 segments, S1, S2, S3, S4, and S5.</span><br><span class="line"></span><br><span class="line">                       ROOT=IH(H+E)</span><br><span class="line">                        /        \</span><br><span class="line">                       /          \</span><br><span class="line">                H=IH(F+G)          E</span><br><span class="line">                /       \           \</span><br><span class="line">               /         \           \</span><br><span class="line">        F=IH(A+B)       G=IH(C+D)     E</span><br><span class="line">        /     \           /     \      \</span><br><span class="line">       /       \         /       \      \</span><br><span class="line">  A=LH(S1)  B=LH(S2) C=LH(S3)  D=LH(S4) E=LH(S5)</span><br></pre></td></tr></table></figure>
+<h1 id="2-Tree-Hash-EXchange-format-THEX"><a href="#2-Tree-Hash-EXchange-format-THEX" class="headerlink" title="2. Tree Hash EXchange format (THEX)"></a>2. Tree Hash EXchange format (THEX)</h1><p>It is common practice in distributed systems to use secure hash algorithms to verify the integrity of content. The employment of <code>secure hash algorithms</code> enables systems to retreive content from completely untrusted hosts with only a small amount of trusted metadata.</p>
+<p>Typically, algorithms such as <code>SHA-1</code> and <code>MD5</code> have been used to check the content integrity after <code>retrieving the entire file</code>. These full file hash techniques work fine in an environment where the content is received from a single host and there are no streaming requirements. However, there are an increasing number of systems that retrieve a single piece of content from multiple untrusted hosts, and require content verification well in advance of retrieving the entire file.</p>
+<p>Many modern peer-to-peer content delivery systems employ <code>fixed size &quot;block hashes&quot;</code> to provide a finer level of granularity in their integrity checking. This approach is still limited in the verification resolution it can attain. Additionally, all of the hash information must be retrieved from a trusted host, which can limit the scalability and reliability of the system.</p>
+<blockquote>
+<p>Another way to verify content is to use the <code>hash tree approach</code>. This approach has the desired characteristics missing from the full file hash approach and works well for very large files. The idea is to break the file up into a number of small pieces, hash those pieces, and then iteratively combine and rehash the resulting hashes in a tree-like fashion until a single “root hash” is created.</p>
+</blockquote>
+<p>The root hash by itself behaves exactly the same way that full file hashes do. If the root hash is retrieved from a trusted source, it can be used to verify the integrity of the entire content. More importantly, the root hash can be combined with a small number of other hashes to verify the integrity of any of the file segments.</p>
+<p>For example, consider a file made up of four segments, S1, S2, S3, and S4. Let H() be the hash function, and ‘+’ indicate concatenation. You could take the traditional hash value:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VALUE=H(S1+S2+S3+S4)</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>Or, you could employ a tree approach. The tree hash utilizes two hash algorithms - one for leaf hashes and one for internal hashes. Let LH() be the leaf hash function and IH() be the internal hash function:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">             ROOT=IH(E+F)</span><br><span class="line">              /      \</span><br><span class="line">             /        \</span><br><span class="line">      E=IH(A+B)       F=IH(C+D)</span><br><span class="line">      /     \           /    \</span><br><span class="line">     /       \         /      \</span><br><span class="line">A=LH(S1)  B=LH(S2) C=LH(S3)  D=LH(S4)</span><br></pre></td></tr></table></figure>
+<p>Now, assuming that the <code>ROOT</code> is retrieved from a trusted source, the integrity of a file segment coming from an untrusted source can be checked with a small amount of hash data. For instance, if S1 is received from an untrusted host, the integrity of S1 can be verified with just B and F. With these, it can be verified that, yes: S1 can be combined up to equal the ROOT hash, even without seeing the other segments. (It is just as impractical to create falsified values of B and F as it is to manipulate any good hash function to give desired results – so B and F can come from untrusted sources as well.) Similarly, if some other untrusted source provides segments S3 and S4, their integrity can be easily checked when combined with hash E. From segments S3 and S4, the values of C and D and then F can be calculated. With these, you can verify that S3 and S4 can combine up to create the ROOT – even if other sources are providing bogus S1 and S2 segments. Bad info can be immediately recognized and discarded, and good info retained, even in situations where you could not even begin to calculate a traditional full-file hash.</p>
+<p>Another interesting property of the tree approach is that it can be used to verify (tree-aligned) subranges whose size is any multiple of the base segment size.</p>
+<pre><code>Consider for example an initial segment size of 1,024 bytes (=1KB), and a file of 32GB (=2^25KB). You could verify:
+
+- a single 1,024-byte block, with about 25 proof-assist values
+- or a block of size 16GB (=2^24KB), with a single proof-assist value
+- or anything in between.
+</code></pre><h2 id="2-1-Hash-Functions"><a href="#2-1-Hash-Functions" class="headerlink" title="2.1 Hash Functions"></a>2.1 Hash Functions</h2><blockquote>
+<p><code>The strength of the hash tree construct is only as strong as the underlying hash algorithm.</code> Thus, it is RECOMMENDED that a secure hash algorithm such as <code>SHA-1</code> be used as the basis of the hash tree.</p>
+</blockquote>
+<blockquote>
+<p>In order to protect against collisions between <code>leaf hashes</code> and <code>internal hashes</code>, different hash constructs are used to hash the leaf nodes and the internal nodes. The same hash algorithm is used as the basis of each construct, but a single ‘1’ byte in network byte order, or 0x01 is prepended to the input of the internal node hashes, and a single ‘0’ byte, or 0x00 is prepended to the input of the leaf node hashes.</p>
+</blockquote>
+<p>Let <code>H()</code> be the secure hash algorithm, for example <code>SHA-1</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">internal hash function = IH(X) = H(0x01, X)</span><br><span class="line"></span><br><span class="line">leaf hash function = LH(X) = H(0x00, X)</span><br></pre></td></tr></table></figure>
+<h2 id="2-2-Unbalanced-Trees"><a href="#2-2-Unbalanced-Trees" class="headerlink" title="2.2 Unbalanced Trees"></a>2.2 Unbalanced Trees</h2><blockquote>
+<p>For trees that are unbalanced – that is, they have a number of leaves which is not a power of 2 – interim hash values which do not have a sibling value to which they may be concatenated are promoted, unchanged, up the tree until a sibling is found.</p>
+</blockquote>
+<p>For example, consider a file made up of 5 segments, S1, S2, S3, S4, and S5.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">                     ROOT=IH(H+E)</span><br><span class="line">                      /        \</span><br><span class="line">                     /          \</span><br><span class="line">              H=IH(F+G)          E</span><br><span class="line">              /       \           \</span><br><span class="line">             /         \           \</span><br><span class="line">      F=IH(A+B)       G=IH(C+D)     E</span><br><span class="line">      /     \           /     \      \</span><br><span class="line">     /       \         /       \      \</span><br><span class="line">A=LH(S1)  B=LH(S2) C=LH(S3)  D=LH(S4) E=LH(S5)</span><br></pre></td></tr></table></figure>
+<p>In the above example, E does not have any immediate siblings with which to be combined to calculate the next generation. So, E is promoted up the tree, without being rehashed, until it can be paired with value H. The values H and E are then concatenated, and hashed, to produce the ROOT hash.</p>
+<h2 id="2-3-Choice-Of-Segment-Size"><a href="#2-3-Choice-Of-Segment-Size" class="headerlink" title="2.3 Choice Of Segment Size"></a>2.3 Choice Of Segment Size</h2><p>Any segment size is possible, but the choice of base segment size establishes the smallest possible unit of verification.</p>
+<blockquote>
+<p>If the segment size &gt;= size of the file to be hashed, the tree hash value is the value of the single segment’s value, which is the same as the underlying hash algorithm value for the whole file.</p>
+</blockquote>
+<p>A segment size equal to the digest algorithm output size would more than double the total amount of data to be hashed, and thus more than double the time required to calculate the tree hash structure, as compared to a simple full-file hash. However, once the segment size reaches several multiples of the digest size, calculating the tree adds only a small fractional time overhead beyond what a traditional full-file hash would cost.</p>
+<p>Otherwise, smaller segments are better. Smaller segments allow, but do not require, the retention and use of fine-grained verification info, (A stack-based tree calculation procedure need never retain more than one pending internal node value per generation before it can be combined with a sibling, and all interim values below a certain generation size of interest can be discarded.) Further, it is beneficial for multiple application domains and even files of wildly different sizes to share the same base segment size, so that tree structures can be shared and used to discover correlated subranges.</p>
+<p>Thus the authors recommend a segment size of 1,024 bytes for most applications, as a sort of “smallest common denominator”, even for applications involving multi-gigabyte or terabyte files. This segment size is 40-50 times larger than common secure hash digest lengths (20-24 bytes), and thus adds no more than 5-10% in running time as compared to the “infinite segment” size case – the traditional full-file hash.</p>
+<p>Considering a 1 terabyte file, the maximum dynamic state required during the calculation of the tree root value is 29 interim node values – less than 1KB assuming a 20-byte digest algorithm like SHA-1. Only interim values in generations of interest for range verification need to be remembered for tree exchange, so if only 8GB ranges ever need to be verified, all but the top 8 generations of internal values (255 hashes) can be discarded.</p>
+<h1 id="3-Serialization-Format"><a href="#3-Serialization-Format" class="headerlink" title="3. Serialization Format"></a>3. Serialization Format</h1><p>This section presents a serialization format for Merkle Hash Trees that utilizes the <code></code>Direct Internet Message Encapsulation (DIME) format`. DIME is a generic message format that allows for multiple payloads, either text or binary. </p>
+<p>The Merkle Hash Tree serialization format consists of two different payloads. </p>
+<ul>
+<li>The first is XML encoded meta-data about the hash tree</li>
+<li>and the second is binary serialization of the tree itself. The binary serialization is required for two important reasons:</li>
+</ul>
+<p>Compactness of Representation - A key virtue of the hash tree approach is that it provides considerable integrity checking power with a relatively small amount of data. A typical hash tree consists of a large number of small hashes. Thus a text encoding, such as XML, could easily double the storage and transmission requirements of the hash tree, negating one of its key benefits.</p>
+<p>Random Access - In order to take full advantage of the hash tree construct, it is often necessary to read the elements of the hash tree in a random access fashion. A common usage of this serialization format will be to access hash data over the HTTP protocol using “Range Requests”. This will allow implementors to retrieve small bits of hash information on-demand, even requesting different parts of the tree from different hosts on the network.</p>
+<h2 id="3-1-DIME-Encapsulation"><a href="#3-1-DIME-Encapsulation" class="headerlink" title="3.1 DIME Encapsulation"></a>3.1 DIME Encapsulation</h2><p>It is RECOMMENDED that DIME be used to encapsulate the payloads described in this specification. The current version of DIME is “draft-nielsen-dime-01” at (<a href="http://gotdotnet.com/team/xml_wsspecs/dime/default.aspx)" target="_blank" rel="noopener">http://gotdotnet.com/team/xml_wsspecs/dime/default.aspx)</a>.</p>
+<p>It is RECOMMENDED that the first payload in the DIME Message be the XML Tree Description. The XML Tree description payload MUST be before the the binary serialized tree.</p>
+<p>It is RECOMMENDED that the binary serialized tree be stored in a single payload rather than using chunked payloads. This will allow implementations to read the tree hash data in a random access fashion within the payload.</p>
+<h2 id="3-2-XML-Tree-Description"><a href="#3-2-XML-Tree-Description" class="headerlink" title="3.2 XML Tree Description"></a>3.2 XML Tree Description</h2><p>The XML Tree Description contains metadata about the hash tree and file that is necessary to interpret the binary serialized tree. An important consideration in the design of THEX is the intention for it to be received from untrusted sources within a distributed network. The only information that needs to be obtained from a trusted source is the root hash and the segment size. The root hash by itself can be used to verify the integrity of the serialized tree and of the file itself.</p>
+<p>It is RECOMMENDED that implementers assume that the serialized file was obtained from an untrusted source, thus the use of this format to store non-verifiable information, such as general file metadata, is highly discouraged. For instance, a malicious party could easily forge metadata, such as the author or file name.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br><span class="line"><span class="meta">&lt;!DOCTYPE hashtree system "http://open-content.net/spec/thex/thex.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hashtree</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">file</span> <span class="attr">size</span>=<span class="string">'1146045066'</span> <span class="attr">segmentsize</span>=<span class="string">'1024'</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">digest</span> <span class="attr">algorithm</span>=<span class="string">'http://www.w3.org/2000/09/xmldsig#sha1'</span> </span></span><br><span class="line"><span class="tag">            <span class="attr">outputsize</span>=<span class="string">'20'</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">serializedtree</span> <span class="attr">depth</span>=<span class="string">'22'</span> </span></span><br><span class="line"><span class="tag">                    <span class="attr">type</span>=<span class="string">'http://open-content.net/spec/thex/breadthfirst'</span> </span></span><br><span class="line"><span class="tag">                    <span class="attr">uri</span>=<span class="string">'uuid:09233523-345b-4351-b623-5dsf35sgs5d6'</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">hashtree</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-2-1-File-Size"><a href="#3-2-1-File-Size" class="headerlink" title="3.2.1 File Size"></a>3.2.1 File Size</h3><p>The file size attribute refers to the size, in bytes, of the file that the hash tree was generated from.</p>
+<h3 id="3-2-2-File-Segment-Size"><a href="#3-2-2-File-Segment-Size" class="headerlink" title="3.2.2 File Segment Size"></a>3.2.2 File Segment Size</h3><p>The file segment size identifies the size, in bytes, of the file segments that were used to create the hash tree. As noted in Choice Of Segment Size, it is recommended that applications use a small, common segment size such as 1,024 bytes in order to retain maximum flexibility and interoperability.</p>
+<h3 id="3-2-3-Digest-Algorithm"><a href="#3-2-3-Digest-Algorithm" class="headerlink" title="3.2.3 Digest Algorithm"></a>3.2.3 Digest Algorithm</h3><p>This attribute provides the identifier URI for the digest algorithm. A URI is used here as an identifier instead of a regular string to avoid the overhead of IANA-style registration. By using URIs, new types can be created without having to consult any other entity. The URIs are only to be used for type identification purposes, but it is RECOMMENDED that the URIs point to information about the given digest function. This convention is inspired by RFC 3275, the XML Signature Specification. For instance, the SHA-1 algorithm is identified by “<a href="http://www.w3.org/2000/09/xmldsig#sha1&quot;" target="_blank" rel="noopener">http://www.w3.org/2000/09/xmldsig#sha1&quot;</a>. All digest algorithms defined in RFC 3275 are supported. The Tiger algorithm is also supported and is identified by “<a href="http://open-content.net/spec/digest/tiger&quot;" target="_blank" rel="noopener">http://open-content.net/spec/digest/tiger&quot;</a>.</p>
+<h3 id="3-2-4-Digest-Output-Size"><a href="#3-2-4-Digest-Output-Size" class="headerlink" title="3.2.4 Digest Output Size"></a>3.2.4 Digest Output Size</h3><p>This attribute specifies the size of the output of the hash function, in bytes.</p>
+<h3 id="3-2-5-Serialized-Tree-Depth"><a href="#3-2-5-Serialized-Tree-Depth" class="headerlink" title="3.2.5 Serialized Tree Depth"></a>3.2.5 Serialized Tree Depth</h3><p>This attribute specifies the number of levels of the tree that have been serialized. This value allows control over the amount of storage space required by the serialized tree. In general, each row added to the tree will double the storage requirements while also doubling the verification resolution.</p>
+<h3 id="3-2-6-Serialized-Tree-Type"><a href="#3-2-6-Serialized-Tree-Type" class="headerlink" title="3.2.6 Serialized Tree Type"></a>3.2.6 Serialized Tree Type</h3><p>This attribute provides the identifier URI for the serialization type. Just as with the Digest Algorithm, new serialization types can be added and described without going through a formal IANA-style process. One serialization type is defined for “Breadth-First Serialization” later in this document.</p>
+<h3 id="3-2-7-Serialized-Tree-URI"><a href="#3-2-7-Serialized-Tree-URI" class="headerlink" title="3.2.7 Serialized Tree URI"></a>3.2.7 Serialized Tree URI</h3><p>This attribute provides the URI of the binary serialized tree payload. If used within a DIME payload, it is recommended that this URI be location independant, such as the “uuid:” URI’s used in the SOAP in DIME specification or SHA-1 URNs.</p>
+<h2 id="3-3-Breadth-First-Serialization"><a href="#3-3-Breadth-First-Serialization" class="headerlink" title="3.3 Breadth-First Serialization"></a>3.3 Breadth-First Serialization</h2><p>Normal breadth-first serialization is the recommended manner in which to serialize the hash tree. This format includes the root hash first, and then each “row” of hashes is serialized until the tree has been serialized to the lowest level as specified by the “Serialized Tree Depth” field.</p>
+<p>For example, consider a file made up of 5 segments, S1, S2, S3, S4, and S5.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">                     ROOT=IH(H+E)</span><br><span class="line">                      /        \</span><br><span class="line">                     /          \</span><br><span class="line">              H=IH(F+G)          E</span><br><span class="line">              /       \           \</span><br><span class="line">             /         \           \</span><br><span class="line">      F=IH(A+B)       G=IH(C+D)     E</span><br><span class="line">      /     \           /     \      \</span><br><span class="line">     /       \         /       \      \</span><br><span class="line">A=LH(S1)  B=LH(S2) C=LH(S3)  D=LH(S4) E=LH(S5)</span><br></pre></td></tr></table></figure>
+<p>The hashes would be serialized in the following order: ROOT, H, E, F, G, E, A, B, C, D, E. Notice that E is serialized as a part of the each row. This is due to its promotion as there are no available siblings in the lower rows. If we choose to serialize the entire tree, the serialized tree depth would be 4, and for a 20 byte digest output, the entire tree payload would occupy 11*20 = 220 bytes.</p>
+<h3 id="3-3-1-Serialization-Type-URI"><a href="#3-3-1-Serialization-Type-URI" class="headerlink" title="3.3.1 Serialization Type URI"></a>3.3.1 Serialization Type URI</h3><p>The serialization type URI for a Merkle Hash Tree serialized in normal breadth-first form is “<a href="http://open-content.net/spec/thex/breadthfirst&quot;" target="_blank" rel="noopener">http://open-content.net/spec/thex/breadthfirst&quot;</a>.</p>
+<h1 id="Anti-Entropy"><a href="#Anti-Entropy" class="headerlink" title="Anti-Entropy"></a>Anti-Entropy</h1><blockquote>
+<p><code>Anti-Entropy</code> means comparing all the replicas of each piece of data that exist (or are supposed to) and updating each replica to the newest version.</p>
+</blockquote>
+<p>Cassandra’s implementation is modeled on Dynamo’s, with modifications to support the richer data model. Quoting from Amazon’s Dynamo section 4.7,</p>
+<blockquote>
+<p>To detect the inconsistencies between replicas faster and to minimize the amount of transferred data, Dynamo uses <code>Merkle trees</code>. A Merkle tree is a hash tree where leaves are hashes of the values of individual keys. Parent nodes higher in the tree are hashes of their respective children. The principal advantage of Merkle tree is that each branch of the tree can be checked independently without requiring nodes to download the entire […] data set.</p>
+</blockquote>
+<p>The key difference in Cassandra’s implementation of anti-entropy is that the Merkle trees are built <code>per column family</code>, and they are not maintained for longer than it takes to send them to neighboring nodes. Instead, the trees are generated as snapshots of the dataset during major compactions: this means that excess data might be sent across the network, but it saves local disk IO, and is preferable for very large datasets.</p>
+<h1 id="Canssandrea’s-Anti-entropy-Overview"><a href="#Canssandrea’s-Anti-entropy-Overview" class="headerlink" title="Canssandrea’s Anti-entropy Overview"></a>Canssandrea’s Anti-entropy Overview</h1><p><code>AntiEntropyService</code> generates MerkleTrees for <code>column families</code> during major compactions. These trees are then exchanged with remote nodes via a TreeRequest/TreeResponse conversation, and when ranges in the trees disagree, the <code>org.apache.cassandra.streaming</code> package is used to repair those ranges.</p>
+<p>Tree comparison and repair triggering occur in the single threaded AE_SERVICE_STAGE.</p>
+<p>The steps taken to enact a repair are as follows:</p>
+<h3 id="1-A-major-compaction-is-triggered-either-via-nodeprobe-or-automatically"><a href="#1-A-major-compaction-is-triggered-either-via-nodeprobe-or-automatically" class="headerlink" title="1. A major compaction is triggered either via nodeprobe, or automatically:"></a>1. A major compaction is triggered either via nodeprobe, or automatically:</h3><ul>
+<li>Nodeprobe sends TreeRequest messages to all neighbors of the target node: when a node receives a TreeRequest, it will perform a readonly compaction to immediately validate the column family.</li>
+<li>Automatic compactions will also validate a column family and broadcast TreeResponses, but since TreeRequest messages are not sent to neighboring nodes, repairs will only occur if two nodes happen to perform automatic compactions within TREE_STORE_TIMEOUT of one another.</li>
+</ul>
+<h3 id="2-The-compaction-process-validates-the-column-family-by"><a href="#2-The-compaction-process-validates-the-column-family-by" class="headerlink" title="2. The compaction process validates the column family by:"></a>2. The compaction process validates the column family by:</h3><ul>
+<li>Calling getValidator() (which can return a NoopValidator if validation should not be performed),</li>
+<li>Calling IValidator.prepare(), which samples the column family to determine key distribution,</li>
+<li>Calling IValidator.add() in order for every row in the column family,</li>
+<li>Calling IValidator.complete() to indicate that all rows have been added.<ul>
+<li>If getValidator decided that the column family should be validated, calling complete() indicates that a valid MerkleTree has been created for the column family.</li>
+<li>The valid tree is broadcast to neighboring nodes via TreeResponse, and stored locally.</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-When-a-node-receives-a-TreeResponse-it-passes-the-tree-to-rendezvous-which-checks-for-trees-to-rendezvous-with-compare-to"><a href="#3-When-a-node-receives-a-TreeResponse-it-passes-the-tree-to-rendezvous-which-checks-for-trees-to-rendezvous-with-compare-to" class="headerlink" title="3. When a node receives a TreeResponse, it passes the tree to rendezvous(), which checks for trees to rendezvous with / compare to:"></a>3. When a node receives a TreeResponse, it passes the tree to rendezvous(), which checks for trees to rendezvous with / compare to:</h3><ul>
+<li>If the tree is local, it is cached, and compared to any trees that were received from neighbors.</li>
+<li>If the tree is remote, it is immediately compared to a local tree if one is cached. Otherwise, the remote tree is cached in case a local tree is generated within TREE_STORE_TIMEOUT.</li>
+<li>A Differencer object is enqueued for each comparison.</li>
+</ul>
+<h3 id="4-Differencers-are-executed-in-AE-SERVICE-STAGE-to-compare-the-two-trees"><a href="#4-Differencers-are-executed-in-AE-SERVICE-STAGE-to-compare-the-two-trees" class="headerlink" title="4. Differencers are executed in AE_SERVICE_STAGE, to compare the two trees."></a>4. Differencers are executed in AE_SERVICE_STAGE, to compare the two trees.</h3><ul>
+<li>If the trees disagree, the differencer will perform repair for the mismatched ranges via the io.Streaming api.</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/merkle-tree/" rel="tag"># merkle tree</a>
+          
+            <a href="/tags/anti-entropy/" rel="tag"># anti entropy</a>
+          
+            <a href="/tags/anti-entropy/" rel="tag"># anti-entropy</a>
+          
+            <a href="/tags/cassandra/" rel="tag"># cassandra</a>
+          
+            <a href="/tags/apache-cassandra/" rel="tag"># apache cassandra</a>
+          
+            <a href="/tags/nosql/" rel="tag"># nosql</a>
+          
+            <a href="/tags/no-sql/" rel="tag"># no sql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/10/distributed system/nosql/Cassandra-V-S-HBase/" rel="next" title="Cassandra V.S. HBase">
+                <i class="fa fa-chevron-left"></i> Cassandra V.S. HBase
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/05/java/java 8/lambda/Java-8-Method-Reference/" rel="prev" title="Java 8 Method Reference">
+                Java 8 Method Reference <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Merkle-Tree"><span class="nav-number">1.</span> <span class="nav-text">1. Merkle Tree</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Tree-Hash-EXchange-format-THEX"><span class="nav-number">2.</span> <span class="nav-text">2. Tree Hash EXchange format (THEX)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Hash-Functions"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Hash Functions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Unbalanced-Trees"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Unbalanced Trees</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Choice-Of-Segment-Size"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Choice Of Segment Size</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-Serialization-Format"><span class="nav-number">3.</span> <span class="nav-text">3. Serialization Format</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-DIME-Encapsulation"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 DIME Encapsulation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-XML-Tree-Description"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 XML Tree Description</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-File-Size"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 File Size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-File-Segment-Size"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 File Segment Size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-Digest-Algorithm"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 Digest Algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-4-Digest-Output-Size"><span class="nav-number">3.2.4.</span> <span class="nav-text">3.2.4 Digest Output Size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-5-Serialized-Tree-Depth"><span class="nav-number">3.2.5.</span> <span class="nav-text">3.2.5 Serialized Tree Depth</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-6-Serialized-Tree-Type"><span class="nav-number">3.2.6.</span> <span class="nav-text">3.2.6 Serialized Tree Type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-7-Serialized-Tree-URI"><span class="nav-number">3.2.7.</span> <span class="nav-text">3.2.7 Serialized Tree URI</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Breadth-First-Serialization"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Breadth-First Serialization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-1-Serialization-Type-URI"><span class="nav-number">3.3.1.</span> <span class="nav-text">3.3.1 Serialization Type URI</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Anti-Entropy"><span class="nav-number">4.</span> <span class="nav-text">Anti-Entropy</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Canssandrea’s-Anti-entropy-Overview"><span class="nav-number">5.</span> <span class="nav-text">Canssandrea’s Anti-entropy Overview</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-A-major-compaction-is-triggered-either-via-nodeprobe-or-automatically"><span class="nav-number">5.0.1.</span> <span class="nav-text">1. A major compaction is triggered either via nodeprobe, or automatically:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-The-compaction-process-validates-the-column-family-by"><span class="nav-number">5.0.2.</span> <span class="nav-text">2. The compaction process validates the column family by:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-When-a-node-receives-a-TreeResponse-it-passes-the-tree-to-rendezvous-which-checks-for-trees-to-rendezvous-with-compare-to"><span class="nav-number">5.0.3.</span> <span class="nav-text">3. When a node receives a TreeResponse, it passes the tree to rendezvous(), which checks for trees to rendezvous with / compare to:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Differencers-are-executed-in-AE-SERVICE-STAGE-to-compare-the-two-trees"><span class="nav-number">5.0.4.</span> <span class="nav-text">4. Differencers are executed in AE_SERVICE_STAGE, to compare the two trees.</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

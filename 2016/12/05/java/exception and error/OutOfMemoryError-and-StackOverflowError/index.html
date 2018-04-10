@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="I have been confused of OutOfMemoryError and StackOverflowError, not being able to distinguish differences between them. So here comes this post. OutOfMemoryErrorhttps://docs.oracle.com/javase/8/docs/">
+<meta name="keywords" content="OutOfMemoryError,StackOverflowError,error,exception,java heap,java stack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OutOfMemoryError and StackOverflowError">
+<meta property="og:url" content="https://bowenli86.github.io/2016/12/05/java/exception and error/OutOfMemoryError-and-StackOverflowError/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="I have been confused of OutOfMemoryError and StackOverflowError, not being able to distinguish differences between them. So here comes this post. OutOfMemoryErrorhttps://docs.oracle.com/javase/8/docs/">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.533Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OutOfMemoryError and StackOverflowError">
+<meta name="twitter:description" content="I have been confused of OutOfMemoryError and StackOverflowError, not being able to distinguish differences between them. So here comes this post. OutOfMemoryErrorhttps://docs.oracle.com/javase/8/docs/">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/12/05/java/exception and error/OutOfMemoryError-and-StackOverflowError/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OutOfMemoryError and StackOverflowError | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/12/05/java/exception and error/OutOfMemoryError-and-StackOverflowError/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OutOfMemoryError and StackOverflowError</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-05T23:42:44-08:00">2016-12-05</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/exception-and-error/" itemprop="url" rel="index"><span itemprop="name">exception and error</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>I have been confused of <strong>OutOfMemoryError</strong> and <strong>StackOverflowError</strong>, not being able to distinguish differences between them. So here comes this post.</p>
+<h2 id="OutOfMemoryError"><a href="#OutOfMemoryError" class="headerlink" title="OutOfMemoryError"></a>OutOfMemoryError</h2><p><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/OutOfMemoryError.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/api/java/lang/OutOfMemoryError.html</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">java.lang.Object</span><br><span class="line">    - java.lang.Throwable</span><br><span class="line">        - java.lang.Error</span><br><span class="line">            - java.lang.VirtualMachineError</span><br><span class="line">                - java.lang.OutOfMemoryError</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Thrown when the Java Virtual Machine cannot allocate an object because it is out of memory, and no more memory could be made available by the garbage collector. OutOfMemoryError objects may be constructed by the virtual machine as if suppression were disabled and/or the stack trace was not writable.</p>
+</blockquote>
+<h2 id="StackOverflowError"><a href="#StackOverflowError" class="headerlink" title="StackOverflowError"></a>StackOverflowError</h2><p><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StackOverflowError.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/api/java/lang/StackOverflowError.html</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">java.lang.Object</span><br><span class="line">    - java.lang.Throwable</span><br><span class="line">        - java.lang.Error</span><br><span class="line">            - java.lang.VirtualMachineError</span><br><span class="line">                - java.lang.StackOverflowError</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Thrown when a stack overflow occurs because an application recurses too deeply.</p>
+</blockquote>
+<h2 id="Error-Exception-and-RuntimeException-The-First-Observation"><a href="#Error-Exception-and-RuntimeException-The-First-Observation" class="headerlink" title="Error, Exception, and RuntimeException - The First Observation"></a>Error, Exception, and RuntimeException - The First Observation</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- java.lang.Object</span><br><span class="line">    - java.lang.Throwable</span><br><span class="line">        - java.lang.Error</span><br><span class="line">        - java.lang.Exception</span><br><span class="line">        - java.lang.RuntimeException</span><br></pre></td></tr></table></figure>
+<p>The first observation is that these are of <strong>Error</strong>, not <strong>Exception</strong> or <strong>RuntimeException</strong>. As you can see from the above hierarchy, <strong>Error</strong>, <strong>Exception</strong>, and <strong>RuntimeException</strong> are three equative classes. </p>
+<p>According to <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/api/java/lang/Error.html</a></p>
+<blockquote>
+<p>An <strong>Error</strong> is a subclass of <strong>Throwable</strong> that <strong>indicates serious problems that a reasonable application should not try to catch</strong>. Most such errors are abnormal conditions. The ThreadDeath error, though a “normal” condition, is also a subclass of Error because most applications should not try to catch it.</p>
+</blockquote>
+<blockquote>
+<p>A method is not required to declare in its throws clause any subclasses of Error that might be thrown during the execution of the method but not caught, since these errors are abnormal conditions that should never occur. That is, Error and its subclasses are regarded as unchecked exceptions for the purposes of compile-time checking of exceptions.</p>
+</blockquote>
+<p>So, <strong>Error</strong> should not be explicitly caught and handled by your application.</p>
+<p>Ok, good to get clarified we are not talking about <strong>Exception</strong> or <strong>RuntimeException</strong>. </p>
+<p>Here’s another of my posts talking specifically for Java Exception <a href="https://phoenixjiangnan.github.io/2016/07/04/java/exception/Java%20-%20Exception%20-%20Principles%20to%20Handle%20Exception/" target="_blank" rel="noopener">https://phoenixjiangnan.github.io/2016/07/04/java/exception/Java%20-%20Exception%20-%20Principles%20to%20Handle%20Exception/</a></p>
+<p>Let’s get focused on <strong>Error</strong>.</p>
+<a id="more"></a>
+<h2 id="OutOfMemoryError-v-s-StackOverflowError"><a href="#OutOfMemoryError-v-s-StackOverflowError" class="headerlink" title="OutOfMemoryError v.s. StackOverflowError"></a>OutOfMemoryError v.s. StackOverflowError</h2><p>When you start JVM you define how much <strong>RAM</strong> it can use for processing. JVM divides this into certain memory locations for its processing purpose, two of those are <strong>Stack</strong> and <strong>Heap</strong>.</p>
+<h3 id="Heap-and-OutOfMemoryError"><a href="#Heap-and-OutOfMemoryError" class="headerlink" title="Heap and OutOfMemoryError"></a>Heap and OutOfMemoryError</h3><p><strong>OutOfMemoryError</strong> is related to <strong>Heap</strong>.</p>
+<p>If you have large objects (or) referenced objects in memeory, then you will see <strong>OutofMemoryError</strong>. If you have strong references to objects, then GC can’t clean the memory space allocated for that object. When JVM tries to allocate memory for new object and not enough space available it throws <strong>OutofMemoryError</strong> because it can’t allocate required amount of memory.</p>
+<blockquote>
+<p>How to avoid: Make sure un-necessary objects are available for GC</p>
+</blockquote>
+<h3 id="Stack-and-StackOverflowError"><a href="#Stack-and-StackOverflowError" class="headerlink" title="Stack and StackOverflowError"></a>Stack and StackOverflowError</h3><p><strong>StackOverflowError</strong> is related to <strong>stack</strong>.</p>
+<p>All your local variables and methods calls related data will be on stack. For every method call, one stack frame will be created and local as well as method call related data will be placed inside the stack frame. Once method execution is completed, stack frame will be removed. ONE WAY to reproduce this is, have infinite loop for method call, you will see stackoverflow error, because stack frame will be populated with method data for every call but it won’t be freed (removed).</p>
+<blockquote>
+<p>How to avoid Make sure method calls are ending (not in infinite loop)</p>
+</blockquote>
+<h2 id="Java-Stack-vs-Heap"><a href="#Java-Stack-vs-Heap" class="headerlink" title="Java Stack vs Heap"></a>Java Stack vs Heap</h2><h3 id="Java-Heap-Space"><a href="#Java-Heap-Space" class="headerlink" title="Java Heap Space"></a>Java Heap Space</h3><p>Java Heap space is used by java runtime to allocate memory to <strong>Objects and JRE classes</strong>.</p>
+<p>Whenever we create an object, it’s always created in the Heap space. <strong>Garbage Collection</strong> runs on the heap memory to free the memory used by objects that doesn’t have any reference. Any object created in the heap space has global access and can be referenced from anywhere of the application.</p>
+<h3 id="Java-Stack-Memory"><a href="#Java-Stack-Memory" class="headerlink" title="Java Stack Memory"></a>Java Stack Memory</h3><p>Java Stack memory is used for execution of a thread. They contain <strong>method specific values</strong> that are short-lived and <strong>references</strong> to other objects in the heap that are getting referred from the method.</p>
+<p>Stack memory is always referenced in LIFO (Last-In-First-Out) order. Whenever a method is invoked, a new block is created in the stack memory for the method to hold local primitive values and reference to other objects in the method. As soon as method ends, the block becomes unused and become available for next method.<br>Stack memory size is very less compared to Heap memory.</p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>Did you get the differences between those two errors? I did!</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/OutOfMemoryError/" rel="tag"># OutOfMemoryError</a>
+          
+            <a href="/tags/StackOverflowError/" rel="tag"># StackOverflowError</a>
+          
+            <a href="/tags/error/" rel="tag"># error</a>
+          
+            <a href="/tags/exception/" rel="tag"># exception</a>
+          
+            <a href="/tags/java-heap/" rel="tag"># java heap</a>
+          
+            <a href="/tags/java-stack/" rel="tag"># java stack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/29/distributed system/data/Big-Data-and-Google-s-Three-Paper-II-BigTable/" rel="next" title="Big Data and Google's Three Paper II - BigTable">
+                <i class="fa fa-chevron-left"></i> Big Data and Google's Three Paper II - BigTable
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/19/tools/mac/bash-profile-and-how-to-permenantly-set-environment-variables-on-Mac/" rel="prev" title=".bash_profile and how to permenantly set environment variables on Mac">
+                .bash_profile and how to permenantly set environment variables on Mac <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OutOfMemoryError"><span class="nav-number">1.</span> <span class="nav-text">OutOfMemoryError</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StackOverflowError"><span class="nav-number">2.</span> <span class="nav-text">StackOverflowError</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Error-Exception-and-RuntimeException-The-First-Observation"><span class="nav-number">3.</span> <span class="nav-text">Error, Exception, and RuntimeException - The First Observation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OutOfMemoryError-v-s-StackOverflowError"><span class="nav-number">4.</span> <span class="nav-text">OutOfMemoryError v.s. StackOverflowError</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Heap-and-OutOfMemoryError"><span class="nav-number">4.1.</span> <span class="nav-text">Heap and OutOfMemoryError</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stack-and-StackOverflowError"><span class="nav-number">4.2.</span> <span class="nav-text">Stack and StackOverflowError</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-Stack-vs-Heap"><span class="nav-number">5.</span> <span class="nav-text">Java Stack vs Heap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Heap-Space"><span class="nav-number">5.1.</span> <span class="nav-text">Java Heap Space</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Stack-Memory"><span class="nav-number">5.2.</span> <span class="nav-text">Java Stack Memory</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">6.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

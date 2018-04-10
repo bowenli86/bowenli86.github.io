@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Spring.io - Spring BootI’m taking some important parts from it and summarizing them as my learning notes. Spring has been notorious for its heaviness when starting a project. Lots of people avoid this">
+<meta name="keywords" content="spring boot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot - Introduction to Spring Boot">
+<meta property="og:url" content="https://bowenli86.github.io/2016/09/30/spring/spring boot/Spring-Boot-Introduction-to-Spring-Boot/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="Spring.io - Spring BootI’m taking some important parts from it and summarizing them as my learning notes. Spring has been notorious for its heaviness when starting a project. Lots of people avoid this">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.544Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Boot - Introduction to Spring Boot">
+<meta name="twitter:description" content="Spring.io - Spring BootI’m taking some important parts from it and summarizing them as my learning notes. Spring has been notorious for its heaviness when starting a project. Lots of people avoid this">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/09/30/spring/spring boot/Spring-Boot-Introduction-to-Spring-Boot/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring Boot - Introduction to Spring Boot | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/09/30/spring/spring boot/Spring-Boot-Introduction-to-Spring-Boot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring Boot - Introduction to Spring Boot</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-30T23:18:56-07:00">2016-09-30</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/spring/spring-boot/" itemprop="url" rel="index"><span itemprop="name">spring boot</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Spring-io-Spring-Boot"><a href="#Spring-io-Spring-Boot" class="headerlink" title="Spring.io - Spring Boot"></a>Spring.io - Spring Boot</h2><p>I’m taking some important parts from it and summarizing them as my learning notes.</p>
+<p>Spring has been notorious for its heaviness when starting a project. Lots of people avoid this framework because of that. Many lighter dependency injection frameworks emerge as a replacement for Spring, <a href="https://github.com/google/guice" target="_blank" rel="noopener">Google’s Guice</a> being one of the most representative ones. </p>
+<p>I’ve talked to quite a few folks who touched Spring a few years back and then switched to some better solutions because of the pain of managing the sophisticated configs. They hadn’t heard of Spring Boot, and were surprised about this project when I introduced it to them.</p>
+<p>Here, let’s discuss some of the very basic yet fundamental aspects of Spring Boot.</p>
+<hr>
+<p>The following content is from the official guidance of <a href="http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#getting-started" target="_blank" rel="noopener">Spring Boot</a></p>
+<hr>
+<h2 id="Introducing-Spring-Boot"><a href="#Introducing-Spring-Boot" class="headerlink" title="Introducing Spring Boot"></a>Introducing Spring Boot</h2><p>Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can <code>just run</code>. We take an opinionated view of the Spring platform and third-party libraries so you can get started with minimum fuss. </p>
+<blockquote>
+<p>Most Spring Boot applications need very little Spring configuration.</p>
+</blockquote>
+<p>You can use Spring Boot to create Java applications that can be started using <code>java -jar</code> or more traditional war deployments. We also provide a command line tool that runs <code>spring scripts</code>.</p>
+<p>Some featured characteristics are:</p>
+<blockquote>
+<ul>
+<li>Provide a radically faster and widely accessible getting started experience for all Spring development.<ul>
+<li>Create stand-alone Spring applications</li>
+<li>Embed Tomcat, Jetty or Undertow directly (no need to deploy WAR files)</li>
+<li>Provide opinionated <code>starter</code> POMs (Project Object Model) to simplify your Maven configuration</li>
+<li>Automatically configure Spring whenever possible</li>
+<li>Provide production-ready features such as metrics, health checks and externalized configuration</li>
+<li>Absolutely <code>no code generation</code> and <code>no requirement for XML configuration</code></li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>Spring Boot offers four main features that will change the way you develop Spring applications:</p>
+<blockquote>
+<ul>
+<li><code>Spring Boot starters</code> — Spring Boot starters aggregate common groupings of dependencies into single dependencies that can be added to a project’s Maven or Gradle build.</li>
+<li><code>Autoconfiguration</code> — Spring Boot’s autoconfiguration feature leverages Spring 4’s support for conditional configuration to make reasonable guesses about the beans your application needs and automatically configure them.</li>
+<li><code>Command-line interface (CLI)</code> — Spring Boot’s CLI takes advantage of the Groovy programming language along with autoconfiguration to further simplify Spring application development.</li>
+<li><code>Actuator</code> — The Spring Boot Actuator adds certain management features to a Spring Boot application.</li>
+</ul>
+</blockquote>
+<a id="more"></a>
+<h3 id="1-Adding-starter-dependencies"><a href="#1-Adding-starter-dependencies" class="headerlink" title="1 Adding starter dependencies"></a>1 Adding starter dependencies</h3><p>There are two ways to bake a cake. The ambitious baker will mix flour, eggs, sugar, baking powder, salt, butter, vanilla, and milk into a batter. Or you can buy a prepackaged box of cake mix that includes most of the ingredients you’ll need and only mix in a few wet ingredients like water, eggs, and vegetable oil.</p>
+<p>Much as a prepackaged cake mix aggregates many of the ingredients of a cake recipe into a single ingredient, Spring Boot starters aggregate the various dependencies of an application into a single dependency.</p>
+<p>If you’re building your project with Gradle, you’ll need (at least) the following dependencies in <code>build.gradle</code>:</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"org.springframework:spring-web:4.0.6.RELEASE"</span>)</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"org.springframework:spring-webmvc:4.0.6.RELEASE"</span>)</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"com.fasterxml.jackson.core:jackson-databind:2.2.2"</span>)</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"org.springframework:spring-jdbc:4.0.6.RELEASE"</span>)</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"org.springframework:spring-tx:4.0.6.RELEASE"</span>)</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"com.h2database:h2:1.3.174"</span>)</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"org.thymeleaf:thymeleaf-spring4:2.1.2.RELEASE"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Fortunately, Gradle makes it possible to express dependencies succinctly. Even so, a lot of work went into creating this list, and more will go into maintaining it. How can you know if these dependencies will play well together? As the application grows and evolves, dependency management will become even more challenging.</p>
+<p>But if you’re using the prepackaged dependencies from Spring Boot starters, the Gradle dependency list can be a little shorter:</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"org.springframework.boot:spring-boot-starter-web:</span></span><br><span class="line"><span class="string">           1.1.4.RELEASE"</span>)</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"org.springframework.boot:spring-boot-starter-jdbc:</span></span><br><span class="line"><span class="string">           1.1.4.RELEASE"</span>)</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"com.h2database:h2:1.3.174"</span>)</span><br><span class="line">  <span class="keyword">compile</span>(<span class="string">"org.thymeleaf:thymeleaf-spring4:2.1.2.RELEASE"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>As you can see, Spring Boot’s web and JDBC starters replaced several of the finergrained dependencies. You still need to include the H2 and Thymeleaf dependencies, but the other dependencies are rolled up into the starter dependencies. Aside from making the dependency list shorter, you can feel confident that the versions of dependencies provided by the starters are compatible with each other.</p>
+<p>E.g.</p>
+<table>
+<thead>
+<tr>
+<th>Starter</th>
+<th>Provides</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>spring-boot-starter-ac tuator</td>
+<td>spring-boot-starter, spring-boot- actuator, spring-core</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td>spring-boot-starter-amqp</td>
+<td>spring-boot-starter, spring-boot-rabbit, spring-core, spring-tx</td>
+</tr>
+<tr>
+<td>spring-boot-starter-aop</td>
+<td>spring-boot-starter, spring-aop, AspectJ Runtime, AspectJ Weaver, spring-core</td>
+</tr>
+</tbody>
+</table>
+<p>Taking advantage of Maven’s and Gradle’s transitive dependency resolution, the starters declare several dependencies in their own pom.xml file. When you add one of these starter dependencies to your Maven or Gradle build, the starter’s dependencies are resolved transitively.</p>
+<h3 id="2-Autoconfiguration"><a href="#2-Autoconfiguration" class="headerlink" title="2 Autoconfiguration"></a>2 Autoconfiguration</h3><p>Whereas <code>Spring Boot starters cut down the size of your build&#39;s dependency list</code>, <code>Spring Boot autoconfiguration cuts down on the amount of Spring configuration</code>. It does this by considering other factors in your application and making assumptions about what Spring configuration you’ll need.</p>
+<p>Spring Boot starters can trigger autoconfiguration. For instance, all you need to do to use Spring MVC in your Spring Boot application is to add <code>the web starter</code> as a dependency in the build. When you add the web starter to your project’s build, it will transitively pull in Spring MVC dependencies. When Spring Boot’s web autoconfiguration detects Spring MVC in the classpath, it will automatically configure several beans to support Spring MVC, including view resolvers, resource handlers, and message converters (among others). All that’s left for you to do is write the controller classes to handle the requests.</p>
+<h3 id="3-The-Spring-Boot-CLI"><a href="#3-The-Spring-Boot-CLI" class="headerlink" title="3 The Spring Boot CLI"></a>3 The Spring Boot CLI</h3><p>The Spring Boot CLI takes the magic provided by Spring Boot <code>starters</code> and <code>autoconfiguration</code> and spices it up a little with Groovy. It reduces the Spring development process to the point where you can run one or more Groovy scripts through a CLI and see it run. In the course of running the application, the CLI will also automatically import Spring types and resolve dependencies.</p>
+<p>One of the most interesting examples used to illustrate Spring Boot CLI is contained in the following Groovy script:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hi</span> </span>&#123;</span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/"</span>)</span><br><span class="line">    <span class="function">String <span class="title">hi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="string">"Hi!"</span> </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Believe it or not, that is a complete (albeit simple) Spring application that can be executed through the Spring Boot CLI. Including whitespace, it’s 82 characters in length. You can paste it into your Twitter client and tweet it to your friends.</p>
+<p>Eliminate the unnecessary whitespace and you get this 64-character one-liner:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span> <span class="class"><span class="keyword">class</span> <span class="title">Hi</span></span>&#123;<span class="meta">@RequestMapping</span>(<span class="string">"/"</span>)<span class="function">String <span class="title">hi</span><span class="params">()</span></span>&#123;<span class="string">"Hi!"</span>&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>This version is so brief that you can paste it twice into a single tweet on Twitter. But it’s still a complete and runnable (if feature-poor) Spring application. If you have the Spring Boot CLI installed, you can run it with the following command line:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ spring run Hi.groovy</span><br></pre></td></tr></table></figure>
+<h3 id="4-The-Actuator"><a href="#4-The-Actuator" class="headerlink" title="4 The Actuator"></a>4 The Actuator</h3><p>The Spring Boot Actuator brings a handful of useful features to a Spring Boot project, including:</p>
+<blockquote>
+<ul>
+<li>Management endpoint</li>
+<li>Sensible error handling and a default mapping for an <code>/error</code> endpoint</li>
+<li>An <code>/info</code> endpoint that can communicate information about an application</li>
+<li>An audit events framework when Spring Security is in play</li>
+</ul>
+</blockquote>
+<p>All of these features are useful, but the management endpoints are the most immediately useful and interesting features of the Actuator.</p>
+<p>Spring Boot includes a number of additional features to help you monitor and manage your application when it’s pushed to production. You can choose to manage and monitor your application using HTTP endpoints, with JMX or even by remote shell (SSH or Telnet). Auditing, health and metrics gathering can be automatically applied to your application.</p>
+<p>Actuator HTTP endpoints are only available with a Spring MVC-based application. In particular, it will not work with Jersey unless you enable Spring MVC as well.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:right">Sensitive Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>actuator</td>
+<td style="text-align:center">Provides a hypermedia-based “discovery page” for the other endpoints. Requires Spring HATEOAS to be on the classpath.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>autoconfig</td>
+<td style="text-align:center">Displays an auto-configuration report showing all auto-configuration candidates and the reason why they ‘were’ or ‘were not’ applied.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>beans</td>
+<td style="text-align:center">Displays a complete list of all the Spring beans in your application.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>configprops</td>
+<td style="text-align:center">Displays a collated list of all @ConfigurationProperties.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>dump</td>
+<td style="text-align:center">Performs a thread dump.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>env</td>
+<td style="text-align:center">Exposes properties from Spring’s ConfigurableEnvironment.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>flyway</td>
+<td style="text-align:center">Shows any Flyway database migrations that have been applied.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>health</td>
+<td style="text-align:center">Shows application health information (when the application is secure, a simple ‘status’ when accessed over an unauthenticated connection or full message details when authenticated).</td>
+<td style="text-align:right">false</td>
+</tr>
+<tr>
+<td>info</td>
+<td style="text-align:center">Displays arbitrary application info.</td>
+<td style="text-align:right">false</td>
+</tr>
+<tr>
+<td>liquibase</td>
+<td style="text-align:center">Shows any Liquibase database migrations that have been applied.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>metrics</td>
+<td style="text-align:center">Shows ‘metrics’ information for the current application.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>mappings</td>
+<td style="text-align:center">Displays a collated list of all @RequestMapping paths.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>shutdown</td>
+<td style="text-align:center">Allows the application to be gracefully shutdown (not enabled by default).</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>trace</td>
+<td style="text-align:center">Displays trace information (by default the last 100 HTTP requests).</td>
+<td style="text-align:right">true</td>
+</tr>
+</tbody>
+</table>
+<p>If you are using Spring MVC, the following additional endpoints can also be used:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:right">Sensitive Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>docs</td>
+<td style="text-align:center">Displays documentation, including example requests and responses, for the Actuator’s endpoints. Requires spring-boot-actuator-docs to be on the classpath.</td>
+<td style="text-align:right">false</td>
+</tr>
+<tr>
+<td>heapdump</td>
+<td style="text-align:center">Returns a GZip compressed hprof heap dump file.</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>jolokia</td>
+<td style="text-align:center">Exposes JMX beans over HTTP (when Jolokia is on the classpath).</td>
+<td style="text-align:right">true</td>
+</tr>
+<tr>
+<td>logfile</td>
+<td style="text-align:center">Returns the contents of the logfile (if logging.file or logging.path properties have been set). Supports the use of the HTTP Range header to retrieve part of the log file’s content.</td>
+<td style="text-align:right">true</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Depending on how an endpoint is exposed, the sensitive property may be used as a security hint. For example, sensitive endpoints will require a username/password when they are accessed over HTTP (or simply disabled if web security is not enabled).</p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring-boot/" rel="tag"># spring boot</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/29/hexo/Hexo-How-to-backup-configs-and-blogs-of-Github-Pages-in-a-Github-repository/" rel="next" title="Hexo - How to backup configs and blogs of Github Pages in a Github repository">
+                <i class="fa fa-chevron-left"></i> Hexo - How to backup configs and blogs of Github Pages in a Github repository
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/03/distributed system/kafka/Putting-Apache-Kafka-To-Use-A-Practical-Guide-to-Building-a-Stream-Data-Platform-Part-1/" rel="prev" title="Putting Apache Kafka To Use - A Practical Guide to Building a Stream Data Platform (Part 1)">
+                Putting Apache Kafka To Use - A Practical Guide to Building a Stream Data Platform (Part 1) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-io-Spring-Boot"><span class="nav-number">1.</span> <span class="nav-text">Spring.io - Spring Boot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Introducing-Spring-Boot"><span class="nav-number">2.</span> <span class="nav-text">Introducing Spring Boot</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Adding-starter-dependencies"><span class="nav-number">2.1.</span> <span class="nav-text">1 Adding starter dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Autoconfiguration"><span class="nav-number">2.2.</span> <span class="nav-text">2 Autoconfiguration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-The-Spring-Boot-CLI"><span class="nav-number">2.3.</span> <span class="nav-text">3 The Spring Boot CLI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-The-Actuator"><span class="nav-number">2.4.</span> <span class="nav-text">4 The Actuator</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

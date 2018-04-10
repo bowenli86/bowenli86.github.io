@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="This is a project I joined on half way, and got it done eventually. What is this project about?Our product is an on-premise platform. Customer can deploy bits in their own data center, or in AWS, Azur">
+<meta name="keywords" content="crypto service,encryption,decryption">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How did I develop a crypto service">
+<meta property="og:url" content="https://bowenli86.github.io/2016/09/14/system design/projects/How-did-I-develop-a-crypto-service-for-Tableau-Server/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="This is a project I joined on half way, and got it done eventually. What is this project about?Our product is an on-premise platform. Customer can deploy bits in their own data center, or in AWS, Azur">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.547Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How did I develop a crypto service">
+<meta name="twitter:description" content="This is a project I joined on half way, and got it done eventually. What is this project about?Our product is an on-premise platform. Customer can deploy bits in their own data center, or in AWS, Azur">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/09/14/system design/projects/How-did-I-develop-a-crypto-service-for-Tableau-Server/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>How did I develop a crypto service | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/09/14/system design/projects/How-did-I-develop-a-crypto-service-for-Tableau-Server/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">How did I develop a crypto service</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-14T22:23:35-07:00">2016-09-14</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/system-design/projects/" itemprop="url" rel="index"><span itemprop="name">projects</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>This is a project I joined on half way, and got it done eventually.</p>
+<h2 id="What-is-this-project-about"><a href="#What-is-this-project-about" class="headerlink" title="What is this project about?"></a>What is this project about?</h2><p>Our product is an on-premise platform. Customer can deploy bits in their own data center, or in AWS, Azure, and GCP.</p>
+<p>There are two categories of passwords within our cluster:</p>
+<ul>
+<li><p>User input passwords, which are entered by users</p>
+<ul>
+<li>AWS key</li>
+<li>smtp passwords</li>
+<li>Windows runas user password</li>
+<li>…</li>
+</ul>
+</li>
+<li><p>System managed passwords, which are randomly generated by our system</p>
+<ul>
+<li>jdbc password</li>
+<li>Postgres admin password</li>
+<li>ZooKeeper password</li>
+<li>…</li>
+</ul>
+</li>
+</ul>
+<p>So the passwords I’m talking about is not the password for someone’s server account. The latter ones live in a table of the cluster’s PostgreSQL database and are already encrypted.</p>
+<p>The current version of our system stores all the passwords in <code>plain text</code> in a configuration file, which is distributed among machines.</p>
+<p>The new architecture also stores all passwords in <code>plain text</code>, but in a <code>Znode</code> in ZooKeeper.</p>
+<blockquote>
+<p>The project is about developing a crypto service that encrypts passwords before persisting them somewhere, and decrypts passwords into memory when server uses them, so that no more clear text secrets live in our system. The new service should support both our old monolith JRuby app and our new Java service-oriented architecture.</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="Why-are-we-developing-this-feature"><a href="#Why-are-we-developing-this-feature" class="headerlink" title="Why are we developing this feature?"></a>Why are we developing this feature?</h2><p>Our product is for enterprise customers, and the top 3 things that enterprise IT cares about are SECURITY, SECURITY, SECURITY.</p>
+<p>According to our sales team, keeping secrets in clear text has been one of the biggest sales blockers. Our customers have also been bringing up many times that either their huge concerns w.r.t the potential password leaks, or the friction they’ve experienced to buy our product - they need to get an exception from IT since our product is the only app in house that don’t encrypt passwords.</p>
+<h2 id="Trade-offs"><a href="#Trade-offs" class="headerlink" title="Trade-offs"></a>Trade-offs</h2><p>There’s no doubt that we are gonna build the crypto service for new Java architecture, a service-oriented server architecture that will come out in 2017. The biggest trade-off we faced was whether to put efforts on enabling this feature in our old monolith JRuby server app.</p>
+<p>The downsides of doing that are:</p>
+<ul>
+<li>Lots of efforts required. Our old server architecture is a monolith JRuby app with messy logic (yeah, everyone agrees on it! It’s totally messed up because people have been keeping on adding new stuff here and there for <code>9 years</code> since 2007). The crypto service will be written in Java and incorporate it into old server can be really hard.</li>
+<li>Uncertain schedule. Because of the large amount of work expected, no one is certain whether we can finish this feature, fully test it, and ship it on time. If it comes out too late, say only three months before new server gets shipped, it’s probably much less valuable.</li>
+<li>We are not sure if it worths it. If our customers have been living with plain text passwords for 9 years, they probably can wait for the new server for another six months?</li>
+<li>Developer frastruction. Not only because it’s a messy job, but also because you know your code will be deleted a year later.</li>
+</ul>
+<p>The upsides of doing that are:</p>
+<ul>
+<li>Removes the sales blocker as soon as possible</li>
+<li>Relieves customers pain and complaints as soon as possible</li>
+<li>Or at least demonstrate to our customers that we have heard of their requirements and we are executing on it (this is sounds very much self-comforting, but it’s been brought up serveral time. Yeah, it’s all about ATTITUDE)</li>
+</ul>
+<p>The team eventually decided to do it.</p>
+<h2 id="Design"><a href="#Design" class="headerlink" title="Design"></a>Design</h2><p>Compared to the complicated integration of crypto service and our ruby app, the design of crypto service itself is actually much more straightforward.</p>
+<p>The core idea is:</p>
+<blockquote>
+<p>Encrpt actual secrets with an encryption key, and encrypt the encryption key with a master key</p>
+</blockquote>
+<h3 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">File System / Config Dir / Config File</span><br><span class="line">    ------yml file</span><br><span class="line">    | inputs</span><br><span class="line">    |    - master key algorithm</span><br><span class="line">    |    - encryption key algorithm</span><br><span class="line">    |    - keystore location</span><br><span class="line">    |</span><br><span class="line">    | generated values</span><br><span class="line">    |    - master key id</span><br><span class="line">    |    - encryption key</span><br><span class="line">    |    - encryption key id</span><br><span class="line">    ------</span><br><span class="line">    </span><br><span class="line">File System / Config Dir / Java KeyStore (JKS)</span><br><span class="line">    ----------------</span><br><span class="line">    |  Master key  |</span><br><span class="line">    ----------------</span><br></pre></td></tr></table></figure>
+<h3 id="Bootstrap"><a href="#Bootstrap" class="headerlink" title="Bootstrap"></a>Bootstrap</h3><ol>
+<li><p>Provide the following three args:</p>
+<ul>
+<li>master key algorithm</li>
+<li>encryption key algorithm</li>
+<li>keystore location</li>
+</ul>
+</li>
+<li><p>Use <code>master key algorithm</code> to create a master key, and put it in <code>Java Keystore (JKS)</code> in <code>keystore location</code>. JKS will be in server’s config directory, and will be guarded by the dir’s access permission.</p>
+</li>
+<li><p>Create encryption key using <code>encryption key algorithm</code>, encrypt it with master key, and put the encrypted value in config file.</p>
+</li>
+<li><p>Encrypt all existing passwords in config file</p>
+</li>
+</ol>
+<h3 id="When-encrypting-passwords"><a href="#When-encrypting-passwords" class="headerlink" title="When encrypting passwords"></a>When encrypting passwords</h3><p>Whenever a new key-value pair is requested to be put into config file:</p>
+<ol>
+<li>Check if the key is in our encryption list. If true, proceed; otherwise, break out and just put them as clear text in config file</li>
+<li>Get encrypted encryption key value, decrypt it with master key to get the actual encryption key. You need to have access to the JKS file to read master key.</li>
+<li>Encrypt passwords with encryption key</li>
+</ol>
+<h3 id="When-decrypting-passwords"><a href="#When-decrypting-passwords" class="headerlink" title="When decrypting passwords"></a>When decrypting passwords</h3><ol>
+<li>Get encrypted encryption key value, decrypt it with master key to get the actual encryption key. You need to have access to the JKS file to read master key.</li>
+<li>Decrypt passwords with encryption key</li>
+</ol>
+<h3 id="Key-rolling"><a href="#Key-rolling" class="headerlink" title="Key-rolling"></a>Key-rolling</h3><p>I made key rolling an atmoic transaction, so that it can recover from any failure.</p>
+<ol>
+<li>Take a backup of the current config file and the JKS, put them in a temp dir which shares the same access permission as the config dir</li>
+<li>Roll all <code>server-managed</code> passwords, encrypt them with existing crypto service, and persist new values in config file</li>
+<li>Decrypt all passwords <code>(both server-managed and user-managed)</code> in config file, and hold them as clear text in memory</li>
+<li>Force creating a new JKS with new master key</li>
+<li>Create a new encyption key</li>
+<li>Reinitialize crypto service with new crypto properties</li>
+<li>Use the new crypto service to encrypt all password held in memory</li>
+<li>Put all new crypto properties and all encrypted passwords into the config file</li>
+<li>If any error happens, force restoring the config file and the JKS in your backup</li>
+</ol>
+<h3 id="When-to-roll-keys"><a href="#When-to-roll-keys" class="headerlink" title="When to roll keys"></a>When to roll keys</h3><p>Here are some best practices I recommend:</p>
+<ul>
+<li>When a worker machine is removed/decommissioned from your cluster</li>
+<li>Every a few months</li>
+<li>Whenever the admin think is necessary</li>
+</ul>
+<h2 id="My-Role-in-this-project"><a href="#My-Role-in-this-project" class="headerlink" title="My Role in this project"></a>My Role in this project</h2><p>I played two major roles in this project</p>
+<h3 id="1-Fireman"><a href="#1-Fireman" class="headerlink" title="1. Fireman"></a>1. Fireman</h3><p>I was not an orginal team member of this project. I joined this project to help put off fire.</p>
+<h3 id="2-One-of-the-Key-Contributor"><a href="#2-One-of-the-Key-Contributor" class="headerlink" title="2. One of the Key Contributor"></a>2. One of the Key Contributor</h3><p>I am one of the main contributors, and finish the following works:</p>
+<ul>
+<li>crypto service bootstapping in both old Jruby app and new service-oriented Java app</li>
+<li>key rolling</li>
+<li>most Java-Ruby integration</li>
+<li>enabling unit and integration tests</li>
+<li>all customer-facing commands</li>
+</ul>
+<h2 id="Most-Important-Stuff-I-learned-from-this-project"><a href="#Most-Important-Stuff-I-learned-from-this-project" class="headerlink" title="Most Important Stuff I learned from this project"></a>Most Important Stuff I learned from this project</h2><p>Project Management:</p>
+<ul>
+<li>Always keep an eye on the project schedule, and don’t be shy to alert everybody when you cannot finish your work on time</li>
+</ul>
+<p>Tech:</p>
+<ul>
+<li>Learned quite a lot crypto architecture and related knowledge</li>
+<li>Learned a lot Ruby and JRuby</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/crypto-service/" rel="tag"># crypto service</a>
+          
+            <a href="/tags/encryption/" rel="tag"># encryption</a>
+          
+            <a href="/tags/decryption/" rel="tag"># decryption</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/27/best practices/How-to-compare-float-numbers/" rel="next" title="How to compare float numbers">
+                <i class="fa fa-chevron-left"></i> How to compare float numbers
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/15/distributed system/zookeeper/ZooKeeper-Sessions-and-Session-Management/" rel="prev" title="ZooKeeper - Sessions and Session Management">
+                ZooKeeper - Sessions and Session Management <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-this-project-about"><span class="nav-number">1.</span> <span class="nav-text">What is this project about?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-are-we-developing-this-feature"><span class="nav-number">2.</span> <span class="nav-text">Why are we developing this feature?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Trade-offs"><span class="nav-number">3.</span> <span class="nav-text">Trade-offs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Design"><span class="nav-number">4.</span> <span class="nav-text">Design</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Architecture"><span class="nav-number">4.1.</span> <span class="nav-text">Architecture</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bootstrap"><span class="nav-number">4.2.</span> <span class="nav-text">Bootstrap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#When-encrypting-passwords"><span class="nav-number">4.3.</span> <span class="nav-text">When encrypting passwords</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#When-decrypting-passwords"><span class="nav-number">4.4.</span> <span class="nav-text">When decrypting passwords</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-rolling"><span class="nav-number">4.5.</span> <span class="nav-text">Key-rolling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#When-to-roll-keys"><span class="nav-number">4.6.</span> <span class="nav-text">When to roll keys</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#My-Role-in-this-project"><span class="nav-number">5.</span> <span class="nav-text">My Role in this project</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Fireman"><span class="nav-number">5.1.</span> <span class="nav-text">1. Fireman</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-One-of-the-Key-Contributor"><span class="nav-number">5.2.</span> <span class="nav-text">2. One of the Key Contributor</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Most-Important-Stuff-I-learned-from-this-project"><span class="nav-number">6.</span> <span class="nav-text">Most Important Stuff I learned from this project</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

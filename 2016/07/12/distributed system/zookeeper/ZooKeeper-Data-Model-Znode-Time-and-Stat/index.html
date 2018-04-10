@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="In distributed application engineering, the word node can refer to a generic host machine, a server, a member of an ensemble, a client process, etc. In the ZooKeeper documentatin,   znodes refer to th">
+<meta name="keywords" content="zookeeper data model,znode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper Data Model - Znode, Time, and Stat">
+<meta property="og:url" content="https://bowenli86.github.io/2016/07/12/distributed system/zookeeper/ZooKeeper-Data-Model-Znode-Time-and-Stat/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="In distributed application engineering, the word node can refer to a generic host machine, a server, a member of an ensemble, a client process, etc. In the ZooKeeper documentatin,   znodes refer to th">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.525Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ZooKeeper Data Model - Znode, Time, and Stat">
+<meta name="twitter:description" content="In distributed application engineering, the word node can refer to a generic host machine, a server, a member of an ensemble, a client process, etc. In the ZooKeeper documentatin,   znodes refer to th">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/07/12/distributed system/zookeeper/ZooKeeper-Data-Model-Znode-Time-and-Stat/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>ZooKeeper Data Model - Znode, Time, and Stat | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/07/12/distributed system/zookeeper/ZooKeeper-Data-Model-Znode-Time-and-Stat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ZooKeeper Data Model - Znode, Time, and Stat</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-07-12T18:54:02-07:00">2016-07-12</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-system/" itemprop="url" rel="index"><span itemprop="name">distributed system</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-system/zookeeper/" itemprop="url" rel="index"><span itemprop="name">zookeeper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>In distributed application engineering, the word <code>node</code> can refer to a generic host machine, a server, a member of an ensemble, a client process, etc. In the ZooKeeper documentatin, </p>
+<ul>
+<li><code>znodes</code> refer to the <code>data nodes</code></li>
+<li><code>Servers</code> to refer to <code>machines that make up the ZooKeeper service</code></li>
+<li><code>quorum peers</code> refer to the <code>servers that make up an ensemble</code>;</li>
+<li><code>client</code> refers to <code>any host or process which uses a ZooKeeper service</code>.</li>
+</ul>
+<p>ZooKeeper has a hierarchal namespace, much like a distributed file system. The only difference is that each node in the namespace can have data associated with it as well as children. It is like having a file system that allows a file to also be a directory. Paths to nodes are always expressed as canonical, absolute, slash-separated paths; there are no relative reference. Any unicode character can be used in a path subject to the following constraints:</p>
+<blockquote>
+<ul>
+<li>The “.” character can be used as part of another name, but “.” and “..” cannot alone be used to indicate a node along a path, because ZooKeeper doesn’t use relative paths. The following would be invalid: “/a/b/./c” or “/a/b/../c”.</li>
+<li>The token “zookeeper” is reserved.</li>
+</ul>
+</blockquote>
+<h2 id="1-ZNodes"><a href="#1-ZNodes" class="headerlink" title="1. ZNodes"></a>1. ZNodes</h2><p>Every node in a <code>ZooKeeper tree</code> is refered to as a <code>znode</code>. <code>Znodes</code> maintain a <code>stat structure</code> that includes <code>version numbers for data changes</code>, <code>acl changes</code>, and <code>timestamps</code>. The version number, together with the timestamp allow ZooKeeper to validate the cache and to coordinate updates. </p>
+<p>Each time a <code>znode</code>‘s data changes, the version number increases. For instance, whenever a client retrieves data, it also receives the version of the data. And when a client performs an update or a delete, it must supply the version of the data of the znode it is changing. If the version it supplies doesn’t match the actual version of the data, the update will fail. </p>
+<p><code>Znodes</code> are the main enitity that a programmer access. They have several characteristics that are worth mentioning here.</p>
+<h3 id="1-Watches"><a href="#1-Watches" class="headerlink" title="1) Watches"></a>1) Watches</h3><p>Clients can set <code>watches</code> on znodes. Changes to that <code>znode</code> trigger the <code>watch</code> and then clear the <code>watch</code>. When a <code>watch</code> triggers, ZooKeeper sends the client a notification. More information about watches can be found in the section ZooKeeper Watches.</p>
+<h3 id="2-Data-Access"><a href="#2-Data-Access" class="headerlink" title="2) Data Access"></a>2) Data Access</h3><p>The data stored at each znode in a namespace is read and written atomically. Reads get all the data bytes associated with a znode and a write replaces all the data. Each node has an <code>Access Control List (ACL)</code> that restricts who can do what.</p>
+<h3 id="3-Ephemeral-Nodes"><a href="#3-Ephemeral-Nodes" class="headerlink" title="3) Ephemeral Nodes"></a>3) Ephemeral Nodes</h3><p>ZooKeeper also has the notion of <code>ephemeral</code> nodes. </p>
+<p><code>These znodes exists as long as the session that created the znode is active. When the session ends the znode is deleted.</code> </p>
+<p>Because of this behavior, <code>ephemeral znodes are not allowed to have children</code>.</p>
+<h3 id="4-Sequence-Nodes-–-Unique-Naming"><a href="#4-Sequence-Nodes-–-Unique-Naming" class="headerlink" title="4) Sequence Nodes – Unique Naming"></a>4) Sequence Nodes – Unique Naming</h3><p>When creating a znode you can also request that ZooKeeper append a monotonicly increasing counter to the end of path. This counter is unique to the parent znode. The counter has a format of <code>%010d</code> – that is 10 digits with 0 (zero) padding (the counter is formatted in this way to simplify sorting), i.e. <code>&quot;&lt;path&gt;0000000001&quot;</code>. See Queue Recipe for an example use of this feature. Note: the counter used to store the next sequence number is a signed int (4bytes) maintained by the parent node, the counter will overflow when incremented beyond 2147483647 (resulting in a name “<path></path>-2147483647”).</p>
+<a id="more"></a>
+<h2 id="2-Time-in-ZooKeeper"><a href="#2-Time-in-ZooKeeper" class="headerlink" title="2. Time in ZooKeeper"></a>2. Time in ZooKeeper</h2><p>ZooKeeper tracks time multiple ways:</p>
+<h3 id="1-Zxid-ZooKeeper-Transaction-Id"><a href="#1-Zxid-ZooKeeper-Transaction-Id" class="headerlink" title="1) Zxid (ZooKeeper Transaction Id)"></a>1) Zxid (ZooKeeper Transaction Id)</h3><p>Every change to the ZooKeeper state receives a stamp in the form of a <code>zxid</code>. This exposes the total ordering of all changes to ZooKeeper. Each change will have a unique <code>zxid</code> and if <code>zxid1</code> is smaller than <code>zxid2</code> then <code>zxid1</code> happened before <code>zxid2</code>.</p>
+<h3 id="2-Version-numbers"><a href="#2-Version-numbers" class="headerlink" title="2) Version numbers"></a>2) Version numbers</h3><p>Every change to a a node will cause an increase to one of the version numbers of that node. The three version numbers are </p>
+<ul>
+<li><code>version</code> - number of changes to the data of a znode</li>
+<li><code>cversion</code> - number of changes to the children of a znode</li>
+<li><code>aversion</code> - number of changes to the ACL of a znode</li>
+</ul>
+<h3 id="3-Ticks"><a href="#3-Ticks" class="headerlink" title="3) Ticks"></a>3) Ticks</h3><p>When using multi-server ZooKeeper, servers use ticks to define timing of events such as status uploads, session timeouts, connection timeouts between peers, etc. The tick time is only indirectly exposed through the minimum session timeout (2 times the tick time); if a client requests a session timeout less than the minimum session timeout, the server will tell the client that the session timeout is actually the minimum session timeout.</p>
+<h3 id="4-Real-time"><a href="#4-Real-time" class="headerlink" title="4) Real time"></a>4) Real time</h3><p>ZooKeeper doesn’t use real time, or clock time, at all except to put timestamps into the stat structure on znode creation and znode modification.</p>
+<h2 id="3-Stat"><a href="#3-Stat" class="headerlink" title="3. Stat"></a>3. Stat</h2><p>The <code>Stat</code> structure for each znode in ZooKeeper is made up of the following fields:</p>
+<h3 id="1-czxid-created-ZooKeeper-Transaction-ID"><a href="#1-czxid-created-ZooKeeper-Transaction-ID" class="headerlink" title="1) czxid (created ZooKeeper Transaction ID)"></a>1) czxid (created ZooKeeper Transaction ID)</h3><p>The zxid of the change that caused this znode to be created.</p>
+<h3 id="2-mzxid-modified-ZooKeeper-Transaction-ID"><a href="#2-mzxid-modified-ZooKeeper-Transaction-ID" class="headerlink" title="2) mzxid (modified ZooKeeper Transaction ID)"></a>2) mzxid (modified ZooKeeper Transaction ID)</h3><p>The zxid of the change that last modified this znode.</p>
+<h3 id="3-ctime-created-time"><a href="#3-ctime-created-time" class="headerlink" title="3) ctime (created time)"></a>3) ctime (created time)</h3><p>The time in milliseconds from epoch when this znode was created.</p>
+<h3 id="4-mtime-modified-time"><a href="#4-mtime-modified-time" class="headerlink" title="4) mtime (modified time)"></a>4) mtime (modified time)</h3><p>The time in milliseconds from epoch when this znode was last modified.</p>
+<h3 id="5-version"><a href="#5-version" class="headerlink" title="5) version"></a>5) version</h3><p>The number of changes to the data of this znode.</p>
+<h3 id="6-cversion-children-version"><a href="#6-cversion-children-version" class="headerlink" title="6) cversion (children version)"></a>6) cversion (children version)</h3><p>The number of changes to the children of this znode.</p>
+<h3 id="7-aversion-ACL-version"><a href="#7-aversion-ACL-version" class="headerlink" title="7) aversion (ACL version)"></a>7) aversion (ACL version)</h3><p>The number of changes to the ACL of this znode.</p>
+<h3 id="8-ephemeralOwner"><a href="#8-ephemeralOwner" class="headerlink" title="8) ephemeralOwner"></a>8) ephemeralOwner</h3><p>The session id of the owner of this znode if the znode is an ephemeral node. If it is not an ephemeral node, it will be zero.</p>
+<h3 id="9-dataLength"><a href="#9-dataLength" class="headerlink" title="9) dataLength"></a>9) dataLength</h3><p>The length of the data field of this znode.</p>
+<h3 id="10-numChildren"><a href="#10-numChildren" class="headerlink" title="10) numChildren"></a>10) numChildren</h3><p>The number of children of this znode.</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zookeeper-data-model/" rel="tag"># zookeeper data model</a>
+          
+            <a href="/tags/znode/" rel="tag"># znode</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/11/distributed system/zookeeper/ZooKeeper-Watches/" rel="next" title="ZooKeeper - Watches">
+                <i class="fa fa-chevron-left"></i> ZooKeeper - Watches
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/12/spring/Spring-Spring-s-Core-Concepts/" rel="prev" title="Spring - Spring's Core Concepts">
+                Spring - Spring's Core Concepts <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-ZNodes"><span class="nav-number">1.</span> <span class="nav-text">1. ZNodes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Watches"><span class="nav-number">1.1.</span> <span class="nav-text">1) Watches</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Data-Access"><span class="nav-number">1.2.</span> <span class="nav-text">2) Data Access</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Ephemeral-Nodes"><span class="nav-number">1.3.</span> <span class="nav-text">3) Ephemeral Nodes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Sequence-Nodes-–-Unique-Naming"><span class="nav-number">1.4.</span> <span class="nav-text">4) Sequence Nodes – Unique Naming</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Time-in-ZooKeeper"><span class="nav-number">2.</span> <span class="nav-text">2. Time in ZooKeeper</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Zxid-ZooKeeper-Transaction-Id"><span class="nav-number">2.1.</span> <span class="nav-text">1) Zxid (ZooKeeper Transaction Id)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Version-numbers"><span class="nav-number">2.2.</span> <span class="nav-text">2) Version numbers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Ticks"><span class="nav-number">2.3.</span> <span class="nav-text">3) Ticks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Real-time"><span class="nav-number">2.4.</span> <span class="nav-text">4) Real time</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Stat"><span class="nav-number">3.</span> <span class="nav-text">3. Stat</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-czxid-created-ZooKeeper-Transaction-ID"><span class="nav-number">3.1.</span> <span class="nav-text">1) czxid (created ZooKeeper Transaction ID)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-mzxid-modified-ZooKeeper-Transaction-ID"><span class="nav-number">3.2.</span> <span class="nav-text">2) mzxid (modified ZooKeeper Transaction ID)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-ctime-created-time"><span class="nav-number">3.3.</span> <span class="nav-text">3) ctime (created time)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-mtime-modified-time"><span class="nav-number">3.4.</span> <span class="nav-text">4) mtime (modified time)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-version"><span class="nav-number">3.5.</span> <span class="nav-text">5) version</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-cversion-children-version"><span class="nav-number">3.6.</span> <span class="nav-text">6) cversion (children version)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-aversion-ACL-version"><span class="nav-number">3.7.</span> <span class="nav-text">7) aversion (ACL version)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-ephemeralOwner"><span class="nav-number">3.8.</span> <span class="nav-text">8) ephemeralOwner</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-dataLength"><span class="nav-number">3.9.</span> <span class="nav-text">9) dataLength</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-numChildren"><span class="nav-number">3.10.</span> <span class="nav-text">10) numChildren</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

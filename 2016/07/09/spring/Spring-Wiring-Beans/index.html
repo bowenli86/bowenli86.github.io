@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Spring Bean Annotation @Repository - a bean as DAO Component on persistence layer @Service - a bean as Service Component on business layer @Controller - a bean as Controller Component on Presentation">
+<meta name="keywords" content="spring bean wiring">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring - Wiring Beans">
+<meta property="og:url" content="https://bowenli86.github.io/2016/07/09/spring/Spring-Wiring-Beans/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="Spring Bean Annotation @Repository - a bean as DAO Component on persistence layer @Service - a bean as Service Component on business layer @Controller - a bean as Controller Component on Presentation">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.543Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring - Wiring Beans">
+<meta name="twitter:description" content="Spring Bean Annotation @Repository - a bean as DAO Component on persistence layer @Service - a bean as Service Component on business layer @Controller - a bean as Controller Component on Presentation">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/07/09/spring/Spring-Wiring-Beans/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring - Wiring Beans | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/07/09/spring/Spring-Wiring-Beans/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring - Wiring Beans</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-07-09T23:14:21-07:00">2016-07-09</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Spring-Bean-Annotation"><a href="#Spring-Bean-Annotation" class="headerlink" title="Spring Bean Annotation"></a>Spring Bean Annotation</h2><ul>
+<li><code>@Repository</code> - a bean as DAO Component on persistence layer</li>
+<li><code>@Service</code> - a bean as Service Component on business layer</li>
+<li><code>@Controller</code> - a bean as Controller Component on Presentation layer</li>
+<li><code>@Configuration</code> - a bean as Configuration Component.</li>
+<li><code>@Component</code> - General purpose annotation, can be used as a replacement for above annotations.</li>
+</ul>
+<p>In Spring, objects aren’t responsible for finding or creating the other objects that they need to do their jobs. Instead, the container gives them references to the objects that they collaborate with.</p>
+<p>The act of creating associations between application objects is <code>the essence of dependency injection (DI)</code> and is commonly referred to as <code>wiring</code>. </p>
+<h2 id="Spring’s-configuration-options"><a href="#Spring’s-configuration-options" class="headerlink" title="Spring’s configuration options"></a>Spring’s configuration options</h2><p>Spring offers three primary wiring mechanisms:</p>
+<ol>
+<li>Implicit bean discovery and automatic wiring</li>
+<li>Explicit configuration in Java.</li>
+<li>Explicit configuration in XML.</li>
+</ol>
+<p>The first two options are the most commonly-used ones. I will not talk about XML-based config because it’s old and hard to read and maintain.</p>
+<h2 id="1-Automatically-wiring-beans"><a href="#1-Automatically-wiring-beans" class="headerlink" title="1. Automatically wiring beans"></a>1. Automatically wiring beans</h2><p>Springs attacks automatic wiring from two angles:</p>
+<blockquote>
+<ul>
+<li>Component scanning - Spring automatically discovers beans to be created in the application context.</li>
+<li>Autowiring - Spring automatically satisfies bean dependencies</li>
+</ul>
+</blockquote>
+<p><code>Working together, component scanning and autowiring can keep explicit configuration to a minimum.</code></p>
+<h3 id="1-1-Component-Creating-discoverable-beans"><a href="#1-1-Component-Creating-discoverable-beans" class="headerlink" title="1.1 @Component - Creating discoverable beans"></a>1.1 <code>@Component</code> - Creating discoverable beans</h3><p>Annotation <code>@Component</code> identifies this class as a component class and serves as a clue to Spring that a bean should be created for this class. There is no need to explicitly configure a AnAlbum bean in XML or JavaConfig, Spring will do it for you because this class is annotated with <code>@Component</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CD</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">play</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnAlbum</span> <span class="keyword">implements</span> <span class="title">CD</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String title = <span class="string">"An album from Scorpions"</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"Playing "</span> + title);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="1-2-Naming-a-component-scanned-bean"><a href="#1-2-Naming-a-component-scanned-bean" class="headerlink" title="1.2 Naming a component-scanned bean"></a>1.2 Naming a component-scanned bean</h3><p>All beans in a Spring application context are given an <code>id</code>. When you didn’t explicitly give the bean an id, Spring will given it one derived from its class name by <code>lowering the first letter of the class name</code>.</p>
+<h4 id="Approach-1"><a href="#Approach-1" class="headerlink" title="Approach 1"></a>Approach 1</h4><p>If you’d rather give the bean a different ID, all you have to do is pass the desired ID as a value to the <code>@Component</code> annotation.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(<span class="string">"anotherAlbum"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnAlbum</span> <span class="keyword">implements</span> <span class="title">CD</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Approach-2"><a href="#Approach-2" class="headerlink" title="Approach 2"></a>Approach 2</h4><p>Use <code>@Named</code> annotation</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Named</span>(<span class="string">"anotherAlbum"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnAlbum</span> <span class="keyword">implements</span> <span class="title">CD</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-ComponentScan-Automatic-component-scan-amp-Setting-a-base-package-for-component-scanning"><a href="#1-3-ComponentScan-Automatic-component-scan-amp-Setting-a-base-package-for-component-scanning" class="headerlink" title="1.3 @ComponentScan - Automatic component scan &amp; Setting a base package for component scanning"></a>1.3 <code>@ComponentScan</code> - Automatic component scan &amp; Setting a base package for component scanning</h3><p>Component scanning isn’t turned on by default. You still need an explicit configuration to tell Spring to seek out classes annotated with <code>@Component</code> and to create beans from them.</p>
+<blockquote>
+<p>When using <code>@ComponentScan</code> with no attributes, it will default to the configuration class’s package as its base packege to scan for components.</p>
+</blockquote>
+<h4 id="Style-1"><a href="#Style-1" class="headerlink" title="Style 1"></a>Style 1</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(<span class="string">"com.xxx.package_name"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AutomaticWiringConfig</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>In the above example, <code>AutomaticWiringConfig</code> class defines a Spring wiring specification, expressed in Java. It’s annotated with <code>@ComponentScan</code> to enable component scanning in Spring.</p>
+<h4 id="Style-2-use-basePackages-attribute"><a href="#Style-2-use-basePackages-attribute" class="headerlink" title="Style 2 - use basePackages attribute"></a>Style 2 - use <code>basePackages</code> attribute</h4><p>If you’d rather it be clear that you’re setting the base package, you can do so with the <code>basePackages</code> attribute</p>
+<p>Here’s an example of component scan with multiple package names</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan</span>(&#123;<span class="string">"com.xxx.p1"</span>, <span class="string">"com.xxx.p2"</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>equals to</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"com.xxx.p1"</span>, <span class="string">"com.xxx.p2"</span>&#125;)</span><br></pre></td></tr></table></figure>
+<h4 id="Style-3-Specify-classes-or-interfaces-with-basePackageClasses"><a href="#Style-3-Specify-classes-or-interfaces-with-basePackageClasses" class="headerlink" title="Style 3 - Specify classes or interfaces with basePackageClasses"></a>Style 3 - Specify classes or interfaces with <code>basePackageClasses</code></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackageClasses = &#123;CDPlayer.class, DVDPlayer.class&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AutomaticWiringConfig</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>I personally don’t like component scan very much, because it’s easy to fail since people are always forgetting to explicitly add packages. Besides, settings in the base packages are expressed as String values. If programmers want to refactor the package names, the specified base packages would be wrong.</p>
+</blockquote>
+<blockquote>
+<p>But component scanning is necessary when the POJO classes that you want to define beans don’t live in the same package as your Spring config class</p>
+</blockquote>
+<h3 id="1-4-Autowired-Annotating-beans-to-be-automatically-wired"><a href="#1-4-Autowired-Annotating-beans-to-be-automatically-wired" class="headerlink" title="1.4 @Autowired - Annotating beans to be automatically wired"></a>1.4 <code>@Autowired</code> - Annotating beans to be automatically wired</h3><p>Autowiring is a means of letting Spring automatically satisfy a bean’s dependencies by finding other beans in the application context that are a match to the bean’s needs.</p>
+<p>Here’s an example in JUnit</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringJUnit4ClassRunner.class)</span><br><span class="line"><span class="meta">@ContextConfiguration</span>(classes = AutomaticWiringConfig.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CDPlayerTest</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> CD cd;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">cdShouldNotBeNull</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		assertNotNull(cd);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>CDPlayerTest</code> takes advantage of Spring’s <code>SpringJUnit4ClassRunner</code> to have a Spring application context automatically created when the test starts. The <code>@ContextConfiguration</code> annotation tells it to load its configuration from where. </p>
+<blockquote>
+<p>Spring will attempt to satisfy the dependency expressed in the method’s parameters, in three typical styles:</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>constructor</li>
+<li>setter method</li>
+<li>any other method</li>
+</ul>
+</blockquote>
+<p>Assuming that one and only one bean matches, that bean will be wired in!</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MediaPlayer</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">play</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CDPlayer</span> <span class="keyword">implements</span> <span class="title">MediaPlayer</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> CD cd;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 1. The constructor is annotated with <span class="doctag">@Autowired</span>, indicating that when</span></span><br><span class="line"><span class="comment">	 * Spring creates the CDPlayer bean, it should instantiate it via that </span></span><br><span class="line"><span class="comment">	 * constructor and pass in a bean that is assignable to CD</span></span><br><span class="line"><span class="comment">	 * */</span></span><br><span class="line">	<span class="meta">@Autowired</span>(required = <span class="keyword">true</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">CDPlayer</span><span class="params">(CD cd)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cd =cd;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 2. <span class="doctag">@Autowired</span> can also be used on a property's setter method</span></span><br><span class="line"><span class="comment">	 * */</span></span><br><span class="line">	<span class="meta">@Autowired</span> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCD</span><span class="params">(CD cd)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cd = cd;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 3. <span class="doctag">@Autowired</span> can also be applied to any method on the class</span></span><br><span class="line"><span class="comment">	 * */</span></span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insertCD</span><span class="params">(CD cd)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.cd = cd;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		cd.play();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>If there’s no matching beans, Spring will throw an exception as the application context is being created. To avoid that exception, you can set the <code>&#39;required&#39;</code> attribute on <code>@Autowired</code> to <code>false</code> </p>
+<h3 id="1-5-Verifying-automatic-configuration"><a href="#1-5-Verifying-automatic-configuration" class="headerlink" title="1.5 Verifying automatic configuration"></a>1.5 Verifying automatic configuration</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringJUnit4ClassRunner.class)</span><br><span class="line"><span class="meta">@ContextConfiguration</span>(classes = AutomaticWiringConfig.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CDPlayerTest</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Rule</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">final</span> StandardOutputStreamLog log = <span class="keyword">new</span> StandardOutputStreamLog();</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Autowired</span> <span class="keyword">private</span> MediaPlayer player;</span><br><span class="line">	<span class="meta">@Autowired</span> <span class="keyword">private</span> CD cd;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">cdShouldNotBeNull</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		assertNotNull(cd);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">playTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		player.play();</span><br><span class="line">		assertEquals(<span class="string">"Playing An album from Scorpions."</span>, log.getLog());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-Wiring-beans-with-JavaConfig"><a href="#2-Wiring-beans-with-JavaConfig" class="headerlink" title="2. Wiring beans with JavaConfig"></a>2. Wiring beans with JavaConfig</h2><p>Although Spring configuration with component scanning and autowiring is preferred, there are times when automatic configuration isn’t an option and you must configure Spring explicitly.</p>
+<blockquote>
+<p>E.g. wiring components from some third-party library into the application. You don’t have the source code for that library, thus you cannot annotate its classes with <code>@Component</code> and <code>@Autowired</code>.</p>
+</blockquote>
+<p>In that case, you must turn to explicit configuration. You have two choices for explicit configuration: <code>Java</code> and <code>XML</code>. <code>JavaConfig</code> is the preferred option for explicit configuration because it’s more powerful, type-safe, and refactor-friendly</p>
+<p>JavaConfig code isn’t just any other Java code. It’s conceptually set apart from the business logic and domain code in your application. <code>JavaConfig is configuration code.</code> This means it shouldn’t contain any business log, nor should JavaConfig invade any code where business logic resides. </p>
+<p>JavaConfig is often set apart in a separate package from the rest of an application’s logic so there’s no confusion as to its purpose.</p>
+<h3 id="2-1-Creating-a-configuration-class-with-Configuration-and-Bean"><a href="#2-1-Creating-a-configuration-class-with-Configuration-and-Bean" class="headerlink" title="2.1 Creating a configuration class with @Configuration and @Bean"></a>2.1 Creating a configuration class with <code>@Configuration</code> and <code>@Bean</code></h3><p><code>@Bean</code> annotation tells Spring that this method will return an object that should be registered as a bean in the Spring application context. The body contains logic that ultimately results in the creation of the bean instance</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JavaConfig</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Bean</span> <span class="comment">// this bean's id is `cd`</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> CD <span class="title">cD</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> AnAlbum();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span>(name = <span class="string">"anotherCd"</span>)  <span class="comment">// this bean's id is `anotherCd`</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> CD <span class="title">cD</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> AnAlbum();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> MediaPlayer <span class="title">mediaPlayer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> CDPlayer(cD());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>What’s wrong with the above JavaConfig? Notice that the creation of bean <code>mediaPlayer</code> depends on the creation of bean <code>cd</code> which lives in the same class. How can we improve it?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JavaConfig</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> CD <span class="title">cD</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> AnAlbum();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> MediaPlayer <span class="title">mediaPlayer</span><span class="params">(CD cd)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> CDPlayer(cd);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>The above improved example is a much better choice!! Because it doesn’t depend on the <code>cd</code> bean declared in the same configuration class.</p>
+<p>By default, all beans in Spring are singletons, and there’s no reason you need to create a duplicate instance for the second bean. Thus, both above <code>mediaPlayer()</code> method is given the same instance of bean <code>cd</code>.</p>
+<h2 id="An-Example-to-close-this-tutorial-Bean-Autowiring-and-Factory-Pattern"><a href="#An-Example-to-close-this-tutorial-Bean-Autowiring-and-Factory-Pattern" class="headerlink" title="An Example to close this tutorial - Bean Autowiring and Factory Pattern"></a>An Example to close this tutorial - Bean Autowiring and Factory Pattern</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Template interface to generate emails for different type of notifications</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IEmailTemplate</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Generate email subject</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="function">String <span class="title">makeSubject</span><span class="params">(List&lt;INotification&gt; notificationList)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Generate email body</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="function">String <span class="title">makeBody</span><span class="params">(List&lt;INotification&gt; notificationList)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GeneralEmailTemplate</span> <span class="keyword">implements</span> <span class="title">IEmailTemplate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> TimeZone timeZone;</span><br><span class="line">    <span class="keyword">private</span> Date lastCheckTime;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">GeneralEmailTemplate</span><span class="params">(TimeZone timeZone, Date lastCheckTime)</span> </span>&#123;</span><br><span class="line">        timeZone = timeZone;</span><br><span class="line">        lastCheckTime = lastCheckTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">makeSubject</span><span class="params">(List&lt;INotification&gt; notificationList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">makeBody</span><span class="params">(List&lt;INotification&gt; notificationList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerEmailTemplate</span> <span class="keyword">extends</span> <span class="title">GeneralEmailTemplate</span> <span class="keyword">implements</span> <span class="title">IEmailTemplate</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ServerHealthEmailTemplate</span><span class="params">(TimeZone timeZone)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(timeZone, <span class="keyword">new</span> Date());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">makeSubject</span><span class="params">(List&lt;INotification&gt; notificationList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"server"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">makeBody</span><span class="params">(List&lt;INotification&gt; notificationList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"server health"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DiskSpaceEmailTemplate</span> <span class="keyword">extends</span> <span class="title">GeneralEmailTemplate</span> <span class="keyword">implements</span> <span class="title">IEmailTemplate</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DiskSpaceEmailTemplate</span><span class="params">(TimeZone timeZone)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(timeZone, <span class="keyword">new</span> Date());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">makeSubject</span><span class="params">(List&lt;INotification&gt; notificationList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"disk"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">makeBody</span><span class="params">(List&lt;INotification&gt; notificationList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"disk space"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(<span class="string">"com.xxx"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmailTemplateFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span>(name = <span class="string">"ServerHealth"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IEmailTemplate <span class="title">getServerHealthEmailTemplate</span><span class="params">(TimeZone timeZone)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ServerHealthEmailTemplate(timeZone);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span>(name = <span class="string">"DiskSpace"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IEmailTemplate <span class="title">getDiskSpaceEmailTemplate</span><span class="params">(TimeZone timeZone)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DiskSpaceEmailTemplate(timeZone);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> appropriate email template according to given NotificationType</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IEmailTemplate <span class="title">getEmailTemplate</span><span class="params">(NotificationType notificationType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(notificationType == NotificationType.ServerHealth) &#123;</span><br><span class="line">            <span class="keyword">return</span> getServerHealthEmailTemplate();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(notificationType == NotificationType.LowDiskSpace) &#123;</span><br><span class="line">            <span class="keyword">return</span> getLowDiskSpaceEmailTemplate();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> IEmailTemplate() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> String <span class="title">makeSubject</span><span class="params">(List&lt;INotification&gt; notificationList)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> String <span class="title">makeBody</span><span class="params">(List&lt;INotification&gt; notificationList)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring-bean-wiring/" rel="tag"># spring bean wiring</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/08/ruby/Ruby-Ruby-blocks-and-yield-statement/" rel="next" title="Ruby - Ruby blocks and yield statement">
+                <i class="fa fa-chevron-left"></i> Ruby - Ruby blocks and yield statement
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/10/ruby/Ruby-Understanding-class-eval-and-instance-eval/" rel="prev" title="Ruby - Understanding class_eval and instance_eval">
+                Ruby - Understanding class_eval and instance_eval <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Bean-Annotation"><span class="nav-number">1.</span> <span class="nav-text">Spring Bean Annotation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring’s-configuration-options"><span class="nav-number">2.</span> <span class="nav-text">Spring’s configuration options</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Automatically-wiring-beans"><span class="nav-number">3.</span> <span class="nav-text">1. Automatically wiring beans</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Component-Creating-discoverable-beans"><span class="nav-number">3.1.</span> <span class="nav-text">1.1 @Component - Creating discoverable beans</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Naming-a-component-scanned-bean"><span class="nav-number">3.2.</span> <span class="nav-text">1.2 Naming a component-scanned bean</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Approach-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">Approach 1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Approach-2"><span class="nav-number">3.2.2.</span> <span class="nav-text">Approach 2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-ComponentScan-Automatic-component-scan-amp-Setting-a-base-package-for-component-scanning"><span class="nav-number">3.3.</span> <span class="nav-text">1.3 @ComponentScan - Automatic component scan &amp; Setting a base package for component scanning</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Style-1"><span class="nav-number">3.3.1.</span> <span class="nav-text">Style 1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Style-2-use-basePackages-attribute"><span class="nav-number">3.3.2.</span> <span class="nav-text">Style 2 - use basePackages attribute</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Style-3-Specify-classes-or-interfaces-with-basePackageClasses"><span class="nav-number">3.3.3.</span> <span class="nav-text">Style 3 - Specify classes or interfaces with basePackageClasses</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-Autowired-Annotating-beans-to-be-automatically-wired"><span class="nav-number">3.4.</span> <span class="nav-text">1.4 @Autowired - Annotating beans to be automatically wired</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-Verifying-automatic-configuration"><span class="nav-number">3.5.</span> <span class="nav-text">1.5 Verifying automatic configuration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Wiring-beans-with-JavaConfig"><span class="nav-number">4.</span> <span class="nav-text">2. Wiring beans with JavaConfig</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Creating-a-configuration-class-with-Configuration-and-Bean"><span class="nav-number">4.1.</span> <span class="nav-text">2.1 Creating a configuration class with @Configuration and @Bean</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#An-Example-to-close-this-tutorial-Bean-Autowiring-and-Factory-Pattern"><span class="nav-number">5.</span> <span class="nav-text">An Example to close this tutorial - Bean Autowiring and Factory Pattern</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

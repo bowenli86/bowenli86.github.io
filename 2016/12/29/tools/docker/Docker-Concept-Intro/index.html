@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Package Your Application into a Standardized Unit for Software DevelopmentDocker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, sys">
+<meta name="keywords" content="docker,docker image,docker container,docker engine,docker machine,docker hub,docker compose">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker - Concept Intro">
+<meta property="og:url" content="https://bowenli86.github.io/2016/12/29/tools/docker/Docker-Concept-Intro/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="Package Your Application into a Standardized Unit for Software DevelopmentDocker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, sys">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://www.docker.com/sites/default/files/WhatIsDocker_2_VMs_0-2_2.png">
+<meta property="og:image" content="https://www.docker.com/sites/default/files/WhatIsDocker_3_Containers_2_0.png">
+<meta property="og:image" content="https://docs.docker.com/engine/getstarted/tutimg/container_explainer.png">
+<meta property="og:image" content="https://docs.docker.com/docker-for-mac/images/docker-for-mac-install.png">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.551Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker - Concept Intro">
+<meta name="twitter:description" content="Package Your Application into a Standardized Unit for Software DevelopmentDocker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, sys">
+<meta name="twitter:image" content="https://www.docker.com/sites/default/files/WhatIsDocker_2_VMs_0-2_2.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/12/29/tools/docker/Docker-Concept-Intro/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Docker - Concept Intro | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/12/29/tools/docker/Docker-Concept-Intro/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Docker - Concept Intro</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-29T22:47:05-08:00">2016-12-29</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tools/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Package-Your-Application-into-a-Standardized-Unit-for-Software-Development"><a href="#Package-Your-Application-into-a-Standardized-Unit-for-Software-Development" class="headerlink" title="Package Your Application into a Standardized Unit for Software Development"></a>Package Your Application into a Standardized Unit for Software Development</h1><p>Docker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, system tools, system libraries – anything that can be installed on a server. This guarantees that the software will always run the same, regardless of its environment.</p>
+<h1 id="Comparing-Containers-and-Virtual-Machines"><a href="#Comparing-Containers-and-Virtual-Machines" class="headerlink" title="Comparing Containers and Virtual Machines"></a>Comparing Containers and Virtual Machines</h1><p>Containers and virtual machines have similar resource isolation and allocation benefits – but a different architectural approach allows containers to be more portable and efficient.</p>
+<h2 id="Virtual-Machines"><a href="#Virtual-Machines" class="headerlink" title="Virtual Machines"></a>Virtual Machines</h2><p>Virtual machines include the application, the necessary binaries and libraries, and an entire guest operating system – all of which can amount to tens of GBs.</p>
+<p><img src="https://www.docker.com/sites/default/files/WhatIsDocker_2_VMs_0-2_2.png" alt="VM"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">    App1            App2            App3</span><br><span class="line">-----------     -----------     -----------</span><br><span class="line"> Bins/Libs       Bins/Libs       Bins/Libs</span><br><span class="line">-----------     -----------     -----------</span><br><span class="line"> Guest OS        Guest OS        Guest OS</span><br><span class="line">---------------------------------------------</span><br><span class="line">              Hypervisor</span><br><span class="line">            ---------------</span><br><span class="line">                Host OS</span><br><span class="line">            ---------------</span><br><span class="line">            Infrastructure</span><br></pre></td></tr></table></figure>
+<h2 id="Containers"><a href="#Containers" class="headerlink" title="Containers"></a>Containers</h2><p>Containers include the application and all of its dependencies –but share the kernel with other containers, running as isolated processes in user space on the host operating system. Docker containers are not tied to any specific infrastructure: they run on any computer, on any infrastructure, and in any cloud.</p>
+<p><img src="https://www.docker.com/sites/default/files/WhatIsDocker_3_Containers_2_0.png" alt="container"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">    App1            App2            App3</span><br><span class="line">-----------     -----------     -----------</span><br><span class="line"> Bins/Libs       Bins/Libs       Bins/Libs</span><br><span class="line">---------------------------------------------</span><br><span class="line">              Docker Engine</span><br><span class="line">            ---------------</span><br><span class="line">                Host OS</span><br><span class="line">            ---------------</span><br><span class="line">            Infrastructure</span><br></pre></td></tr></table></figure>
+<h1 id="Terminologies"><a href="#Terminologies" class="headerlink" title="Terminologies"></a>Terminologies</h1><h2 id="1-Images-and-Containers"><a href="#1-Images-and-Containers" class="headerlink" title="1. Images and Containers"></a>1. Images and Containers</h2><p><strong>Docker Engine</strong> provides the core Docker technology that enables images and containers. As the last step in your installation, you ran the <code>docker run hello-world</code> command. The command you ran had three parts.</p>
+<p><img src="https://docs.docker.com/engine/getstarted/tutimg/container_explainer.png" alt="docker command"></p>
+<ul>
+<li>An <strong>image</strong> is <strong>a filesystem and parameters to use at runtime</strong>. It doesn’t have state and never changes.</li>
+<li><p>A <strong>container</strong> is <strong>a running instance of an image</strong>. When you ran the command, Docker Engine:</p>
+<ul>
+<li>checked to see if you had the <code>hello-world</code> software image</li>
+<li>downloaded the image from the <strong>Docker Hub</strong> (more about the hub later)</li>
+<li>loaded the image into the container and <strong>“ran”</strong> it</li>
+</ul>
+</li>
+</ul>
+<p>Depending on how it was built, an image might run a simple, single command and then exit. This is what <strong>hello-world</strong> did.</p>
+<p>A <strong>Docker image</strong>, though, is capable of much more. An image can start software as complex as a database, wait for you to add data, store the data for later use, and then wait for the next person.</p>
+<p>Who built the <code>hello-world</code> software image though? In this case, Docker did but anyone can. <strong>Docker Engine</strong> lets people (or companies) create and share software through <strong>Docker images</strong>. Using <strong>Docker Engine</strong>, you don’t have to worry about whether your computer can run the software in a <strong>Docker image</strong> — a <strong>Docker container</strong> can always run it.</p>
+<a id="more"></a>
+<h2 id="2-Docker-Engine"><a href="#2-Docker-Engine" class="headerlink" title="2. Docker Engine"></a>2. Docker Engine</h2><p>The <strong>Docker Engine</strong> is <strong>a lightweight container runtime and robust tooling that builds and runs your container</strong>. </p>
+<blockquote>
+<p>My own explanation: So what the above statement is saying is: First, <strong>Docker Engine is a tool</strong>, a container runtime tool, and a robust tool. Second, <strong>Docker Engine runs containers</strong></p>
+</blockquote>
+<p>Docker allows you to package up application code and dependencies together in an isolated container that share the OS kernel on the host system. The in-host daemon communicates with the <strong>Docker Client</strong> to execute commands to build, ship and run containers.</p>
+<h2 id="3-Docker-Machine"><a href="#3-Docker-Machine" class="headerlink" title="3. Docker Machine"></a>3. Docker Machine</h2><p>You can use <strong>Docker Machine</strong> to:</p>
+<ul>
+<li>Install and run Docker on Mac or Windows</li>
+<li>Provision and manage multiple remote Docker hosts</li>
+<li>Provision Swarm clusters</li>
+</ul>
+<p><strong>Docker Machine</strong> is a tool that lets you 1) install <strong>Docker Engine</strong> on virtual hosts, and 2) manage the hosts with <strong>docker-machine</strong> commands. </p>
+<p>You can use Machine to create Docker hosts on your local Mac or Windows box, on your company network, in your data center, or on cloud providers like AWS or Digital Ocean.</p>
+<p>Using <strong>docker-machine</strong> commands, you can start, inspect, stop, and restart a managed host, upgrade the Docker client and daemon, and configure a Docker client to talk to your host.</p>
+<p>Point the Machine CLI at a running, managed host, and you can run docker commands directly on that host. For example, run docker-machine env default to point to a host called default, follow on-screen instructions to complete env setup, and run docker ps, docker run <code>hello-world</code>, and so forth.</p>
+<p><strong>Docker Machine</strong> was the only way to run Docker on Mac or Windows previous to Docker v1.12. Starting with the beta program and Docker v1.12, Docker for Mac and Docker for Windows are available as native apps and the better choice for this use case on newer desktops and laptops. We encourage you to try out these new apps. <strong>The installers for Docker for Mac and Docker for Windows include Docker Machine, along with Docker Compose.</strong></p>
+<h2 id="4-Docker-for-Mac"><a href="#4-Docker-for-Mac" class="headerlink" title="4. Docker for Mac"></a>4. Docker for Mac</h2><p><strong>Docker for Mac</strong> is a Mac <strong>native</strong> application, that you install in <code>/Applications</code>. At installation time, it creates symlinks in <code>/usr/local/bin</code> for <strong>docker</strong> and <strong>docker-compose</strong>, to the version of the commands inside the Mac application bundle, in <code>/Applications/Docker.app/Contents/Resources/bin</code>.</p>
+<p>Here are some key points to know about <strong>Docker for Mac</strong> before you get started:</p>
+<ul>
+<li><p><strong>Docker for Mac</strong> does not use VirtualBox, but rather <strong><a href="https://github.com/docker/HyperKit/" target="_blank" rel="noopener">HyperKit</a></strong>, a lightweight macOS virtualization solution built on top of <strong>Hypervisor.framework</strong> in macOS 10.10 Yosemite and higher.</p>
+</li>
+<li><p>Installing <strong>Docker for Mac</strong> does not affect machines you created with <strong>Docker Machine</strong>. The install offers to copy containers and images from your local default machine (if one exists) to the new <strong>Docker for Mac HyperKit VM</strong>. If chosen, content from default is copied to the new <strong>Docker for Mac HyperKit VM</strong>, and your original default machine is kept as is.</p>
+</li>
+<li><p>The <strong>Docker for Mac</strong> application <strong>does not use docker-machine to provision that VM; but rather creates and manages it directly</strong>.</p>
+</li>
+<li><p><strong>At installation time, Docker for Mac provisions an HyperKit VM based on Alpine Linux, running Docker Engine</strong>. It exposes the docker API on a socket in <code>/var/run/docker.sock</code>. Since this is the default location where docker will look if no environment variables are set, you can start using <code>docker</code> and <code>docker-compose</code> without setting any environment variables.</p>
+</li>
+</ul>
+<p>This setup is shown in the following diagram.</p>
+<p><img src="https://docs.docker.com/docker-for-mac/images/docker-for-mac-install.png" alt="Docker for Mac"></p>
+<p>With <strong>Docker for Mac</strong>, you get only one VM, and you don’t manage it. It is managed by the <strong>Docker for Mac</strong> application, which includes autoupdate to update the client and server versions of Docker.</p>
+<p>If you need several VMs and want to manage the version of the Docker client or server you are using, you can continue to use <strong>docker-machine</strong>, on the same machine, as described in Docker Toolbox (<a href="https://docs.docker.com/toolbox/overview/" target="_blank" rel="noopener">Legacy desktop solution</a>) and Docker for Mac coexistence.</p>
+<h2 id="5-Docker-Compose"><a href="#5-Docker-Compose" class="headerlink" title="5. Docker Compose"></a>5. Docker Compose</h2><p><strong>Docker Compose</strong> is <strong>a tool for defining and running multi-container Docker applications</strong>.</p>
+<p>With <strong>Compose</strong>, you use <strong>a Compose file</strong> to configure your application’s services. Then, using a single command, you create and start all the services from your configuration.</p>
+<p><strong>Compose</strong> is great for development, testing, and staging environments, as well as CI workflows.</p>
+<p>Using <strong>Compose</strong> is basically a three-step process.</p>
+<ul>
+<li>Define your app’s environment with a <strong>Dockerfile</strong> so it can be reproduced anywhere.</li>
+<li>Define the services that make up your app in <strong>docker-compose.yml</strong> so they can be run together in an isolated environment.</li>
+<li>Lastly, run <code>docker-compose up</code>, and <strong>Compose</strong> will start and run your entire app.</li>
+</ul>
+<p>A <code>docker-compose.yml</code> looks like this:</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'2'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  web:</span></span><br><span class="line"><span class="attr">    build:</span> <span class="string">.</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">"5000:5000"</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">.:/code</span></span><br><span class="line"><span class="attr">    - logvolume01:</span><span class="string">/var/log</span></span><br><span class="line"><span class="attr">    links:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">  redis:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">redis</span></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line"><span class="attr">  logvolume01:</span> <span class="string">&#123;&#125;</span></span><br></pre></td></tr></table></figure>
+<p>Compose has commands for managing the whole lifecycle of your application:</p>
+<ul>
+<li>Start, stop and rebuild services</li>
+<li>View the status of running services</li>
+<li>Stream the log output of running services</li>
+<li>Run a one-off command on a service</li>
+</ul>
+<h2 id="6-Docker-Hub"><a href="#6-Docker-Hub" class="headerlink" title="6. Docker Hub"></a>6. Docker Hub</h2><p><strong><a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a></strong> is <strong>a cloud-based registry service which allows you to link to code repositories, build your images and test them, stores manually pushed images, and links to Docker Cloud so you can deploy images to your hosts</strong>.</p>
+<p>It provides a centralized resource for container image discovery, distribution and change management, user and team collaboration, and workflow automation throughout the development pipeline.</p>
+<p><strong>Docker Hub</strong> provides the following major features:</p>
+<ul>
+<li><strong>Image Repositories</strong>: Find, manage, and push and pull images from community, official, and private image libraries.</li>
+<li><strong>Automated Builds</strong>: Automatically create new images when you make changes to a source code repository.</li>
+<li><strong>Webhooks</strong>: A feature of Automated Builds, Webhooks let you trigger actions after a successful push to a repository.</li>
+<li><strong>Organizations</strong>: Create work groups to manage access to image repositories.</li>
+<li>GitHub and Bitbucket Integration: Add the Hub and your Docker Images to your current workflows.</li>
+</ul>
+<h1 id="Typical-Docker-Platform-Workflow"><a href="#Typical-Docker-Platform-Workflow" class="headerlink" title="Typical Docker Platform Workflow"></a>Typical Docker Platform Workflow</h1><ol>
+<li><p>Get your code and its dependencies into Docker containers:</p>
+<ul>
+<li><p>Write a <code>Dockerfile</code> that specifies the execution environment and pulls in your code.</p>
+</li>
+<li><p>If your app depends on external applications (such as Redis, or MySQL), simply find them on a registry such as <strong>Docker Hub</strong>, and refer to them in a <code>Docker Compose file</code>, along with a reference to your application, so they’ll run simultaneously.</p>
+<ul>
+<li>Software providers also distribute paid software via the Docker Store.</li>
+</ul>
+</li>
+<li><p>Build, then run your containers on a virtual host via <strong>Docker Machine</strong> as you develop.</p>
+</li>
+</ul>
+</li>
+<li><p>Configure networking and storage for your solution, if needed.</p>
+</li>
+<li><p>Upload builds to a registry (ours, yours, or your cloud provider’s), to collaborate with your team.</p>
+</li>
+<li><p>If you’re gonna need to scale your solution across multiple hosts (VMs or physical machines), plan for how you’ll set up your Swarm cluster and scale it to meet demand.<br>Note: Use Universal Control Plane and you can manage your Swarm cluster using a friendly UI!</p>
+</li>
+<li><p>Finally, deploy to your preferred cloud provider (or, for redundancy, multiple cloud providers) with Docker Cloud. Or, use Docker Datacenter, and deploy to your own on-premise hardware.</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+            <a href="/tags/docker-image/" rel="tag"># docker image</a>
+          
+            <a href="/tags/docker-container/" rel="tag"># docker container</a>
+          
+            <a href="/tags/docker-engine/" rel="tag"># docker engine</a>
+          
+            <a href="/tags/docker-machine/" rel="tag"># docker machine</a>
+          
+            <a href="/tags/docker-hub/" rel="tag"># docker hub</a>
+          
+            <a href="/tags/docker-compose/" rel="tag"># docker compose</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/21/test/How-to-Conduct-Performance-Testing-如何做性能测试/" rel="next" title="How to Conduct Performance Testing - 如何做性能测试">
+                <i class="fa fa-chevron-left"></i> How to Conduct Performance Testing - 如何做性能测试
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/10/tools/docker/Docker-Images-Containers-and-Storage-Drivers/" rel="prev" title="Docker Images, Containers, and Storage Drivers">
+                Docker Images, Containers, and Storage Drivers <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Package-Your-Application-into-a-Standardized-Unit-for-Software-Development"><span class="nav-number">1.</span> <span class="nav-text">Package Your Application into a Standardized Unit for Software Development</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Comparing-Containers-and-Virtual-Machines"><span class="nav-number">2.</span> <span class="nav-text">Comparing Containers and Virtual Machines</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Virtual-Machines"><span class="nav-number">2.1.</span> <span class="nav-text">Virtual Machines</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Containers"><span class="nav-number">2.2.</span> <span class="nav-text">Containers</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Terminologies"><span class="nav-number">3.</span> <span class="nav-text">Terminologies</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Images-and-Containers"><span class="nav-number">3.1.</span> <span class="nav-text">1. Images and Containers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Docker-Engine"><span class="nav-number">3.2.</span> <span class="nav-text">2. Docker Engine</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Docker-Machine"><span class="nav-number">3.3.</span> <span class="nav-text">3. Docker Machine</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Docker-for-Mac"><span class="nav-number">3.4.</span> <span class="nav-text">4. Docker for Mac</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Docker-Compose"><span class="nav-number">3.5.</span> <span class="nav-text">5. Docker Compose</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Docker-Hub"><span class="nav-number">3.6.</span> <span class="nav-text">6. Docker Hub</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Typical-Docker-Platform-Workflow"><span class="nav-number">4.</span> <span class="nav-text">Typical Docker Platform Workflow</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

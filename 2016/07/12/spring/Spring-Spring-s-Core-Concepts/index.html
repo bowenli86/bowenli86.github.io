@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. Spring and IoC (Inversion of Control) 反转控制 The main idead behind Inversion of Control as a concept is: component dependencies, lifecycle events, and configuration reside outside of the components t">
+<meta name="keywords" content="spring core concept,dependency injection,inversion of control">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring - Spring&#39;s Core Concepts">
+<meta property="og:url" content="https://bowenli86.github.io/2016/07/12/spring/Spring-Spring-s-Core-Concepts/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="1. Spring and IoC (Inversion of Control) 反转控制 The main idead behind Inversion of Control as a concept is: component dependencies, lifecycle events, and configuration reside outside of the components t">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.543Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring - Spring&#39;s Core Concepts">
+<meta name="twitter:description" content="1. Spring and IoC (Inversion of Control) 反转控制 The main idead behind Inversion of Control as a concept is: component dependencies, lifecycle events, and configuration reside outside of the components t">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/07/12/spring/Spring-Spring-s-Core-Concepts/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring - Spring's Core Concepts | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/07/12/spring/Spring-Spring-s-Core-Concepts/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring - Spring's Core Concepts</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-07-12T22:42:49-07:00">2016-07-12</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1-Spring-and-IoC-Inversion-of-Control-反转控制"><a href="#1-Spring-and-IoC-Inversion-of-Control-反转控制" class="headerlink" title="1. Spring and IoC (Inversion of Control) 反转控制"></a>1. Spring and IoC (Inversion of Control) 反转控制</h2><blockquote>
+<p>The main idead behind Inversion of Control as a concept is: <strong>component dependencies, lifecycle events, and configuration reside outside of the components themselves but in the framework.</strong> It sounds like giving up too much control, but in fact makes your code more manageable, testable, and portable.</p>
+</blockquote>
+<h3 id="Dependency-Inversion-Precursor-to-Dependency-Injection"><a href="#Dependency-Inversion-Precursor-to-Dependency-Injection" class="headerlink" title="Dependency Inversion: Precursor to Dependency Injection"></a>Dependency Inversion: Precursor to Dependency Injection</h3><p>In <em>The Dependency Inversion Principle</em> (or DIP), the author states the three defining factors of “bad code”:</p>
+<blockquote>
+<ol>
+<li>It is hard to change because every change affects too many other parts of the system (Rigidity)</li>
+<li>When you make a change, unexpected parts of the system break (Fragility)</li>
+<li>It is hard to reuse in another application because it cannot be disentangled from the current application (Immobility) [3]</li>
+</ol>
+</blockquote>
+<p>According to Martin, interdependency causes these coding problems (we’ll call them RFI for Rigidity, Fragility, and Immobility). To fix RFI issues in your OO code, DIP has two basic rules:</p>
+<hr>
+<blockquote>
+<p>1) High level modules should not depend upon low level modules, both should depend upon abstractions. 高层次的模块不应该依赖于低层次的模块，两者都应该依赖于抽象接口</p>
+</blockquote>
+<p>In other words, high level modules – which contain your business logic and all of the important meat of your application – should not depend on lower level components. The reason for this is if these lower level components were to change, the changes might affect the higher level components as well. This is the defining concept behind dependency inversion, that the prevailing wisdom of having higher-level modules dependent on lower-level modules is in fact a bad idea.</p>
+<hr>
+<blockquote>
+<p>2) Abstractions should not depend upon details, details should depend upon abstractions.<br>抽象接口不应该依赖于具体实现。而具体实现则应该依赖于抽象接口</p>
+</blockquote>
+<p>This is another way to say that before you begin coding to the abstraction – <code>the interface or abstract class</code> – you should find the common behaviors in the code and work backwards. Your interface /abstraction should cater to the intersection between the needs of your business logic and the common behaviors of the lower level modules. You should also leave the details of how these behaviors are implemented to the implementation classes.</p>
+<hr>
+<a id="more"></a>
+<p>This simple example of a voting booth program shows a <strong><em>non-DIP</em></strong> compliant program.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VotingBooth</span> </span>&#123;</span><br><span class="line">    VoteRecorder voteRecorder = <span class="keyword">new</span> VoteRecorder();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">vote</span><span class="params">(Candidate candidate)</span> </span>&#123;</span><br><span class="line">        voteRecorder.record(candidate);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">VoteRecorder</span> </span>&#123;</span><br><span class="line">        Map hVotes = <span class="keyword">new</span> HashMap();</span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">record</span><span class="params">(Candidate candidate)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">if</span> (hVotes.containsKey(candidate))&#123;</span><br><span class="line">                count = hVotes.get(candidate);</span><br><span class="line">            &#125;</span><br><span class="line">            count++;</span><br><span class="line">            hVotes.put(candidate, count);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>In this example, the <code>VotingBooth</code> class is directly dependent on <code>VoteRecorder</code>, which has no abstractions and is the implementing class.</p>
+<hr>
+<p>A dependency “inverted” version of this code might look a little different. First, we would define our <code>VoteRecorder</code> interface.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">VoteRecorder</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">record</span><span class="params">(Candidate candidate)</span> </span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>And our implementing classes. The <code>LocalVoteRecorder</code>, which implements the <code>VoteRecorder</code> interface:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalVoteRecorder</span> <span class="keyword">implements</span> <span class="title">VoteRecorder</span> </span>&#123;</span><br><span class="line">    Map hVotes = <span class="keyword">new</span> HashMap();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">record</span><span class="params">(Candidate candidate)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (hVotes.containsKey(candidate))&#123;</span><br><span class="line">            count = hVotes.get(candidate);</span><br><span class="line">        &#125;</span><br><span class="line">        count++;</span><br><span class="line">        hVotes.put(candidate, count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>And the <code>VotingBooth</code> class:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VotingBooth</span> </span>&#123;</span><br><span class="line">    VoteRecorder recorder = <span class="keyword">null</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setVoteRecorder</span><span class="params">(VoteRecorder recorder)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.recorder = recorder;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">vote</span><span class="params">(Candidate candidate)</span> </span>&#123;</span><br><span class="line">        recorder.record(candidate);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Now the <code>LocalVoteRecorder</code> class – the implementing class of the <code>VoteRecorder</code> interface – is completely decoupled from the <code>VotingBooth</code> class. We have removed all hard-coded references to lower level classes. According to the rules of DIP, this is all we need to do in order to rid our code of RFI.</p>
+<hr>
+<p>However, there is one problem with this implementation. We don’t have a main method. We definitely need one in order to run our application, and somewhere in this main method we will need to instantiate the <code>LocalVoteRecorder</code>.</p>
+<p>By instantiating the LocalVoteRecorder in our main method, we would break Rule #1 of Dependency Inversion (**High level modules should not depend upon low level modules, both should depend upon abstractions). We have coded to the abstraction, we have integrated our changes, but our application would still have a dependency on a lower level class.</p>
+<h2 id="2-Dependency-Injection-to-the-rescue"><a href="#2-Dependency-Injection-to-the-rescue" class="headerlink" title="2. Dependency Injection to the rescue"></a>2. Dependency Injection to the rescue</h2><p>Dependency Injection takes the level of decoupling that began with the Dependency Inversion Principle one step further. Dependency injection has the concept of an <code>assembler</code> – or what in Java is commonly referred to as a <code>Factory</code> – that instantiates the objects required by an application and “injects” them into their dependent objects.</p>
+<pre><code>In the case of a dependency injection-informed framework such as Spring, components are coded to interfaces, just as in the DIP example above. But now the IoC container manages the instantiation, management, and class casting of the implemented objects so that the application doesn&apos;t have to. This removes any true dependencies on low-level implemented classes.
+</code></pre><p>There are three types of Dependency Injection employed by IoC container providers.</p>
+<pre><code>Table 1. Dependency Injection Types
+</code></pre><table>
+<thead>
+<tr>
+<th>DI Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Constructor Injection</td>
+<td>The constructor arguments are injected during instance instantiation.</td>
+</tr>
+<tr>
+<td>Setter Injection</td>
+<td>This is the most favored method of dependency injection in Spring. Dependencies are “set” in the objects through setter methods defined in a Spring configuration file.</td>
+</tr>
+<tr>
+<td>Interface Injection</td>
+<td>This is not implemented in Spring currently, but by Avalon. It’s a different type of DI that involves mapping items to inject to specific interfaces.</td>
+</tr>
+</tbody>
+</table>
+<p>Spring uses the concept of a <code>BeanFactory</code> as its assembler, and it is the <code>BeanFactory</code> that manages the JavaBeans you have configured to run within it. In the next section we will discuss Spring’s IoC container and how it makes use of dependency injection patterns to make your code, well, RFI-free, and just better.</p>
+<hr>
+<p>The example in my intern project.</p>
+<p>1) create RepositoryServiceFactory</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RepositoryServiceFactory</span> </span>&#123;</span><br><span class="line">    IApp app;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RepositoryServiceFactory</span><span class="params">(IApp app)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.app = app;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// A factory method that handle off-switch feature</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IRepositoryService <span class="title">createRepositoryService</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(app.getBoolWithDefault(<span class="string">"service.enabled"</span>, <span class="keyword">false</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ScalableRepositoryServiceImpl();</span><br><span class="line">        &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> RepositoryServiceImpl();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2) add Bean injection in xx.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"IRepositoryService"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">factory-bean</span>=<span class="string">"repositoryServiceFactory"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">factory-method</span>=<span class="string">"createRepositoryService"</span></span></span><br><span class="line"><span class="tag"> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>in config.yml add<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service.enabled: true</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-Bean-management-through-IoC"><a href="#3-Bean-management-through-IoC" class="headerlink" title="3. Bean management through IoC"></a>3. Bean management through IoC</h2><p>Through its factory, Spring’s IoC container manages the objects that it is configured to instantiate. Spring’s management of the container objects adds flexibility and control to your application, and provides a central place of configuration management for your Plain Old Java Objects (POJO).</p>
+<blockquote>
+<p>For example, through Spring IoC you can configure the number of instances of the component – whether the component is a singleton or not – and at what point the component is created and destroyed in memory. In Spring, the initialization of a bean by the framework is exactly equivalent to using the new keyword to instantiate an object in Java code. Once the framework has instantiated the object, it manages the scope of the bean, based on its configuration.</p>
+</blockquote>
+<p>Because the IoC container is managing the beans, JNDI (Java Naming and Directory Interface) lookups that are typical in Java EE containers are no longer required, leaving your code container-agnostic and easier to unit test both inside and outside of the framework. And while you are coding to interfaces as part of good OO practice, Spring allows you to manage what implementations are used by leveraging dependency injection, resulting in cleaner, decoupled components.</p>
+<p>The IoC container can also be configured to receive instantiation and destruction callback events for a particular bean. Certain components such as a database connection pool obviously need to be initialized and destroyed when the application is shutdown. Instead of using your custom code, Spring can manage these lifecycle events.</p>
+<h2 id="4-A-practical-example-of-Inversion-of-Control"><a href="#4-A-practical-example-of-Inversion-of-Control" class="headerlink" title="4. A practical example of Inversion of Control"></a>4. A practical example of Inversion of Control</h2><p>As we may have mentioned, the core of the Spring Framework is its Inversion of Control (Ioc) container. The IoC container manages java objects – from instantiation to destruction – through its BeanFactory. Java components that are instantiated by the IoC container are called <code>beans</code>, and <code>the IoC container manages a bean&#39;s scope, lifecycle events, and any AOP features for which it has been configured and coded.</code></p>
+<h3 id="4-1-Basic-Bean-Creation"><a href="#4-1-Basic-Bean-Creation" class="headerlink" title="4.1. Basic Bean Creation"></a>4.1. Basic Bean Creation</h3><p>A Spring bean in the IoC container can typically be any POJO (plain old java object). POJOs in this context are defined simply as reusable modular components – they are complete entities unto themselves and the IoC container will resolve any dependencies they may need. </p>
+<p>Creating a Spring bean is as simple as coding your POJO and adding a bean configuration element to the Spring XML configuration file or annotating the POJO, although XML based configuration will be covered first.</p>
+<p>To start our tutorial, we’ll use a simple POJO, a class called <code>Message</code> which does not have an explicit constructor, just a getMessage() and setMessage(String message) method. Message has a zero argument constructor and a default message value.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultMessage</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String message = <span class="string">"Spring is fun."</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMessage</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.message = message;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span> = <span class="string">"message"</span> <span class="attr">class</span> = <span class="string">"xml.DefaultMessage"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-Basic-Constructor-Injection"><a href="#2-Basic-Constructor-Injection" class="headerlink" title="2. Basic Constructor Injection"></a>2. Basic Constructor Injection</h2><p><code>Through the Spring beans XML file you can configure your bean to initialize with an argument for the constructor, and then assign the arguments. Spring essentially “injects” the argument into your bean.</code> This is referred to as <code>constructor injection</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> xml;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConstructorMessage</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String message = <span class="keyword">null</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">ConstructorMessage</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">		message = msg;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> message;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMessage</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">		message = msg;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>The following example passes in the String message using a constructor. The class is the same as the one in Basic Bean Creation except the default message on the message variable has been cleared and is now set to null. A single parameter constructor has been added to set a message.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span> = <span class="string">"message"</span> <span class="attr">class</span> = <span class="string">"xml.ConstructorMessage"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span> = <span class="string">"Hello, Spring, from John!"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>The configuration for this bean is exactly the same as in the previous example, but now we have a new element, the constructor-arg. <code>The constructor-arg element injects a message into the bean using the constructor-arg element&#39;s value attribute.</code></p>
+<h2 id="3-Basic-Setter-Injection"><a href="#3-Basic-Setter-Injection" class="headerlink" title="3. Basic Setter Injection"></a>3. Basic Setter Injection</h2><p>The Spring IoC container also supports setter injection, which is the preferred method of dependency injection in Spring. Setter injection uses the set* methods in a class file to garner property names that are configurable in the spring XML config.</p>
+<p>From a configuration standpoint, setter injection is easier to read because the property name being set is assigned as an attribute to the bean, along with the value being injected.</p>
+<h3 id="Property-naming-tradition"><a href="#Property-naming-tradition" class="headerlink" title="Property naming tradition"></a>Property naming tradition</h3><pre><code>In most cases, Spring will lowercase the first letter after “set” in the method name and use the rest of the method name as-is for deducing the property name.
+</code></pre><p>So for example if there is a <code>setMessage() method</code> in your class, the property name you would use when setting <code>that property on a bean in the XML config is &#39;message&#39;</code>. If there is a <code>setFirstName() method</code> in your class, <code>the property name you would use when setting the value is &#39;firstName&#39;</code>.</p>
+<p>In cases where the letters after “set” are all uppercase, Spring will leave the property name as uppercase. So if you have <code>setXML() method</code> on a class, <code>the property name would be &#39;XML&#39;</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SetterInjectionMessage</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String message = <span class="keyword">null</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> message;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMessage</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">		message = msg;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span> = <span class="string">"message"</span> <span class="attr">class</span> = <span class="string">"xml.SetterInjectionMessage"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span> = <span class="string">"message"</span> <span class="attr">value</span> = <span class="string">"setter injection bean of message!"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">	</span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="4-Reference-Injection"><a href="#4-Reference-Injection" class="headerlink" title="4. Reference Injection"></a>4. Reference Injection</h2><p>So far we have only injected constructor and property values with static values, which is useful if you want to eliminate configuration files. </p>
+<p><code>Values can also be injected by reference -- one bean definition can be injected into another</code>. To do this, you use the constructor-arg or property’s <code>ref</code> attribute instead of the value attribute. <code>The ref attribute then refers to another bean definition&#39;s id</code>.</p>
+<p>In the following example, the first bean definition is a java.lang.String with the id springMessage. It is injected into the second bean definition by reference using the property element’s ref attribute.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span> = <span class="string">"springMessage"</span> <span class="attr">class</span> = <span class="string">"java.lang.String"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span> = <span class="string">"Reference Injection Bean Message!"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span> = <span class="string">"message"</span> <span class="attr">class</span> = <span class="string">"xml.SetterInjectionMessage"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span> = <span class="string">"message"</span> <span class="attr">ref</span> = <span class="string">"springMessage"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="5-A-Spring-Application"><a href="#5-A-Spring-Application" class="headerlink" title="5. A Spring Application"></a>5. A Spring Application</h2><p>Spring can be used in standard applications, web applications, full Java EE applications, and other containers, the only requirement is that you run a standard JVM. <code>Spring&#39;s resource abstraction allows you to load configuration files from wherever you&#39;d like -- the classpath, the file system, FTP, and HTTP locations</code>. You can also use Spring’s resource abstraction for loading other files required for your application.</p>
+<p>Once the IoC container is initialized, you can retrieve your Spring beans. By delegating as much bean creation as possible to Spring, there should only be a few key points where the application code needs to directly access the IoC container, and this is true even for legacy applications. If you’re developing a web application, you may not need to directly access the IoC container at all since it will automatically handle instantiation of your controller and any beans it requires.</p>
+<p>The lowest level implementation of the IoC container is the <code>BeanFactory</code>, but it is recommended to use an <code>ApplicationContext</code> for your application. The <code>ApplicationContext</code> is a subclass of the <code>BeanFactory</code> interface so it has all the functionality a <code>BeanFactory</code> has and more.` </p>
+<p>Unless you are writing an application that needs an extremely small memory footprint, <code>BeanFactory</code> shouldn’t be used directly.</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring-core-concept/" rel="tag"># spring core concept</a>
+          
+            <a href="/tags/dependency-injection/" rel="tag"># dependency injection</a>
+          
+            <a href="/tags/inversion-of-control/" rel="tag"># inversion of control</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/12/distributed system/zookeeper/ZooKeeper-Data-Model-Znode-Time-and-Stat/" rel="next" title="ZooKeeper Data Model - Znode, Time, and Stat">
+                <i class="fa fa-chevron-left"></i> ZooKeeper Data Model - Znode, Time, and Stat
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/14/system design/task queue/System-Design-Design-Task-Scheduling-System-in-Distributed-System/" rel="prev" title="System Design - Design Task Scheduling System in Distributed System">
+                System Design - Design Task Scheduling System in Distributed System <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Spring-and-IoC-Inversion-of-Control-反转控制"><span class="nav-number">1.</span> <span class="nav-text">1. Spring and IoC (Inversion of Control) 反转控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Dependency-Inversion-Precursor-to-Dependency-Injection"><span class="nav-number">1.1.</span> <span class="nav-text">Dependency Inversion: Precursor to Dependency Injection</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Dependency-Injection-to-the-rescue"><span class="nav-number">2.</span> <span class="nav-text">2. Dependency Injection to the rescue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Bean-management-through-IoC"><span class="nav-number">3.</span> <span class="nav-text">3. Bean management through IoC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-A-practical-example-of-Inversion-of-Control"><span class="nav-number">4.</span> <span class="nav-text">4. A practical example of Inversion of Control</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Basic-Bean-Creation"><span class="nav-number">4.1.</span> <span class="nav-text">4.1. Basic Bean Creation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Basic-Constructor-Injection"><span class="nav-number">5.</span> <span class="nav-text">2. Basic Constructor Injection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Basic-Setter-Injection"><span class="nav-number">6.</span> <span class="nav-text">3. Basic Setter Injection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Property-naming-tradition"><span class="nav-number">6.1.</span> <span class="nav-text">Property naming tradition</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Reference-Injection"><span class="nav-number">7.</span> <span class="nav-text">4. Reference Injection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-A-Spring-Application"><span class="nav-number">8.</span> <span class="nav-text">5. A Spring Application</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

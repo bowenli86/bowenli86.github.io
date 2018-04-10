@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="This article is about some inspirations I got from another blog pasted below.  That post discusses which algorithm is truly correct to randomly shuffle an array of integers (or shuffle pokers), and ho">
+<meta name="keywords" content="random,probability">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to test a program involving probability - take an algorithm that shuffles array as example">
+<meta property="og:url" content="https://bowenli86.github.io/2016/08/26/data structures and algorithms/probability/How-to-test-a-program-involving-probability-take-an-algorithm-that-shuffles-array-as-example/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="This article is about some inspirations I got from another blog pasted below.  That post discusses which algorithm is truly correct to randomly shuffle an array of integers (or shuffle pokers), and ho">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.518Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to test a program involving probability - take an algorithm that shuffles array as example">
+<meta name="twitter:description" content="This article is about some inspirations I got from another blog pasted below.  That post discusses which algorithm is truly correct to randomly shuffle an array of integers (or shuffle pokers), and ho">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/08/26/data structures and algorithms/probability/How-to-test-a-program-involving-probability-take-an-algorithm-that-shuffles-array-as-example/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>How to test a program involving probability - take an algorithm that shuffles array as example | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/08/26/data structures and algorithms/probability/How-to-test-a-program-involving-probability-take-an-algorithm-that-shuffles-array-as-example/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">How to test a program involving probability - take an algorithm that shuffles array as example</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-08-26T23:00:49-07:00">2016-08-26</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/data-structures-and-algorithms/" itemprop="url" rel="index"><span itemprop="name">data structures and algorithms</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/data-structures-and-algorithms/probability/" itemprop="url" rel="index"><span itemprop="name">probability</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>This article is about some inspirations I got from another blog pasted below.</p>
+<blockquote>
+<p>That post discusses which algorithm is truly correct to randomly shuffle an array of integers (or shuffle pokers), and how to test an algorithm to make sure it’s the right one.</p>
+</blockquote>
+<blockquote>
+<p>The core idea is that: when it comes to probability problem, there’s only one way to actually test that - statistics.</p>
+</blockquote>
+<p>For example, if a function can randomly return a number from 1 - 10, it means the probability of occurance of each individual number is 1/10. Therefore, if we run this function a huge amount of times (let’s say 1 million times), the distribution of returned values should be uniform.</p>
+<p>At least, the error rate should be reasonable, say 5% but not 20%. We can define ‘reasonable’ as:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Sample: 1 million times</span><br><span class="line">Max error rate: 10%</span><br><span class="line">The 95% Percentile: over 90% error rate is less than 5%</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Don’t use average error rate here as the post mentioned! I personally really hate using average of something. What’s the problem with ‘average’? You might ask. My question is: the average personal assets between you and Mark Zuckerburgh is pretty huge, so you a billinaire.</p>
+</blockquote>
+<p>And the corresponding test plan is:</p>
+<blockquote>
+<ul>
+<li>a test unit should run this function 100 thousand times (100 samples)</li>
+<li>run this test unit 1 million times for each sample</li>
+<li>if over 95% percentile of the 1m sample tests has an error rate less than 5%, we say this function is truly random</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>(From my point of view, there’s actually another way if the function given to you is not in a black box - you are able to give out the math probability equation)</p>
+</blockquote>
+<a id="more"></a>
+<hr>
+<p>The following content is from <a href="http://coolshell.cn/articles/8593.html" target="_blank" rel="noopener">http://coolshell.cn/articles/8593.html</a></p>
+<p>Use Google Translate if necessary</p>
+<hr>
+<p>我希望本文有助于你了解测试软件是一件很重要也是一件不简单的事。</p>
+<p>我们有一个程序，叫<code>ShuffleArray()</code>，是用来洗牌的，我见过N多千变万化的<code>ShuffleArray()</code>，但是似乎从来没人去想过怎么去测试这个算法。所以，我在面试中我经常会问应聘者如何测试<code>ShuffleArray()</code>，没想到这个问题居然难倒了很多有多年编程经验的人。对于这类的问题，其实，测试程序可能比算法更难写，代码更多。而这个问题正好可以加强一下我在<code>《我们需要专职的QA吗？》</code>中我所推崇的——开发人员更适合做测试的观点。</p>
+<h2 id="Algorithms"><a href="#Algorithms" class="headerlink" title="Algorithms"></a>Algorithms</h2><p>我们先来看几个算法（第一个用递归二分随机抽牌，第二个比较偷机取巧，第三个比较通俗易懂）</p>
+<h3 id="1-递归二分随机抽牌"><a href="#1-递归二分随机抽牌" class="headerlink" title="1. 递归二分随机抽牌"></a>1. 递归二分随机抽牌</h3><p>有一次是有一个朋友做了一个网页版的扑克游戏，他用到的算法就是想模拟平时我们玩牌时用手洗牌的方式，是用递归+二分法，我说这个程序恐怕不对吧。他觉得挺对的，说测试了没有问题。他的程序大致如下（原来的是用Javascript写的，我在这里凭记忆用C复现一下）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//递归二分方法</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">size_t</span> MAXLEN = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> TestArr[MAXLEN] = &#123;<span class="string">'A'</span>,<span class="string">'B'</span>,<span class="string">'C'</span>,<span class="string">'D'</span>,<span class="string">'E'</span>,<span class="string">'F'</span>,<span class="string">'G'</span>,<span class="string">'H'</span>,<span class="string">'I'</span>,<span class="string">'J'</span>&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> RecurArr[MAXLEN]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ShuffleArray_Recursive_Tmp</span><span class="params">(<span class="keyword">char</span>* arr, <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(cnt &gt; MAXLEN || len &lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">int</span> pos = rand() % len;</span><br><span class="line">    RecurArr[cnt++] = arr[pos];</span><br><span class="line">    <span class="keyword">if</span> (len==<span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line">    ShuffleArray_Recursive_Tmp(arr, pos);</span><br><span class="line">    ShuffleArray_Recursive_Tmp(arr+pos+<span class="number">1</span>, len-pos<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ShuffleArray_Recursive</span><span class="params">(<span class="keyword">char</span>* arr, <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">memset</span>(RecurArr, <span class="number">0</span>, <span class="keyword">sizeof</span>(RecurArr));</span><br><span class="line">    cnt=<span class="number">0</span>;</span><br><span class="line">    ShuffleArray_Recursive_Tmp(arr, len);</span><br><span class="line">    <span class="built_in">memcpy</span>(arr, RecurArr, len);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> temp[MAXLEN]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">5</span>; i++) &#123;</span><br><span class="line">        <span class="built_in">strncpy</span>(temp, TestArr, MAXLEN);</span><br><span class="line">        ShuffleArray_Recursive((<span class="keyword">char</span>*)temp, MAXLEN);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>随便测试几次，还真像那么回事：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">第一次：D C A B H E G F I J</span><br><span class="line">第二次：A G D B C E F J H I</span><br><span class="line">第三次：A B H F C E D G I J</span><br><span class="line">第四次：J I F B A D C E H G</span><br><span class="line">第五次：F B A D C E H G I J</span><br></pre></td></tr></table></figure>
+<h3 id="2-快排Hack法"><a href="#2-快排Hack法" class="headerlink" title="2. 快排Hack法"></a>2. 快排Hack法</h3><p>让我们再看一个hack快排的洗牌程序（只看算法，省去别的代码）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">( <span class="keyword">const</span> <span class="keyword">void</span> *a, <span class="keyword">const</span> <span class="keyword">void</span> *b )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> rand() % <span class="number">3</span><span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ShuffleArray_Sort</span><span class="params">(<span class="keyword">char</span>* arr, <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    qsort( (<span class="keyword">void</span> *)arr, (<span class="keyword">size_t</span>)len, <span class="keyword">sizeof</span>(<span class="keyword">char</span>), compare );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行个几次，感觉得还像那么回事：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">第一次：H C D J F E A G B I</span><br><span class="line">第二次：B F J D C E I H G A</span><br><span class="line">第三次：C G D E J F B I A H</span><br><span class="line">第四次：H C B J D F G E I A</span><br><span class="line">第五次：D B C F E A I H G J</span><br></pre></td></tr></table></figure>
+<p>看不出有什么破绽。</p>
+<h3 id="3-大多数人的实现"><a href="#3-大多数人的实现" class="headerlink" title="3. 大多数人的实现"></a>3. 大多数人的实现</h3><p>下面这个算法是大多数人的实现，就是<code>for</code>循环一次，然后随机交换两个数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ShuffleArray_General</span><span class="params">(<span class="keyword">char</span>* arr, <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> suff_time = len;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> idx=<span class="number">0</span>; idx&lt;suff_time; idx++) &#123;</span><br><span class="line">        <span class="keyword">int</span> i = rand() % len;</span><br><span class="line">        <span class="keyword">int</span> j = rand() % len;</span><br><span class="line">        <span class="keyword">char</span> temp = arr[i];</span><br><span class="line">        arr[i] = arr[j];</span><br><span class="line">        arr[j] = temp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>跑起来也还不错，洗得挺好的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">第一次：G F C D A J B I H E</span><br><span class="line">第二次：D G J F E I A H C B</span><br><span class="line">第三次：C J E F A D G B H I</span><br><span class="line">第四次：H D C F A E B J I G</span><br><span class="line">第五次：E A J F B I H G D C</span><br></pre></td></tr></table></figure>
+<p>但是上述三个算法哪个的效果更好？好像都是对的。一般的QA或是程序员很有可能就这样把这个功能Pass了。但是事情并没有那么简单……</p>
+<h2 id="如何测试-How-to-test"><a href="#如何测试-How-to-test" class="headerlink" title="如何测试 How to test"></a>如何测试 How to test</h2><p>在做测试之前，我们还需要了解一下一个基本知识——PC机上是做不出真随机数的，只能做出伪随机数。真随机数需要硬件支持。但是不是这样我们就无法测试了呢，不是的。我们依然可以测试。</p>
+<blockquote>
+<p>我们知道，洗牌洗得好不好，主要是看是不是够随机。那么如何测试随机性呢？</p>
+</blockquote>
+<blockquote>
+<p>一到概率问题，我们只有一个方法来做测试，那就是用统计的方式.</p>
+</blockquote>
+<p>试想，我们有个随机函数<code>rand()</code>返回 1 到 10 中的一个数，如果够随机的话，每个数返回的概率都应该是一样的，也就是说每个数都应该有10分之1的概率会被返回。</p>
+<p>也就是说，你调用<code>rand()</code>函数100次，其中，每个数出现的次数大约都在10次左右。（注意：我用了左右，这说明概率并不是很准确的）不应该有一个数出现了15次以上，另一个在5次以下，要是这样的话，这个函数就是错的。</p>
+<p>举一反三，测试洗牌程序也一样，需要通过概率的方式来做统计，是不是每张牌出现在第一个位置的次数都是差不多的。</p>
+<p>于是，这样一来上面的程序就可以很容易做测试了。</p>
+<h2 id="Test-Result"><a href="#Test-Result" class="headerlink" title="Test Result"></a>Test Result</h2><p>下面是测试结果（测试样本1000次——列是每个位置出现的次数，行是各个字符的统计，出现概率应该是1/10，也就是100次）：</p>
+<h3 id="1-递归随机抽牌的方法"><a href="#1-递归随机抽牌的方法" class="headerlink" title="1. 递归随机抽牌的方法"></a>1. 递归随机抽牌的方法</h3><p>很明显，这个洗牌程序太有问题。算法是错的！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">     1    2    3    4    5    6    7    8    9    10</span><br><span class="line">----------------------------------------------------</span><br><span class="line">A | 101  283  317  208   65   23    3    0    0    0</span><br><span class="line">B | 101  191  273  239  127   54   12    2    1    0</span><br><span class="line">C | 103  167  141  204  229  115   32    7    2    0</span><br><span class="line">D | 103  103   87  128  242  195  112   26    3    1</span><br><span class="line">E | 104   83   62   67  116  222  228   93   22    3</span><br><span class="line">F |  91   58   34   60   69  141  234  241   65    7</span><br><span class="line">G |  93   43   35   19   44  102  174  274  185   31</span><br><span class="line">H |  94   28   27   27   46   68   94  173  310  133</span><br><span class="line">I | 119   27   11   30   28   49   64   96  262  314</span><br><span class="line">J |  91   17   13   18   34   31   47   88  150  511</span><br></pre></td></tr></table></figure>
+<h3 id="2-快排Hack法-1"><a href="#2-快排Hack法-1" class="headerlink" title="2. 快排Hack法"></a>2. 快排Hack法</h3><p>看看对角线（从左上到右下）上的数据，很离谱！所以，这个算法也是错的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">      1    2    3    4    5    6    7    8    9    10</span><br><span class="line">-----------------------------------------------------</span><br><span class="line">A |   74  108  123  102   93  198   40   37   52  173</span><br><span class="line">B |  261  170  114   70   49   28   37   76  116   79</span><br><span class="line">C |  112  164  168  117   71   37   62   96  116   57</span><br><span class="line">D |   93   91  119  221  103   66   91   98   78   40</span><br><span class="line">E |   62   60   82   90  290  112   95   98   71   40</span><br><span class="line">F |   46   60   63   76   81  318   56   42   70  188</span><br><span class="line">G |   72   57   68   77   83   39  400  105   55   44</span><br><span class="line">H |   99   79   70   73   87   34  124  317   78   39</span><br><span class="line">I |  127  112  102   90   81   24   57   83  248   76</span><br><span class="line">J |   54   99   91   84   62  144   38   48  116  264</span><br></pre></td></tr></table></figure>
+<h3 id="3-大多数人的算法"><a href="#3-大多数人的算法" class="headerlink" title="3. 大多数人的算法"></a>3. 大多数人的算法</h3><p>我们再来看看大多数人的算法。还是对角线上的数据有问题，所以，还是错的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">      1    2    3    4    5    6    7    8    9    10</span><br><span class="line">-----------------------------------------------------</span><br><span class="line">A |  178   98   92   82  101   85   79  105   87   93</span><br><span class="line">B |   88  205   90   94   77   84   93   86  106   77</span><br><span class="line">C |   93   99  185   96   83   87   98   88   82   89</span><br><span class="line">D |  105   85   89  190   92   94  105   73   80   87</span><br><span class="line">E |   97   74   85   88  204   91   80   90  100   91</span><br><span class="line">F |   85   84   90   91   96  178   90   91  105   90</span><br><span class="line">G |   81   84   84  104  102  105  197   75   79   89</span><br><span class="line">H |   84   99  107   86   82   78   92  205   79   88</span><br><span class="line">I |  102   72   88   94   87  103   94   92  187   81</span><br><span class="line">J |   87  100   90   75   76   95   72   95   95  215</span><br></pre></td></tr></table></figure>
+<h2 id="正确的算法-The-correct-algorithm"><a href="#正确的算法-The-correct-algorithm" class="headerlink" title="正确的算法 The correct algorithm"></a>正确的算法 The correct algorithm</h2><p>下面，我们来看看性能高且正确的算法—— <code>Fisher_Yates算法</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void ShuffleArray_Fisher_Yates(char* arr, int len)</span><br><span class="line">&#123;</span><br><span class="line">    int i = len, j;</span><br><span class="line">    char temp;</span><br><span class="line"> </span><br><span class="line">    if ( i == 0 ) return;</span><br><span class="line">    while ( i-- ) &#123;</span><br><span class="line">        j = rand() % (i+1);</span><br><span class="line">        temp = arr[i];</span><br><span class="line">        arr[i] = arr[j];</span><br><span class="line">        arr[j] = temp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个算法不难理解，看看测试效果（效果明显比前面的要好）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">      1    2    3    4    5    6    7    8    9    10</span><br><span class="line">-----------------------------------------------------</span><br><span class="line">A |  107   98   83  115   89  103  105   99   94  107</span><br><span class="line">B |   91  106   90  102   88  100  102   97  112  112</span><br><span class="line">C |  100  107   99  108  101   99   86   99  101  100</span><br><span class="line">D |   96   85  108  101  117  103  102   96  108   84</span><br><span class="line">E |  106   89  102   86   88  107  114  109  100   99</span><br><span class="line">F |  109   96   87   94   98  102  109  101   92  102</span><br><span class="line">G |   94   95  119  110   97  112   89  101   89   94</span><br><span class="line">H |   93  102  102  103  100   89  107  105  101   98</span><br><span class="line">I |   99  110  111  101  102   79  103   89  104  102</span><br><span class="line">J |  105  112   99   99  108  106   95   95   99   82</span><br></pre></td></tr></table></figure>
+<p>但是我们可以看到还是不完美。因为我们使用的<code>rand()</code>是伪随机数，不过已经很不错的。最大的误差在20%左右。</p>
+<p>我们再来看看洗牌100万次的统计值，你会看到误差在6%以内了。这个对于伪随机数生成的程序已经很不错了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">      1       2     3       4      5      6      7      8     9      10</span><br><span class="line">-------------------------------------------------------------------------</span><br><span class="line">A | 100095  99939 100451  99647  99321 100189 100284  99565 100525  99984</span><br><span class="line">B |  99659 100394  99699 100436  99989 100401  99502 100125 100082  99713</span><br><span class="line">C |  99938  99978 100384 100413 100045  99866  99945 100025  99388 100018</span><br><span class="line">D |  99972  99954  99751 100112 100503  99461  99932  99881 100223 100211</span><br><span class="line">E | 100041 100086  99966  99441 100401  99958  99997 100159  99884 100067</span><br><span class="line">F | 100491 100294 100164 100321  99902  99819  99449 100130  99623  99807</span><br><span class="line">G |  99822  99636  99924 100172  99738 100567 100427  99871 100125  99718</span><br><span class="line">H |  99445 100328  99720  99922 100075  99804 100127  99851 100526 100202</span><br><span class="line">I | 100269 100001  99542  99835 100070  99894 100229 100181  99718 100261</span><br><span class="line">J | 100268  99390 100399  99701  99956 100041 100108 100212  99906 100019</span><br></pre></td></tr></table></figure>
+<h2 id="如何写测试案例"><a href="#如何写测试案例" class="headerlink" title="如何写测试案例"></a>如何写测试案例</h2><p>测试程序其实很容易写了。就是，设置一个样本大小，做一下统计，然后计算一下误差值是否在可以容忍的范围内。比如：</p>
+<blockquote>
+<p>样本：100万次<br>最大误差：10%以内<br>平均误差：5%以内 （或者：90%以上的误差要小于5%)</p>
+</blockquote>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>其实，以上的测试只是测试了牌在各个位置的概率。这个还不足够好。因为还可能会现在有Pattern的情况。如：每次洗牌出来的都是一个循环顺序数组。这完全可以满足我上面的测试条件。但是那明显是错的。所以，还需要统计每种排列的出现的次数，看看是不是均匀。但是，如果这些排列又是以某种规律出现的呢？看来，这没完没了了。</p>
+<p>测试的确是一个很重要，并不简单的事情。谢谢所有参与讨论的人。</p>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><p>之前忘贴了一个模拟我们玩牌洗牌的算法，现补充如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ShuffleArray_Manual</span><span class="params">(<span class="keyword">char</span>* arr, <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> mid = len / <span class="number">2</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n=<span class="number">0</span>; n&lt;<span class="number">5</span>; n++)&#123;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//两手洗牌</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;mid; i+=<span class="number">2</span>)&#123;</span><br><span class="line">            <span class="keyword">char</span> tmp = arr[i];</span><br><span class="line">            arr[i] = arr[mid+i];</span><br><span class="line">            arr[mid+i] = tmp;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//随机切牌</span></span><br><span class="line">        <span class="keyword">char</span> *buf = (<span class="keyword">char</span>*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>)*len);</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;<span class="number">5</span>; j++) &#123;</span><br><span class="line">            <span class="keyword">int</span> start= rand() % (len<span class="number">-1</span>) + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> numCards= rand()% (len/<span class="number">2</span>) + <span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">if</span> (start + numCards &gt; len )&#123;</span><br><span class="line">                numCards = len - start;</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">            <span class="built_in">memset</span>(buf, <span class="number">0</span>, len);</span><br><span class="line">            <span class="built_in">strncpy</span>(buf, arr, start);</span><br><span class="line">            <span class="built_in">strncpy</span>(arr, arr+start, numCards);</span><br><span class="line">            <span class="built_in">strncpy</span>(arr+numCards, buf, start);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">free</span>(buf);</span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们来看看测试结果：（10万次）效果更好一些，误差在2%以内了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">      1       2     3       4      5      6      7      8     9      10</span><br><span class="line">-------------------------------------------------------------------------</span><br><span class="line">A |  10002   9998   9924  10006  10048  10200   9939   9812  10080   9991</span><br><span class="line">B |   9939   9962  10118  10007   9974  10037  10149  10052   9761  10001</span><br><span class="line">C |  10054  10100  10050   9961   9856   9996   9853  10016   9928  10186</span><br><span class="line">D |   9851   9939   9852  10076  10208  10003   9974  10052   9992  10053</span><br><span class="line">E |  10009   9915  10050  10037   9923  10094  10078  10059   9880   9955</span><br><span class="line">F |  10151  10115  10113   9919   9844   9896   9891   9904  10225   9942</span><br><span class="line">G |  10001  10116  10097  10030  10061   9993   9891   9922   9889  10000</span><br><span class="line">H |  10075  10033   9866   9857  10170   9854  10062  10078  10056   9949</span><br><span class="line">I |  10045   9864   9879  10066   9930   9919  10085  10104  10095  10013</span><br><span class="line">J |   9873   9958  10051  10041   9986  10008  10078  10001  10094   9910</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/random/" rel="tag"># random</a>
+          
+            <a href="/tags/probability/" rel="tag"># probability</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/26/data structures and algorithms/interview/Facebook-User-Group-and-Bipartite-Graph/" rel="next" title="Facebook User Group and Bipartite Graph">
+                <i class="fa fa-chevron-left"></i> Facebook User Group and Bipartite Graph
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/27/best practices/How-to-compare-float-numbers/" rel="prev" title="How to compare float numbers">
+                How to compare float numbers <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Algorithms"><span class="nav-number">1.</span> <span class="nav-text">Algorithms</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-递归二分随机抽牌"><span class="nav-number">1.1.</span> <span class="nav-text">1. 递归二分随机抽牌</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-快排Hack法"><span class="nav-number">1.2.</span> <span class="nav-text">2. 快排Hack法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-大多数人的实现"><span class="nav-number">1.3.</span> <span class="nav-text">3. 大多数人的实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何测试-How-to-test"><span class="nav-number">2.</span> <span class="nav-text">如何测试 How to test</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Test-Result"><span class="nav-number">3.</span> <span class="nav-text">Test Result</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-递归随机抽牌的方法"><span class="nav-number">3.1.</span> <span class="nav-text">1. 递归随机抽牌的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-快排Hack法-1"><span class="nav-number">3.2.</span> <span class="nav-text">2. 快排Hack法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-大多数人的算法"><span class="nav-number">3.3.</span> <span class="nav-text">3. 大多数人的算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正确的算法-The-correct-algorithm"><span class="nav-number">4.</span> <span class="nav-text">正确的算法 The correct algorithm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何写测试案例"><span class="nav-number">5.</span> <span class="nav-text">如何写测试案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意"><span class="nav-number">6.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附录"><span class="nav-number">7.</span> <span class="nav-text">附录</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

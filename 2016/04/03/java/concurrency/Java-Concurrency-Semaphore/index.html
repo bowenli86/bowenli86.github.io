@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="java.util.concurrent.SemaphoreA Semaphore is a thread synchronization construct that can be used either to send signals between threads to avoid missed signals, or to guard a critical section like you">
+<meta name="keywords" content="java concurrency,java semaphore,semaphore tutorial">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Concurrency - Semaphore">
+<meta property="og:url" content="https://bowenli86.github.io/2016/04/03/java/concurrency/Java-Concurrency-Semaphore/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="java.util.concurrent.SemaphoreA Semaphore is a thread synchronization construct that can be used either to send signals between threads to avoid missed signals, or to guard a critical section like you">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.531Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java Concurrency - Semaphore">
+<meta name="twitter:description" content="java.util.concurrent.SemaphoreA Semaphore is a thread synchronization construct that can be used either to send signals between threads to avoid missed signals, or to guard a critical section like you">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/04/03/java/concurrency/Java-Concurrency-Semaphore/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java Concurrency - Semaphore | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/04/03/java/concurrency/Java-Concurrency-Semaphore/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java Concurrency - Semaphore</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-04-03T23:51:31-07:00">2016-04-03</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/concurrency/" itemprop="url" rel="index"><span itemprop="name">concurrency</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="java-util-concurrent-Semaphore"><a href="#java-util-concurrent-Semaphore" class="headerlink" title="java.util.concurrent.Semaphore"></a>java.util.concurrent.Semaphore</h1><p>A <code>Semaphore</code> is a thread synchronization construct that can be used either <code>to send signals between threads to avoid missed signals</code>, or <code>to guard a critical section like you would with a lock</code>.</p>
+<p>A counting semaphore. Conceptually, a semaphore maintains <code>a set of permits</code>, or <code>a given number of &quot;permits&quot;</code>, with the following characteristics.</p>
+<blockquote>
+<ul>
+<li>For each call to <code>acquire()</code>, a permit is taken by the calling thread. </li>
+<li>For each call to <code>release()</code>, a permit is returned to the semaphore. </li>
+<li>Thus, at most N threads can pass the <code>acquire()</code> method without any <code>release()</code> calls, where N is the number of permits the semaphore was initialized with. </li>
+<li>Each <code>acquire()</code> blocks if necessary until a permit is available, and then takes it. </li>
+<li>Each <code>release()</code> adds a permit, potentially releasing a blocking acquirer. </li>
+</ul>
+</blockquote>
+<blockquote>
+<p>It safely allows us to ensure that only n processes can access a certain resource at a given time.</p>
+</blockquote>
+<p>However, no actual permit objects are used; the <code>Semaphore</code> just keeps a count of the number available and acts accordingly. The permits are just a simple counter. Nothing fancy here.</p>
+<h1 id="Semaphore-Classification"><a href="#Semaphore-Classification" class="headerlink" title="Semaphore Classification"></a>Semaphore Classification</h1><p>The semaphores in computer science can be broadly classified as :</p>
+<blockquote>
+<ul>
+<li>Binary Semaphore</li>
+<li>Counting Semaphore</li>
+</ul>
+</blockquote>
+<p><code>A semaphore initialized to one (1)</code>, and which is used such that it only has at most one permit available, <code>can serve as a mutual exclusion lock</code>. This is more commonly known as a <code>binary semaphore</code>, because it only has two states: one permit available, or zero permits available. When used in this way, <code>the binary semaphore has the property</code> (unlike many Lock implementations), <code>that the &quot;lock&quot; can be released by a thread other than the owner</code> <code>(as semaphores have no notion of ownership)</code>. <code>This can be useful in some specialized contexts, such as deadlock recovery</code>.</p>
+<h1 id="Build-a-simple-Semaphore"><a href="#Build-a-simple-Semaphore" class="headerlink" title="Build a simple Semaphore"></a>Build a simple Semaphore</h1><p>Here is a simple Semaphore implementation:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Semaphore</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">boolean</span> signal = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		signal = <span class="keyword">true</span>;</span><br><span class="line">		notify();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>&#123;</span><br><span class="line">		<span class="keyword">while</span>(!signal) &#123;</span><br><span class="line">			wait();</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		signal = <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>The <code>acquire()</code> method sends a signal which is stored internally in the <code>Semaphore</code>. The <code>release()</code> method waits for a signal. When received the signal flag is cleared again, and the <code>release()</code> method exited.</p>
+</blockquote>
+<p>Using a semaphore like this you can avoid missed signals. You will call <code>acquire()</code> instead of <code>notify()</code> and <code>release()</code> instead of <code>wait()</code>. If the call to <code>acquire()</code> happens before the call to <code>release()</code> the thread calling <code>release()</code> will still know that <code>acquire()</code> was called, because the signal is stored internally in the signal variable. This is not the case with <code>wait()</code> and <code>notify()</code>.</p>
+<p>The names <code>acquire()</code> and <code>release()</code> may seem a bit odd when using a semaphore for signaling. The names origin from the use of semaphores as locks, as explained later in this text. In that case the names make more sense.</p>
+<h1 id="Building-a-Counting-Semaphore"><a href="#Building-a-Counting-Semaphore" class="headerlink" title="Building a Counting Semaphore"></a>Building a Counting Semaphore</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CountingSemaphore</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> signals = <span class="number">0</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">take</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		signals++;</span><br><span class="line">		notify();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>&#123;</span><br><span class="line">		<span class="keyword">while</span>(signals == <span class="number">0</span>) &#123;</span><br><span class="line">			wait();</span><br><span class="line">		&#125;</span><br><span class="line">		signals--;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Building-a-Bounded-Semaphore"><a href="#Building-a-Bounded-Semaphore" class="headerlink" title="Building a Bounded Semaphore"></a>Building a Bounded Semaphore</h1><p>The <code>CoutingSemaphore</code> has no upper bound on how many signals it can store. We can change the semaphore implementation to have an upper bound, like this:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBoundedSemaphore</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> signal;</span><br><span class="line">    <span class="keyword">int</span> capacity;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyBoundedSemaphore</span><span class="params">(<span class="keyword">int</span> cap)</span> </span>&#123;</span><br><span class="line">        signal = <span class="number">0</span>;</span><br><span class="line">        capacity = cap;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * Notice how the acquire() method now blocks if the number of signals is equal to the upper bound.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * Not until a thread has called release() will the thread calling take() be allowed to deliver its signal,</span></span><br><span class="line"><span class="comment">    * if the BoundedSemaphore has reached its upper signal limit.</span></span><br><span class="line"><span class="comment">    * </span></span><br><span class="line"><span class="comment">    * If the queue size is not equal to either bound when enqueue() or dequeue() is called,</span></span><br><span class="line"><span class="comment">    * there can be no threads waiting to either enqueue or dequeue items.</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(signal == capacity) &#123;</span><br><span class="line">            wait();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(signal == <span class="number">0</span>) &#123;</span><br><span class="line">            notifyAll();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        signal ++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(signal == <span class="number">0</span>) &#123;</span><br><span class="line">            wait();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(signal == capacity) &#123;</span><br><span class="line">            notifyAll();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        signal --;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Notice how the <code>take()</code> method now blocks if the number of signals is equal to the upper bound. Not until a thread has called <code>release()</code> will the thread calling <code>take()</code> be allowed to deliver its signal, if the <code>BoundedSemaphore</code> has reached its upper signal limit.</p>
+<h2 id="Interview"><a href="#Interview" class="headerlink" title="Interview"></a>Interview</h2><p>I had one interview that requires to build a Semaphore class with the following primitives</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Semaphore</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">increment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">decrement</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Semaphore</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> counter;</span><br><span class="line">	<span class="keyword">private</span> ILock lock;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Semaphore</span><span class="params">(<span class="keyword">int</span> v)</span> </span>&#123;</span><br><span class="line">		counter = v;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">increment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		lock.enter();</span><br><span class="line">		</span><br><span class="line">		lock.leave();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">decrement</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		lock.enter();</span><br><span class="line">		</span><br><span class="line">		lock.leave();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Here is a simple Semaphore implementation:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">class ILock &#123;</span><br><span class="line">	enter();</span><br><span class="line">	leave();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class IEvent &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class IMutex &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="Semaphore-Usage"><a href="#Semaphore-Usage" class="headerlink" title="Semaphore Usage"></a>Semaphore Usage</h2><p>As semaphore typically has two uses:</p>
+<blockquote>
+<ul>
+<li>To guard a critical section against entry by more than N threads at a time.</li>
+<li>To send signals between two threads.</li>
+</ul>
+</blockquote>
+<h3 id="1-Guarding-Critical-Sections"><a href="#1-Guarding-Critical-Sections" class="headerlink" title="1) Guarding Critical Sections"></a>1) Guarding Critical Sections</h3><p>If you use a semaphore to guard a critical section, the thread trying to enter the critical section will typically first try to acquire a permit, enter the critical section, and then release the permit again after. Like this:</p>
+<p>Semaphores are often used to <code>restrict the number of threads than can access some (physical or logical) resource</code>. </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Semaphore semaphore = <span class="keyword">new</span> Semaphore(<span class="number">1</span>);</span><br><span class="line"><span class="comment">//critical section</span></span><br><span class="line">semaphore.acquire();</span><br><span class="line">...</span><br><span class="line">semaphore.release();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pool</span> </span>&#123;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_AVAILABLE = <span class="number">100</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">final</span> Semaphore available = <span class="keyword">new</span> Semaphore(MAX_AVAILABLE, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> Object <span class="title">getItem</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">     available.acquire();</span><br><span class="line">     <span class="keyword">return</span> getNextAvailableItem();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">putItem</span><span class="params">(Object x)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">if</span> (markAsUnused(x))</span><br><span class="line">       available.release();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Not a particularly efficient data structure; just for demo</span></span><br><span class="line">   <span class="keyword">protected</span> Object[] items = ... whatever kinds of items being managed</span><br><span class="line">   <span class="keyword">protected</span> <span class="keyword">boolean</span>[] used = <span class="keyword">new</span> <span class="keyword">boolean</span>[MAX_AVAILABLE];</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">synchronized</span> Object <span class="title">getNextAvailableItem</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; MAX_AVAILABLE; ++i) &#123;</span><br><span class="line">       <span class="keyword">if</span> (!used[i]) &#123;</span><br><span class="line">          used[i] = <span class="keyword">true</span>;</span><br><span class="line">          <span class="keyword">return</span> items[i];</span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> <span class="keyword">null</span>; <span class="comment">// not reached</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">markAsUnused</span><span class="params">(Object item)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; MAX_AVAILABLE; ++i) &#123;</span><br><span class="line">       <span class="keyword">if</span> (item == items[i]) &#123;</span><br><span class="line">          <span class="keyword">if</span> (used[i]) &#123;</span><br><span class="line">            used[i] = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">          &#125; <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>With the above example. Before obtaining an item each thread must acquire a permit from the semaphore, guaranteeing that an item is available for use. When the thread has finished with the item it is returned back to the pool and a permit is returned to the semaphore, allowing another thread to acquire that item. Note that no synchronization lock is held when acquire() is called as that would prevent an item from being returned to the pool. The semaphore encapsulates the synchronization needed to restrict access to the pool, separately from any synchronization needed to maintain the consistency of the pool itself.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SemaphoreDemo</span> </span>&#123;</span><br><span class="line">    Semaphore semaphore = <span class="keyword">new</span> Semaphore(<span class="number">10</span>);</span><br><span class="line">		</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	    <span class="keyword">try</span> &#123;</span><br><span class="line">           semaphore.acquire();</span><br><span class="line">	        System.out.println(<span class="string">"Locks acquired"</span>);</span><br><span class="line">	        System.out.println(<span class="string">"Locks remaining &gt;&gt; "</span> +semaphore.availablePermits());</span><br><span class="line">        &#125; <span class="keyword">catch</span>(InterruptedException ie) &#123;</span><br><span class="line">	        ie.printStackTrace();</span><br><span class="line">	    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	        semaphore.release();</span><br><span class="line">	        System.out.println(<span class="string">"Locks Released"</span>);</span><br><span class="line">	    &#125;	    </span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	    <span class="keyword">final</span> SemaphoreDemo semaphoreDemo = <span class="keyword">new</span> SemaphoreDemo();</span><br><span class="line">	    Thread thread = <span class="keyword">new</span> Thread()&#123;</span><br><span class="line">    	    <span class="meta">@Override</span></span><br><span class="line">    	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	           semaphoreDemo.printLock();</span><br><span class="line">    	    &#125;</span><br><span class="line">    	&#125;;</span><br><span class="line">	    thread.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Locks acquired</span><br><span class="line">Locks remaining &gt;&gt; <span class="number">9</span></span><br><span class="line">Locks Released</span><br></pre></td></tr></table></figure>
+<h3 id="2-Sending-Signals-Between-Threads"><a href="#2-Sending-Signals-Between-Threads" class="headerlink" title="2) Sending Signals Between Threads"></a>2) Sending Signals Between Threads</h3><p>If you use a semaphore to send signals between threads, then you would typically have one thread call the <code>acquire()</code> method, and the other thread to call the <code>release()</code> method.</p>
+<blockquote>
+<p>If no permits are available, the <code>acquire()</code> call will block until a permit is released by another thread. Similarly, a <code>release()</code> calls is blocked if no more permits can be released into this semaphore.</p>
+</blockquote>
+<p>Thus it is possible to coordinate threads. For instance, if acquire was called after <code>Thread 1</code> had inserted an object in a shared list, and <code>Thread 2</code> had called <code>release()</code> just before taking an object from that list, you had essentially created a blocking queue. The number of permits available in the semaphore would correspond to the maximum number of elements the blocking queue could hold.</p>
+<p>Here is a simplified example of two threads signaling each other using a Semaphore:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Semaphore semaphore = <span class="keyword">new</span> Semaphore();</span><br><span class="line"></span><br><span class="line">SendingThread sender = <span class="keyword">new</span> SendingThread(semaphore);</span><br><span class="line"></span><br><span class="line">ReceivingThread receiver = <span class="keyword">new</span> ReceivingThread(semaphore);</span><br><span class="line"></span><br><span class="line">receiver.start();</span><br><span class="line">sender.start();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SendingThread</span> </span>&#123;</span><br><span class="line">  Semaphore semaphore = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">SendingThread</span><span class="params">(Semaphore semaphore)</span></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.semaphore = semaphore;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">      <span class="comment">//do something, then signal</span></span><br><span class="line">      <span class="keyword">this</span>.semaphore.take();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RecevingThread</span> </span>&#123;</span><br><span class="line">  Semaphore semaphore = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">ReceivingThread</span><span class="params">(Semaphore semaphore)</span></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.semaphore = semaphore;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">      <span class="keyword">this</span>.semaphore.release();</span><br><span class="line">      <span class="comment">//receive signal, then do something...</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Fairness"><a href="#Fairness" class="headerlink" title="Fairness"></a>Fairness</h2><p>The constructor for this class optionally accepts <code>a fairness parameter</code>. When set false, this class makes no guarantees about the order in which threads acquire permits. In particular, barging is permitted, that is, a thread invoking acquire() can be allocated a permit ahead of a thread that has been waiting - logically the new thread places itself at the head of the queue of waiting threads. When fairness is set true, the semaphore guarantees that threads invoking any of the acquire methods are selected to obtain permits in the order in which their invocation of those methods was processed (first-in-first-out; FIFO). Note that FIFO ordering necessarily applies to specific internal points of execution within these methods. So, it is possible for one thread to invoke acquire before another, but reach the ordering point after the other, and similarly upon return from the method. Also note that the untimed tryAcquire methods do not honor the fairness setting, but will take any permits that are available.</p>
+<p><code>Generally, semaphores used to control resource access should be initialized as fair</code>, to ensure that no thread is starved out from accessing a resource. When using semaphores for other kinds of synchronization control, the throughput advantages of non-fair ordering often outweigh fairness considerations.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Semaphore semaphore = new Semaphore(1, true);</span><br></pre></td></tr></table></figure>
+<p>This class also provides convenience methods to acquire and release multiple permits at a time. Beware of the increased risk of indefinite postponement when these methods are used without fairness set true.</p>
+<p>Memory consistency effects: Actions in a thread prior to calling a “release” method such as release() happen-before actions following a successful “acquire” method such as acquire() in another thread.</p>
+<h2 id="Limiting-connections"><a href="#Limiting-connections" class="headerlink" title="Limiting connections"></a>Limiting connections</h2><p>Perhaps we have a process that downloads resources for us periodically via HTTP. We don’t want to spam any of the hosts and at the same time, we want to limit how many connections we are making so we don’t exhaust the limited file handles or outbound connections we are permitted. A simple way to do this would be with a semaphore:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConnectionLimiter</span> </span>&#123;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">final</span> Semaphore semaphore;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="title">ConnectionLimiter</span><span class="params">(<span class="keyword">int</span> maxConcurrentRequests)</span> </span>&#123;</span><br><span class="line">       semaphore = <span class="keyword">new</span> Semaphore(maxConcurrentRequests);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> URLConnection <span class="title">acquire</span><span class="params">(URL url)</span> <span class="keyword">throws</span> InterruptedException,</span></span><br><span class="line"><span class="function">                                                IOException </span>&#123;</span><br><span class="line">       semaphore.acquire();</span><br><span class="line">       <span class="keyword">return</span> url.openConnection();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">(URLConnection conn)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           <span class="comment">/*</span></span><br><span class="line"><span class="comment">           * ... clean up here</span></span><br><span class="line"><span class="comment">           */</span></span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           semaphore.release();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Dangers"><a href="#Dangers" class="headerlink" title="Dangers"></a>Dangers</h2><p>As with most methods of locking or synchronization, there are some potential issues.</p>
+<p>The number one thing to remember is, <code>always release what you acquire</code>. This is done by using try..finally constructs.</p>
+<p>There are other less obvious problems that can befall you when using semaphores. The following class shows a <code>deadlock</code> that only the luckiest of you will avoid. You’ll notice that the <code>two threads which acquire the two semaphore permits do so in opposite order</code>. (try..finally is left out for the sake of brevity).</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">   Semaphore s1 = <span class="keyword">new</span> Semaphore(<span class="number">1</span>);</span><br><span class="line">   Semaphore s2 = <span class="keyword">new</span> Semaphore(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">   Thread t = <span class="keyword">new</span> Thread(<span class="keyword">new</span> DoubleResourceGrabber(s1, s2));</span><br><span class="line">   <span class="comment">// now reverse them ... here comes trouble!</span></span><br><span class="line">   Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> DoubleResourceGrabber(s2, s1));</span><br><span class="line"></span><br><span class="line">   t.start();</span><br><span class="line">   t2.start();</span><br><span class="line"></span><br><span class="line">   t.join();</span><br><span class="line">   t2.join();</span><br><span class="line">   System.out.println(<span class="string">"We got lucky!"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">DoubleResourceGrabber</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">   <span class="keyword">private</span> Semaphore first;</span><br><span class="line">   <span class="keyword">private</span> Semaphore second;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">DoubleResourceGrabber</span><span class="params">(Semaphore s1, Semaphore s2)</span> </span>&#123;</span><br><span class="line">       first = s1;</span><br><span class="line">       second = s2;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           Thread t = Thread.currentThread();</span><br><span class="line"></span><br><span class="line">           first.acquire();</span><br><span class="line">           System.out.println(t + <span class="string">" acquired "</span> + first);</span><br><span class="line"></span><br><span class="line">           Thread.sleep(<span class="number">200</span>); <span class="comment">// demonstrate deadlock</span></span><br><span class="line"></span><br><span class="line">           second.acquire();</span><br><span class="line">           System.out.println(t + <span class="string">" acquired "</span> + second);</span><br><span class="line"></span><br><span class="line">           second.release();</span><br><span class="line">           System.out.println(t + <span class="string">" released "</span> + second);</span><br><span class="line"></span><br><span class="line">           first.release();</span><br><span class="line">           System.out.println(t + <span class="string">" released "</span> + first);</span><br><span class="line">       &#125; <span class="keyword">catch</span> (InterruptedException ex) &#123;</span><br><span class="line">           ex.printStackTrace();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>If you run this, you will more than likely have a hung process. Issues of <code>lock ordering</code> apply to semaphores as much as regular mutexes or synchronization in Java. In some cases, timeouts (see note on tryAcquire() later in the article) can be used to prevent deadlocks from causing a process to hang up, but typically a deadlock is a symptom of a logic error which can be avoided. </p>
+<p>The main things that you should be careful of when using semaphores (including binary semaphores, i.e. mutexes) are:</p>
+<ul>
+<li>Not releasing after acquire (either missing release call or an exception is thrown and there is no finally block)</li>
+<li>Long held semaphores, causing thread starvation</li>
+<li>Deadlocks (as seen above)</li>
+</ul>
+<h2 id="Useful-Tricks-with-Semaphores"><a href="#Useful-Tricks-with-Semaphores" class="headerlink" title="Useful Tricks with Semaphores"></a>Useful Tricks with Semaphores</h2><p>One interesting property of Semaphores in Java is that <code>release doesn’t have to be called by the same thread as acquire</code>. This means you could have a thread limiter that pools or creates threads based on a semaphore by calling acquire(). Then, the running thread could release its own semaphore permit when it completes. This is a useful property that we don’t have with normal mutexes in Java.</p>
+<p>Another trick is to <code>increase the number of permits at runtime</code>. Contrary to what you might guess, <code>the number of permits in a semaphore isn’t fixed</code>, and <code>a call to release() will always increment the number of permits, even if no corresponding acquire() call was made</code>. Note that this can also result in bugs if you are incorrectly calling release() when no acquire() was made.</p>
+<p>Finally, there are a few useful methods to be familiar with in Java’s Semaphore. The method <code>acquireInterruptibly()</code> will acquire a resource, reattempting if it is interrupted. This means no outside handling of InterruptedException. The method <code>tryAcquire()</code> allows us to limit how long we will wait for a permit – <code>we can either return immediately if there is no permit to obtain, or wait a specified timeout</code>. If you somehow have known deadlocks that you can’t fix easily or track down, you could help prevent locking up processes by using tryAcquire() with suitable timeouts.</p>
+<h2 id="Uses"><a href="#Uses" class="headerlink" title="Uses"></a>Uses</h2><p>What are some possible uses for counting semaphores? The following come to mind:<br>Limiting concurrent access to disk (this can kill performance due to competing disk seeks)</p>
+<ul>
+<li>Thread creation limiting</li>
+<li>JDBC connection pooling / limiting</li>
+<li>Network connection throttling</li>
+<li>Throttling CPU or memory intensive tasks</li>
+</ul>
+<hr>
+<p>Reference</p>
+<p><a href="http://tutorials.jenkov.com/java-concurrency/semaphores.html" target="_blank" rel="noopener">http://tutorials.jenkov.com/java-concurrency/semaphores.html</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java-concurrency/" rel="tag"># java concurrency</a>
+          
+            <a href="/tags/java-semaphore/" rel="tag"># java semaphore</a>
+          
+            <a href="/tags/semaphore-tutorial/" rel="tag"># semaphore tutorial</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/03/spring/Spring-Spring-configuration-styles/" rel="next" title="Spring - Spring configuration styles">
+                <i class="fa fa-chevron-left"></i> Spring - Spring configuration styles
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/03/java/concurrency/Java-Concurrency-CountDownLatch/" rel="prev" title="Java Concurrency - CountDownLatch">
+                Java Concurrency - CountDownLatch <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#java-util-concurrent-Semaphore"><span class="nav-number">1.</span> <span class="nav-text">java.util.concurrent.Semaphore</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Semaphore-Classification"><span class="nav-number">2.</span> <span class="nav-text">Semaphore Classification</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Build-a-simple-Semaphore"><span class="nav-number">3.</span> <span class="nav-text">Build a simple Semaphore</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Building-a-Counting-Semaphore"><span class="nav-number">4.</span> <span class="nav-text">Building a Counting Semaphore</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Building-a-Bounded-Semaphore"><span class="nav-number">5.</span> <span class="nav-text">Building a Bounded Semaphore</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Interview"><span class="nav-number">5.1.</span> <span class="nav-text">Interview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Semaphore-Usage"><span class="nav-number">5.2.</span> <span class="nav-text">Semaphore Usage</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Guarding-Critical-Sections"><span class="nav-number">5.2.1.</span> <span class="nav-text">1) Guarding Critical Sections</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Sending-Signals-Between-Threads"><span class="nav-number">5.2.2.</span> <span class="nav-text">2) Sending Signals Between Threads</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fairness"><span class="nav-number">5.3.</span> <span class="nav-text">Fairness</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Limiting-connections"><span class="nav-number">5.4.</span> <span class="nav-text">Limiting connections</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dangers"><span class="nav-number">5.5.</span> <span class="nav-text">Dangers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Useful-Tricks-with-Semaphores"><span class="nav-number">5.6.</span> <span class="nav-text">Useful Tricks with Semaphores</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Uses"><span class="nav-number">5.7.</span> <span class="nav-text">Uses</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

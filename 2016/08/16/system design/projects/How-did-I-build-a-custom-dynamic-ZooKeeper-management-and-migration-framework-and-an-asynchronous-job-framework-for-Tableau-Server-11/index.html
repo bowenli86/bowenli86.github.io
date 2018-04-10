@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="This is a project that I owned and built from scratch. Project and Feature RequirementsWe were developing a new Java-based distributed system architecutre to replace the old jruby one. Notably, old jr">
+<meta name="keywords" content="zookeeper management,zookeeper migration,async job framework">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How did I build a custom dynamic ZooKeeper management and migration framework and an asynchronous job framework">
+<meta property="og:url" content="https://bowenli86.github.io/2016/08/16/system design/projects/How-did-I-build-a-custom-dynamic-ZooKeeper-management-and-migration-framework-and-an-asynchronous-job-framework-for-Tableau-Server-11/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="This is a project that I owned and built from scratch. Project and Feature RequirementsWe were developing a new Java-based distributed system architecutre to replace the old jruby one. Notably, old jr">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.547Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How did I build a custom dynamic ZooKeeper management and migration framework and an asynchronous job framework">
+<meta name="twitter:description" content="This is a project that I owned and built from scratch. Project and Feature RequirementsWe were developing a new Java-based distributed system architecutre to replace the old jruby one. Notably, old jr">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/08/16/system design/projects/How-did-I-build-a-custom-dynamic-ZooKeeper-management-and-migration-framework-and-an-asynchronous-job-framework-for-Tableau-Server-11/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>How did I build a custom dynamic ZooKeeper management and migration framework and an asynchronous job framework | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/08/16/system design/projects/How-did-I-build-a-custom-dynamic-ZooKeeper-management-and-migration-framework-and-an-asynchronous-job-framework-for-Tableau-Server-11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">How did I build a custom dynamic ZooKeeper management and migration framework and an asynchronous job framework</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-08-16T13:45:18-07:00">2016-08-16</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/system-design/projects/" itemprop="url" rel="index"><span itemprop="name">projects</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>This is a project that I owned and built from scratch.</p>
+<h2 id="Project-and-Feature-Requirements"><a href="#Project-and-Feature-Requirements" class="headerlink" title="Project and Feature Requirements"></a>Project and Feature Requirements</h2><p>We were developing a new Java-based distributed system architecutre to replace the old jruby one.</p>
+<p>Notably, old jruby architecture persisting cluster-wide configuration and topology information in a local yaml file on each machine. The role of ZooKeeper (referenced as ZK) is only used a distributed lock and a temp data store - it keeps some vilatile data that can be lost or wiped out and no one cares about it. This characteristic also makes managing and migrating ZooKeeper very very easy - you only need to clean up all data in existing ZooKeeper nodes, deploy the ZooKeeper bits to new nodes, and bring the new cluster up. </p>
+<p>Unlike the old world, new Java will persist all essential configuration and topology data in ZK as a single source of truth, which makes managing, expanding, and migrating ZK much harder than before. </p>
+<h2 id="The-Problem"><a href="#The-Problem" class="headerlink" title="The Problem"></a>The Problem</h2><p>The problem we are facing is how to maintain ZK’s data and expand/shrink ZK cluster, as well as making this process super reliable and easy for users.</p>
+<p>Let’s elaborate more about the problem.</p>
+<p>Say we start with machine A, which has a single node ZK cluster runs on it. Then we want to expand the cluster from 1 node (A) to 3 nodes (A, B, C), as well as the ZK cluster runs on top of it. How to achieve that?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(A) -&gt; (A, B, C)</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="Non-Goal"><a href="#Non-Goal" class="headerlink" title="Non-Goal"></a>Non-Goal</h3><p>For customers who already have a ZK cluster in house and want to reuse that cluster, we provides configurations that enable them to do so. That is not part of the project, and will not be discussed here. This project is focusing on smoothing the experience of managing the built-in ZooKeeper cluster in new architecture.</p>
+<h3 id="Naive-Approach"><a href="#Naive-Approach" class="headerlink" title="Naive Approach"></a>Naive Approach</h3><p>The naive approach is to shut down (A), deploy ZK bits on B and C, change their configuration files, and bring up (A, B, C). Well, this can lead to disasters. The reason being that ZK runs on a quorum mode, means that if more than half nodes in a ZK cluster form a quorum, their decision will be the final decision that all nodes should follow. In this case, if B and C come up first and form a quorum, their decision will be “there’s no data in our cluster”. When A joins them, B and C will force A to delete its data, causing data loss.</p>
+<h3 id="ZooKeeper’s-built-in-Approach"><a href="#ZooKeeper’s-built-in-Approach" class="headerlink" title="ZooKeeper’s built-in Approach"></a>ZooKeeper’s built-in Approach</h3><p>Actually all developers using ZooKeeper faces the same problem. Think about running a ZooKeeper in your data center. If a ZooKeeper node fails, the common practice is that admin will try to bring it back manually/through scripts. If the machine dies, admins have to bring up a new machine, change its IP to match the failed one, and join it to the cluster. And you must know that machine failure is more than normal.</p>
+<p>So ZooKeeper 3.5 starts to build a native rolling based approach to solve this common problem. The principle is to bring up a new node each time, join it to the existing cluster, wait them to sync up and become stable, bring up another new node.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(A) -&gt; (A, B) -&gt; (A, B, C)</span><br></pre></td></tr></table></figure>
+<p>The problem is that ZK is not originally developed to support this use case. It involves lots of refactoring, produces lots of bugs, and is not stable for production.</p>
+<p>Take a look at ZK’s <a href="https://zookeeper.apache.org/" target="_blank" rel="noopener">release page</a>. 3.5.0 was released around 3 years ago. Apache then release 3.5.1 and 3.5.2, both are alpha version. They themselves even don’t recommend using it for production.</p>
+<h3 id="Other-Open-Sourced-Approach-Framework"><a href="#Other-Open-Sourced-Approach-Framework" class="headerlink" title="Other Open-Sourced Approach / Framework"></a>Other Open-Sourced Approach / Framework</h3><p>The closet solution we found online is Netflix’s Exebitor library. Exhibitor is a Java supervisor system for ZooKeeper built and <a href="https://github.com/Netflix/exhibitor/wiki" target="_blank" rel="noopener">opensourced by Netflix</a></p>
+<p>Though Exhibitor is an off-the-shelf zookeeper-managing library from Netflix, we found Exhibitor does not fit our needs because it also takes the way of rolling reconfiguration. What’s worse is that it’s not even a native solution, it’s only a wrapper. It’s so prone to errors that even Netflix doesn’t recommend using it.</p>
+<blockquote>
+<p>Netflix has warned users “Experience has shown that rolling config changes can lead to runtime problems with the ZooKeeper ensemble.” as stated <a href="https://github.com/Netflix/exhibitor/wiki/Configuration-UI" target="_blank" rel="noopener">here</a></p>
+</blockquote>
+<p>Our conclusion is that Exhibitor is more of a monitoring tool with good UI, rather than a true automated ZK management framework.</p>
+<h3 id="My-Approach"><a href="#My-Approach" class="headerlink" title="My Approach"></a>My Approach</h3><p>I took a completely new approach that is different from any solution on the market.</p>
+<p>The core idea behind the scene is that the new architecture will run two ZooKeeper clusters side by side to facilitate migration. If they overlap on a machine, they will run on different ports. Besides, this migration framework relies on our async job framework on top of ZooKeeper.</p>
+<h4 id="A-New-Asynchronous-Job-Framework"><a href="#A-New-Asynchronous-Job-Framework" class="headerlink" title="A New Asynchronous Job Framework"></a>A New Asynchronous Job Framework</h4><p>First thing first, the new <code>Async Job</code> Framework that I’m talking about is different from <code>Async Background Jobs</code>.</p>
+<p><code>Async Background Jobs</code> are taken care of by backgrounder processes in the new system architecture. Those jobs are all kinds of scheduled jobs that can be run in parallel by multiple backgrounders.</p>
+<p><code>Async Jobs</code> in new architecture are a serial of configuring and initializing jobs that have to be executed in order and one at a time, to perform changes to cluster Configuration and Topology.</p>
+<p>Each of our Async Job is created as <code>PERSISTENT_SEQUENTIAL</code> node under a ZK node <code>/asyncjobs</code>, so that name of each async job node looks like <code>asyncjob00000000001</code>, <code>asyncjob00000000002</code>, and keep on increasing. How that works is discussed <a href="https://phoenixjiangnan.github.io/2016/07/07/distributed%20system/zookeeper/How-does-ZooKeeper-s-persistent-sequential-id-work/" target="_blank" rel="noopener">here</a>.</p>
+<p>Other Components involved are:</p>
+<ul>
+<li><p>Configuration / Topology</p>
+<ul>
+<li>key-values pairs stored as string binary in a ZK node</li>
+</ul>
+</li>
+<li><p>Agent </p>
+<ul>
+<li>Runs on every machine    . All Agents are the same.</li>
+<li>Does NOT make any decision but execute whatever commands it receives, from either Configuration/Topology in ZooKeeper or commands issued by users on terminal</li>
+<li><p>Controls the actual life cycle of ZK</p>
+<ul>
+<li>Start/stop local ZK instance on a given port</li>
+<li>Create/delete/update zoo.cfg and myid files to support cluster migration</li>
+<li>Restart itself when a new ZK connection string appear in Configuration </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Controller</p>
+<ul>
+<li>Runs on every machine. Only one Controller across the cluster is the Controller Leader (selected by Leader Election with Curator).</li>
+<li>Any Controller can create Async Jobs, but only Controller Leader can execute Async Jobs</li>
+<li><p>The Controller Leader will curate the whole ZK migration process</p>
+<ul>
+<li>Read/write Topology (which machines run ZK) and Configuration (ZK connection string) from/to both old and new ZK clusters</li>
+<li>Trigger rollback or recover from a broken situation if anything goes wrong</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="High-Level-Steps"><a href="#High-Level-Steps" class="headerlink" title="High Level Steps"></a>High Level Steps</h4><p>The high level steps for migrating from (A) to (A, B, C) are like this: </p>
+<ol start="0">
+<li><p>Take a global lock of ZK, so that no one can write/update important data during migration</p>
+</li>
+<li><p>First identify the machines where new cluster is targeted to sit on, and create a new Async Job to cluster (A1) - say <code>AsyncJob(A, B, C)</code> in our case. The async job is composed of several substeps</p>
+</li>
+<li><p>Substep 1. Controller Leader will add the target cluster as a config key to Configuration in ZooKeeper. Deploy ZK bits to B and C, and create data dirs and configurations for (A2, B2, C2)</p>
+</li>
+<li><p>Substep 2. Bring up new ZK cluster (A2, B2, C2), migrate all data (all persisitent data excluding async jobs. Will discuss in detail later in this post) from (A1) to (A2, B2, C2)</p>
+</li>
+<li><p>Substep 3. Migrate all persistent data excluding asyncjobs by backup() and restore(). Do a live check by iterating trees in both ZK cluster. At the end, create the same <code>AsyncJob(A, B, C)</code> in new ZK cluster</p>
+</li>
+<li><p>Substep 4. Begin a two phase commmit</p>
+<ol>
+<li>Ask all clients to try to connect to the new ZK cluster. If anyone is missing, roll back</li>
+<li>If all shows up, update all clients’ ZK connection string. Clients have built-in mechanism to watch its configuration file, and will restart automatically when its ZK connection string is updated</li>
+<li>If any client doesn’t show up in new ZK after the switch, manual intervention is required. Will discuss later in the post. </li>
+</ol>
+</li>
+<li><p>When Controller Leader restarts and comes up, it ensures all clients show up in new ZK (A2, B2, C2). </p>
+<ol>
+<li>If so, it proceed to substep 5 to clean up the old ZK cluster (A1), and mark the migration as <code>Succeed</code>.</li>
+<li>If not, an error message will be shown to users to ask for manual intervention. The old ZK cluster won’t be deleted.</li>
+</ol>
+</li>
+<li><p>Release the global lock so clients can resume operations</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(A1) -&gt; ((A1, A2), B2, C2)</span><br></pre></td></tr></table></figure>
+<h4 id="More-Details-that-are-Important-to-Keep-In-Mind"><a href="#More-Details-that-are-Important-to-Keep-In-Mind" class="headerlink" title="More Details that are Important to Keep In Mind"></a>More Details that are Important to Keep In Mind</h4><ul>
+<li><p>Controller Leader need to lock() both ZK cluster to prevent data being modified during the migration, and releases locks after the migration finishes.</p>
+</li>
+<li><p>The # of ZK instances is required to be an odd number less or equal to 7, because 1) ZK quorum mechanism so that even number of ZK instances doesn’t make sense 2) too many ZK will not improve the stability of TS and may bring troubles (thinking of fsync issue).</p>
+<p>  So ZK migration scenarios are as followed:</p>
+<pre><code>The # of old ZK cluster &lt;-&gt; # of new ZK cluster (machines here may overlap or be totally different ones)  
+</code></pre></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1 &lt;-&gt; 3</span><br><span class="line">1 &lt;-&gt; 5</span><br><span class="line">3 &lt;-&gt; 3</span><br><span class="line">3 &lt;-&gt; 5</span><br><span class="line">5 &lt;-&gt; 5</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Why Not migrate all async jobs?<ul>
+<li>Old jobs are not necessary to be there. As I mentioned above, <code>Async Jobs</code> in new architecture are a serial of configuring and initializing jobs that have to be executed in order and one at a time, to perform changes to cluster Configuration and Topology. Thus, anytime you migrate ZK, it means the Topology has changed, and you need to rerun all those serial jobs again. Thus, there’s no need to migrate them.</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zookeeper-management/" rel="tag"># zookeeper management</a>
+          
+            <a href="/tags/zookeeper-migration/" rel="tag"># zookeeper migration</a>
+          
+            <a href="/tags/async-job-framework/" rel="tag"># async job framework</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/10/system design/projects/How-did-I-build-a-Facebook-Messenger-chatbot-for-news-feed/" rel="next" title="How did I build a Facebook Messenger chatbot for news feed">
+                <i class="fa fa-chevron-left"></i> How did I build a Facebook Messenger chatbot for news feed
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/21/spring/Spring-What-is-dependency-injection-and-how-it-works-in-Spring/" rel="prev" title="Spring - What is dependency injection and how it works in Spring">
+                Spring - What is dependency injection and how it works in Spring <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Project-and-Feature-Requirements"><span class="nav-number">1.</span> <span class="nav-text">Project and Feature Requirements</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Problem"><span class="nav-number">2.</span> <span class="nav-text">The Problem</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Non-Goal"><span class="nav-number">2.1.</span> <span class="nav-text">Non-Goal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Naive-Approach"><span class="nav-number">2.2.</span> <span class="nav-text">Naive Approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZooKeeper’s-built-in-Approach"><span class="nav-number">2.3.</span> <span class="nav-text">ZooKeeper’s built-in Approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Other-Open-Sourced-Approach-Framework"><span class="nav-number">2.4.</span> <span class="nav-text">Other Open-Sourced Approach / Framework</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#My-Approach"><span class="nav-number">2.5.</span> <span class="nav-text">My Approach</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-New-Asynchronous-Job-Framework"><span class="nav-number">2.5.1.</span> <span class="nav-text">A New Asynchronous Job Framework</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#High-Level-Steps"><span class="nav-number">2.5.2.</span> <span class="nav-text">High Level Steps</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#More-Details-that-are-Important-to-Keep-In-Mind"><span class="nav-number">2.5.3.</span> <span class="nav-text">More Details that are Important to Keep In Mind</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

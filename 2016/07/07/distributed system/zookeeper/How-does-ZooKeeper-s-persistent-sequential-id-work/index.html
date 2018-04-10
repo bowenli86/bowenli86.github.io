@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="I got the opportunity to learn how ZooKeeper&amp;#39;s PERSISTENT_SEQUENTIAL node works, how a PERSISTENT_SEQUENTIAL node is created, and how the persistent sequential id is generated recently in a ZooKee">
+<meta name="keywords" content="zookeeper,zookeeper persistent sequential id,create mode persistent sequential">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How does ZooKeeper&#39;s persistent sequential id work">
+<meta property="og:url" content="https://bowenli86.github.io/2016/07/07/distributed system/zookeeper/How-does-ZooKeeper-s-persistent-sequential-id-work/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="I got the opportunity to learn how ZooKeeper&amp;#39;s PERSISTENT_SEQUENTIAL node works, how a PERSISTENT_SEQUENTIAL node is created, and how the persistent sequential id is generated recently in a ZooKee">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.525Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How does ZooKeeper&#39;s persistent sequential id work">
+<meta name="twitter:description" content="I got the opportunity to learn how ZooKeeper&amp;#39;s PERSISTENT_SEQUENTIAL node works, how a PERSISTENT_SEQUENTIAL node is created, and how the persistent sequential id is generated recently in a ZooKee">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/07/07/distributed system/zookeeper/How-does-ZooKeeper-s-persistent-sequential-id-work/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>How does ZooKeeper's persistent sequential id work | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/07/07/distributed system/zookeeper/How-does-ZooKeeper-s-persistent-sequential-id-work/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">How does ZooKeeper's persistent sequential id work</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-07-07T23:53:06-07:00">2016-07-07</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-system/" itemprop="url" rel="index"><span itemprop="name">distributed system</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-system/zookeeper/" itemprop="url" rel="index"><span itemprop="name">zookeeper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>I got the opportunity to learn <code>how ZooKeeper&#39;s PERSISTENT_SEQUENTIAL node works</code>, <code>how a PERSISTENT_SEQUENTIAL node is created</code>, and <code>how the persistent sequential id is generated</code> recently in a ZooKeeper data migration project.</p>
+<p>The project is about implementing our own logic to back and restore ZooKeeper’s data. There are several reasons why we are doing it ourselves rather than using ZooKeeper’s logs and snapshots, but it’s beyond the scope of this article.</p>
+<p>The <code>PERSISTENT_SEQUENTIAL</code> node problem came up to the table in the following scenario. Let’s say you want to maintain <code>a list of strictly ordered tasks</code> in ZooKeeper, basically <code>using ZooKeeper as a task scheduling pool</code>. The best practice to do it is, having a parent node <code>/tasks</code> and creating new tasks as its children nodes with <code>CreateMode.PERSISTENT_SEQUENTIAL</code>, with names like <code>/tasks/task0000000001</code> and <code>/tasks/task0000000002</code>. How is the sequential id generated? ZooKeeper has an internally maintained counter.</p>
+<p>The original general implementation for our own migration is to take a backup of all the <code>persistent</code> nodes and their data in old ZooKeeper (ZK0) and restore the data to the newly deployed ZooKeeper (ZK1) by recreating all those <code>persistent</code> nodes. That doesn’t work for <code>PERSISTENT_SEQUENTIAL</code> nodes because the internal counter for id does not get migrated. So when I trired to create new tasks in the ZK1 after migration, the sequential id generator tries to create the new task as <code>/tasks/task0000000001</code> and got a confliction of nodes with <code>KeeperException.NodeExistsException</code>.</p>
+<p>So let’s talk about how <code>PERSISTENT_SEQUENTIAL</code> nodes works and how I solved this problem for our migration.</p>
+<a id="more"></a>
+<h1 id="The-Start"><a href="#The-Start" class="headerlink" title="The Start"></a>The Start</h1><p>The only source I found online is this <a href="https://stackoverflow.com/questions/10338076/zookeeper-persistent-sequential-incrementing-by-two/36927266#36927266" target="_blank" rel="noopener">stackoverflow</a> question.</p>
+<blockquote>
+<p>Creation or deletion of any child znode increments the cversion of the parent znode. Since in ZooKeeper <code>3.3.3</code>, the counter used for sequential znode creation is cversion itself, any “spurious” creation/deletion between two sequential creations is the most likely reason for the behavior you are experiencing.</p>
+</blockquote>
+<blockquote>
+<p>Keep in mind that since <code>ZooKeeper 3.4.x</code>, deletions do not affect the parent sequence counter anymore: a <code>DataNode</code> internally holds a <code>StatPersisted</code> in which the <code>cversion</code> represents <code>the number of creations</code> exactly; on the contrary, the cversion of the Stat that you obtain by querying the node still represents the number of children changes: Stat.cversion = 2*PersistedStat.cversion - Stat.numChildren.</p>
+</blockquote>
+<p>(FYI, the original post says its <code>PersistedStat</code>, and I editted and corrected it as <code>StatPersisted</code>)</p>
+<h1 id="The-Principle"><a href="#The-Principle" class="headerlink" title="The Principle"></a>The Principle</h1><p>On the server side, ZooKeeper (<code>ZooKeeperServer.java</code>) maintains a hashmap mapping each path to a <code>ChangeRecord</code> object, which consists of <code>StatPersisted</code>. <code>StatPersisted</code> is very similar to <code>Stat</code>, having all the version variables, especially <code>cversion</code>. </p>
+<p>In <code>Stat</code>, <code>cversion</code> indicates <code>number of changes to the children of a znode</code>. So in normal usage, a node’s <code>cversion</code> will increase when its children are added and removed. But since 3.4.x, <code>StatPersisted</code>‘s <code>cversion</code> in <code>ChangeRecord</code> only increase when a child is added to the node.</p>
+<p>So when a <code>PERSISTENT_SEQUENTIAL</code> node is added to ZooKeeper, ZooKeeper will look at its parent’s <code>ChangeRecord</code>‘s <code>cversion</code>, use it as sequential id, and then increment <code>cversion</code> by 1.</p>
+<h1 id="Source-Code-Analysis"><a href="#Source-Code-Analysis" class="headerlink" title="Source Code Analysis"></a>Source Code Analysis</h1><h2 id="The-Client-ZooKeeper-java"><a href="#The-Client-ZooKeeper-java" class="headerlink" title="The Client - ZooKeeper.java"></a>The Client - <code>ZooKeeper.java</code></h2><p><a href="http://grepcode.com/file/repo1.maven.org/maven2/org.apache.zookeeper/zookeeper/3.4.6/org/apache/zookeeper/ZooKeeper.java#ZooKeeper" target="_blank" rel="noopener">org.apache.zookeeper.ZooKeeper.java</a> in 3.4.6. This client code sends a request to the server.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">An ephemeral node will be removed by the ZooKeeper automatically when the session associated with the creation of the node expires.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">The flags argument can also specify to create a sequential node. The actual path name of a sequential node will be the given path plus a suffix "i" where i is the current sequential number of the node. The sequence number is always fixed length of 10 digits, 0 padded. Once such a node is created, the sequential number will be incremented by one.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">If a node with the same actual path already exists in the ZooKeeper, a KeeperException with error code KeeperException.NodeExists will be thrown. Note that since a different actual path is used for each invocation of creating sequential node with the same path argument, the call will never throw "file exists" KeeperException.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">If the parent node does not exist in the ZooKeeper, a KeeperException with error code KeeperException.NoNode will be thrown.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">An ephemeral node cannot have children. If the parent node of the given path is ephemeral, a KeeperException with error code KeeperException.NoChildrenForEphemerals will be thrown.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">If a node is created successfully, the ZooKeeper server will trigger the watches on the path left by exists calls, and the watches on the parent of the node by getChildren calls.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">The maximum allowable size of the data array is 1 MB (1,048,576 bytes). Arrays larger than this will cause a KeeperExecption to be thrown.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">create</span><span class="params">(<span class="keyword">final</span> String path, <span class="keyword">byte</span> data[], List&lt;ACL&gt; acl,</span></span></span><br><span class="line"><span class="function"><span class="params">        CreateMode createMode)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> KeeperException, InterruptedException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">final</span> String clientPath = path;</span><br><span class="line">    PathUtils.validatePath(clientPath, createMode.isSequential());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> String serverPath = prependChroot(clientPath);</span><br><span class="line"></span><br><span class="line">    RequestHeader h = <span class="keyword">new</span> RequestHeader();</span><br><span class="line">    h.setType(ZooDefs.OpCode.create);</span><br><span class="line">    CreateRequest request = <span class="keyword">new</span> CreateRequest();</span><br><span class="line">    CreateResponse response = <span class="keyword">new</span> CreateResponse();</span><br><span class="line">    request.setData(data);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/////////////////////////////////</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * You can see here that ZooKeeper client set </span></span><br><span class="line"><span class="comment">    * the `CreateMode` flag for the request</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    request.setFlags(createMode.toFlag());</span><br><span class="line">    <span class="comment">/////////////////////////////////</span></span><br><span class="line">    </span><br><span class="line">    request.setPath(serverPath);</span><br><span class="line">    <span class="keyword">if</span> (acl != <span class="keyword">null</span> &amp;&amp; acl.size() == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> KeeperException.InvalidACLException();</span><br><span class="line">    &#125;</span><br><span class="line">    request.setAcl(acl);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">///////// then send the request to ZooKeeper server /////////</span></span><br><span class="line">    ReplyHeader r = cnxn.submitRequest(h, request, response, <span class="keyword">null</span>);</span><br><span class="line">    <span class="comment">/////////////////////////////////</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (r.getErr() != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> KeeperException.create(KeeperException.Code.get(r.getErr()),</span><br><span class="line">                clientPath);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (cnxn.chrootPath == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> response.getPath();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> response.getPath().substring(cnxn.chrootPath.length());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="The-Server-Side"><a href="#The-Server-Side" class="headerlink" title="The Server Side"></a>The Server Side</h2><h3 id="1-PrepRequestProcessor-java"><a href="#1-PrepRequestProcessor-java" class="headerlink" title="1. PrepRequestProcessor.java"></a>1. <code>PrepRequestProcessor.java</code></h3><p><a href="http://grepcode.com/file/repo1.maven.org/maven2/org.apache.zookeeper/zookeeper/3.4.6/org/apache/zookeeper/server/PrepRequestProcessor.java?av=f" target="_blank" rel="noopener">org.apache.zooekeeper.server.PrepRequestProcessor.java</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * This method will be called inside the ProcessRequestThread, which is a singleton, so there will be a single thread calling this code.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">pRequest2Txn</span><span class="params">(<span class="keyword">int</span> type, <span class="keyword">long</span> zxid, Request request, Record record, <span class="keyword">boolean</span> deserialize)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> KeeperException, IOException, RequestProcessorException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    request.hdr = <span class="keyword">new</span> TxnHeader(request.sessionId, request.cxid, zxid,</span><br><span class="line">                                zks.getTime(), type);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (type) &#123;</span><br><span class="line">        <span class="comment">//////// --- the beginning --- ////////</span></span><br><span class="line">        <span class="comment">//////// if this request is to create node  ///////// </span></span><br><span class="line">        <span class="keyword">case</span> OpCode.create:</span><br><span class="line">        </span><br><span class="line">            zks.sessionTracker.checkSession(request.sessionId, request.getOwner());</span><br><span class="line">            CreateRequest createRequest = (CreateRequest)record;   </span><br><span class="line">            <span class="keyword">if</span>(deserialize)</span><br><span class="line">                ByteBufferInputStream.byteBuffer2Record(request.request, createRequest);</span><br><span class="line">            String path = createRequest.getPath();</span><br><span class="line">            <span class="keyword">int</span> lastSlash = path.lastIndexOf(<span class="string">'/'</span>);</span><br><span class="line">            <span class="keyword">if</span> (lastSlash == -<span class="number">1</span> || path.indexOf(<span class="string">'\0'</span>) != -<span class="number">1</span> || failCreate) &#123;</span><br><span class="line">                LOG.info(<span class="string">"Invalid path "</span> + path + <span class="string">" with session 0x"</span> +</span><br><span class="line">                        Long.toHexString(request.sessionId));</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> KeeperException.BadArgumentsException(path);</span><br><span class="line">            &#125;</span><br><span class="line">            List&lt;ACL&gt; listACL = removeDuplicates(createRequest.getAcl());</span><br><span class="line">            <span class="keyword">if</span> (!fixupACL(request.authInfo, listACL)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> KeeperException.InvalidACLException(path);</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//////// get parent node's ChangeRecord  /////////</span></span><br><span class="line">            String parentPath = path.substring(<span class="number">0</span>, lastSlash);</span><br><span class="line">            ChangeRecord parentRecord = getRecordForPath(parentPath); <span class="comment">// See implementation below</span></span><br><span class="line"></span><br><span class="line">            checkACL(zks, parentRecord.acl, ZooDefs.Perms.CREATE,</span><br><span class="line">                    request.authInfo);</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//////// get cversion of parent's ChangeRecord ////////</span></span><br><span class="line">            <span class="keyword">int</span> parentCVersion = parentRecord.stat.getCversion();</span><br><span class="line">            </span><br><span class="line">            </span><br><span class="line">            <span class="comment">//////// get the CreateMode flag from request ////////</span></span><br><span class="line">            CreateMode createMode =</span><br><span class="line">                CreateMode.fromFlag(createRequest.getFlags());</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//////// create sequential node path ////////</span></span><br><span class="line">            <span class="keyword">if</span> (createMode.isSequential()) &#123;</span><br><span class="line">                path = path + String.format(Locale.ENGLISH, <span class="string">"%010d"</span>, parentCVersion);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                PathUtils.validatePath(path);</span><br><span class="line">            &#125; <span class="keyword">catch</span>(IllegalArgumentException ie) &#123;</span><br><span class="line">                LOG.info(<span class="string">"Invalid path "</span> + path + <span class="string">" with session 0x"</span> +</span><br><span class="line">                        Long.toHexString(request.sessionId));</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> KeeperException.BadArgumentsException(path);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">//////// check if node exists ////////</span></span><br><span class="line">                <span class="keyword">if</span> (getRecordForPath(path) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> KeeperException.NodeExistsException(path);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (KeeperException.NoNodeException e) &#123;</span><br><span class="line">                <span class="comment">// ignore this one</span></span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//////// ensure parent is a persistent node ////////</span></span><br><span class="line">            <span class="keyword">boolean</span> ephemeralParent = parentRecord.stat.getEphemeralOwner() != <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">if</span> (ephemeralParent) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> KeeperException.NoChildrenForEphemeralsException(path);</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//////// increase cversion of parent's ChangeRecord by 1 ////////</span></span><br><span class="line">            <span class="keyword">int</span> newCversion = parentRecord.stat.getCversion()+<span class="number">1</span>;</span><br><span class="line">            request.txn = <span class="keyword">new</span> CreateTxn(path, createRequest.getData(),</span><br><span class="line">                    listACL,</span><br><span class="line">                    createMode.isEphemeral(), newCversion);</span><br><span class="line">            StatPersisted s = <span class="keyword">new</span> StatPersisted();</span><br><span class="line">            <span class="keyword">if</span> (createMode.isEphemeral()) &#123;</span><br><span class="line">                s.setEphemeralOwner(request.sessionId);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//////// set parent's ChangeRecord ////////</span></span><br><span class="line">            parentRecord = parentRecord.duplicate(request.hdr.getZxid());</span><br><span class="line">            parentRecord.childCount++;</span><br><span class="line">            parentRecord.stat.setCversion(newCversion);</span><br><span class="line">            addChangeRecord(parentRecord);</span><br><span class="line">            addChangeRecord(<span class="keyword">new</span> ChangeRecord(request.hdr.getZxid(), path, s,</span><br><span class="line">                    <span class="number">0</span>, listACL));</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">//////// --- the end --- ////////</span></span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="keyword">case</span> OpCode.delete:</span><br><span class="line">            ...</span><br><span class="line">        <span class="keyword">case</span> OpCode.setData:</span><br><span class="line">            ...</span><br><span class="line">        <span class="keyword">case</span> OpCode.setACL:</span><br><span class="line">            ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ChangeRecord <span class="title">getRecordForPath</span><span class="params">(String path)</span> <span class="keyword">throws</span> KeeperException.NoNodeException </span>&#123;</span><br><span class="line">        ChangeRecord lastChange = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">synchronized</span> (zks.outstandingChanges) &#123;</span><br><span class="line">            <span class="comment">/////// zks is an Object of `ZooKeeperServer.java` ///////</span></span><br><span class="line">            lastChange = zks.outstandingChangesForPath.get(path);</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">            for (int i = 0; i &lt; zks.outstandingChanges.size(); i++) &#123;</span></span><br><span class="line"><span class="comment">                ChangeRecord c = zks.outstandingChanges.get(i);</span></span><br><span class="line"><span class="comment">                if (c.path.equals(path)) &#123;</span></span><br><span class="line"><span class="comment">                    lastChange = c;</span></span><br><span class="line"><span class="comment">                &#125;</span></span><br><span class="line"><span class="comment">            &#125;</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line">            <span class="comment">//////// if this is a new node, create its ChangeRecord ////////</span></span><br><span class="line">            <span class="keyword">if</span> (lastChange == <span class="keyword">null</span>) &#123;</span><br><span class="line">                DataNode n = zks.getZKDatabase().getNode(path);</span><br><span class="line">                <span class="keyword">if</span> (n != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    Long acl;</span><br><span class="line">                    Set&lt;String&gt; children;</span><br><span class="line">                    <span class="keyword">synchronized</span>(n) &#123;</span><br><span class="line">                        acl = n.acl;</span><br><span class="line">                        children = n.getChildren();</span><br><span class="line">                    &#125;</span><br><span class="line">                    lastChange = <span class="keyword">new</span> ChangeRecord(-<span class="number">1</span>, path, n.stat,</span><br><span class="line">                        children != <span class="keyword">null</span> ? children.size() : <span class="number">0</span>,</span><br><span class="line">                            zks.getZKDatabase().convertLong(acl));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (lastChange == <span class="keyword">null</span> || lastChange.stat == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> KeeperException.NoNodeException(path);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//////// return the ChangeRecord ////////</span></span><br><span class="line">        <span class="keyword">return</span> lastChange;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-ZooKeeperServer-java-and-ChangeRecord-java"><a href="#2-ZooKeeperServer-java-and-ChangeRecord-java" class="headerlink" title="2. ZooKeeperServer.java and ChangeRecord.java"></a>2. <code>ZooKeeperServer.java</code> and <code>ChangeRecord.java</code></h3><p><a href="http://grepcode.com/file/repo1.maven.org/maven2/org.apache.zookeeper/zookeeper/3.4.6/org/apache/zookeeper/server/ZooKeeperServer.java" target="_blank" rel="noopener">org.apache.zookeeper.server.ZooKeeperServer.java</a></p>
+<pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">More</span> ...<span class="title">ZooKeeperServer</span> <span class="keyword">implements</span> <span class="title">SessionExpirer</span>, <span class="title">ServerStats</span>.<span class="title">Provider</span> </span>{
+    ...
+
+    <span class="keyword">final</span> List&lt;ChangeRecord&gt; outstandingChanges = <span class="keyword">new</span> ArrayList&lt;ChangeRecord&gt;();
+    <span class="comment">// this data structure must be accessed under the outstandingChanges lock</span>
+
+    <span class="comment">//////// a hashmap that maps &lt;path, path's ChangeRecord&gt; ////////</span>
+    <span class="keyword">final</span> HashMap&lt;String, ChangeRecord&gt; outstandingChangesForPath =
+    <span class="keyword">new</span> HashMap&lt;String, ChangeRecord&gt;();
+
+    ...
+
+    <span class="comment">/**</span>
+<span class="comment">     * This structure is used to facilitate information sharing between PrepRP</span>
+<span class="comment">     * and FinalRP.</span>
+<span class="comment">     */</span>
+    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ChangeRecord</span> </span>{
+        ChangeRecord(<span class="keyword">long</span> zxid, String path, StatPersisted stat, <span class="keyword">int</span> childCount,
+                List&lt;ACL&gt; acl) {
+            <span class="keyword">this</span>.zxid = zxid;
+            <span class="keyword">this</span>.path = path;
+            <span class="keyword">this</span>.stat = stat;
+            <span class="keyword">this</span>.childCount = childCount;
+            <span class="keyword">this</span>.acl = acl;
+        }
+
+        <span class="keyword">long</span> zxid;
+
+        String path;
+
+        StatPersisted stat; <span class="comment">/* Make sure to create a new object when changing */</span>
+
+        <span class="keyword">int</span> childCount;
+
+        List&lt;ACL&gt; acl; <span class="comment">/* Make sure to create a new object when changing */</span>
+
+        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)
+        <span class="function">ChangeRecord <span class="title">duplicate</span><span class="params">(<span class="keyword">long</span> zxid)</span> </span>{
+            StatPersisted stat = <span class="keyword">new</span> StatPersisted();
+            <span class="keyword">if</span> (<span class="keyword">this</span>.stat != <span class="keyword">null</span>) {
+                DataTree.copyStatPersisted(<span class="keyword">this</span>.stat, stat);
+            }
+            <span class="keyword">return</span> <span class="keyword">new</span> ChangeRecord(zxid, path, stat, childCount,
+                    acl == <span class="keyword">null</span> ? <span class="keyword">new</span> ArrayList&lt;ACL&gt;() : <span class="keyword">new</span> ArrayList(acl));
+        }
+    }
+}
+</code></pre>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zookeeper/" rel="tag"># zookeeper</a>
+          
+            <a href="/tags/zookeeper-persistent-sequential-id/" rel="tag"># zookeeper persistent sequential id</a>
+          
+            <a href="/tags/create-mode-persistent-sequential/" rel="tag"># create mode persistent sequential</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/04/distributed system/zookeeper/ZooKeeper-Consistency-Guarantees/" rel="next" title="ZooKeeper - Consistency Guarantees">
+                <i class="fa fa-chevron-left"></i> ZooKeeper - Consistency Guarantees
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/08/ruby/Ruby-Ruby-blocks-and-yield-statement/" rel="prev" title="Ruby - Ruby blocks and yield statement">
+                Ruby - Ruby blocks and yield statement <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#The-Start"><span class="nav-number">1.</span> <span class="nav-text">The Start</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-Principle"><span class="nav-number">2.</span> <span class="nav-text">The Principle</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Source-Code-Analysis"><span class="nav-number">3.</span> <span class="nav-text">Source Code Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Client-ZooKeeper-java"><span class="nav-number">3.1.</span> <span class="nav-text">The Client - ZooKeeper.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Server-Side"><span class="nav-number">3.2.</span> <span class="nav-text">The Server Side</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-PrepRequestProcessor-java"><span class="nav-number">3.2.1.</span> <span class="nav-text">1. PrepRequestProcessor.java</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-ZooKeeperServer-java-and-ChangeRecord-java"><span class="nav-number">3.2.2.</span> <span class="nav-text">2. ZooKeeperServer.java and ChangeRecord.java</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

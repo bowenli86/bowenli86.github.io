@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Throttling and Traffic Shaping Throttling is, to control the consumption of resources used by an instance of an application, an individual tenant, or an entire service.   Throttling can allow the syst">
+<meta name="keywords" content="throttling,traffic shaping,leaky bucket,token bucket">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Throttling and Traffic Shaping">
+<meta property="og:url" content="https://bowenli86.github.io/2016/10/05/system design/Throttling-and-Traffic-Shaping/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="Throttling and Traffic Shaping Throttling is, to control the consumption of resources used by an instance of an application, an individual tenant, or an entire service.   Throttling can allow the syst">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.545Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Throttling and Traffic Shaping">
+<meta name="twitter:description" content="Throttling and Traffic Shaping Throttling is, to control the consumption of resources used by an instance of an application, an individual tenant, or an entire service.   Throttling can allow the syst">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/10/05/system design/Throttling-and-Traffic-Shaping/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Throttling and Traffic Shaping | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/10/05/system design/Throttling-and-Traffic-Shaping/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Throttling and Traffic Shaping</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-10-05T23:49:42-07:00">2016-10-05</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Throttling-and-Traffic-Shaping"><a href="#Throttling-and-Traffic-Shaping" class="headerlink" title="Throttling and Traffic Shaping"></a>Throttling and Traffic Shaping</h2><blockquote>
+<p>Throttling is, to control the consumption of resources used by an instance of an application, an individual tenant, or an entire service. </p>
+</blockquote>
+<p>Throttling can allow the system to continue to function and meet service level agreements, even when an increase in demand places an extreme load on resources.</p>
+<p>The system could implement several throttling strategies, including:</p>
+<ul>
+<li><p><code>Service Metering</code> - that is, rejecting requests from an individual user who has already accessed system APIs more than n times per second over a given period of time. This requires that the system meters the use of resources for each tenant or user running an application.</p>
+</li>
+<li><p><code>Leaky bucket as a queue</code> - that is, using load leveling to smooth the volume of activity (also called <code>Queue-based Load Leveling pattern</code>). </p>
+</li>
+<li><p><code>Leaky bucket as a priority queue</code> - in a multitenant environment, <code>Leaky bucket as a queue</code> will reduce the performance for every tenant. </p>
+<ul>
+<li><p>If the system must support a mix of tenants with different SLAs, the work for high-value tenants might be performed immediately. </p>
+</li>
+<li><p>Requests for other tenants can be held back, and handled when the backlog has eased. Deferring operations being performed on behalf of lower priority applications or tenants. These operations can be suspended or curtailed, with an exception generated to inform the tenant that the system is busy and that the operation should be retried later.</p>
+</li>
+</ul>
+</li>
+<li><p><code>Token bucket</code> - that is, using tokens to limit the volume of activity</p>
+</li>
+<li><p><code>Disable non-critical services</code> Disabling or degrading the functionality of selected nonessential services so that essential services can run unimpeded with sufficient resources. For example, if the application is streaming video output, it could switch to a lower resolution.</p>
+</li>
+</ul>
+<p>There are two most commonly used algorithms:</p>
+<ol>
+<li>Leaky Bucket for rate controll</li>
+<li>Token Bucket for concurrency control</li>
+</ol>
+<a id="more"></a>
+<h2 id="Leaky-Bucket-Algorithm"><a href="#Leaky-Bucket-Algorithm" class="headerlink" title="Leaky Bucket Algorithm"></a>Leaky Bucket Algorithm</h2><blockquote>
+<p>Leaky Bucket Algorithm as a Queue, a.k.a Queue-Based Load Leveling Pattern</p>
+</blockquote>
+<h3 id="Statistics"><a href="#Statistics" class="headerlink" title="Statistics"></a>Statistics</h3><ul>
+<li>What’s the max latency time a request can experience:<ul>
+<li>V/(T - O) : V - the bucket’s volume, T - the request input rate, O - the output rate to process requests </li>
+</ul>
+</li>
+</ul>
+<h3 id="Pros"><a href="#Pros" class="headerlink" title="Pros:"></a>Pros:</h3><ul>
+<li>Easy to implement</li>
+<li>Best used to control processing rate</li>
+</ul>
+<h3 id="Cons"><a href="#Cons" class="headerlink" title="Cons:"></a>Cons:</h3><ul>
+<li>Leaky bucket algorithms cannot effectively take advantages of resources. The leaking rate is fixed, so it cannot process a bulky traffic that exceeds its threshold even though there are plenty of resources. (Token Bucket Algorithm can do that)</li>
+</ul>
+<h3 id="Use-Case"><a href="#Use-Case" class="headerlink" title="Use Case:"></a>Use Case:</h3><ul>
+<li>To address system callback flood</li>
+</ul>
+<h2 id="Token-Bucket-Algorithm"><a href="#Token-Bucket-Algorithm" class="headerlink" title="Token Bucket Algorithm"></a>Token Bucket Algorithm</h2><blockquote>
+<p>What a token bucket limits is the traffic within a predefined time window. From the API level, the traffic that we always talk about is <code>QPS (Queries per sec)</code> and <code>TPS (Transactions per sec)</code>, and they are just the traffic in a 1-sec time window.</p>
+</blockquote>
+<p>The token bucket algorithm can be conceptually understood as follows:</p>
+<ul>
+<li>A token is added to the bucket every <code>1/r</code>  seconds.</li>
+<li>The current number of tokens in the bucket is <code>c</code>. <ul>
+<li>Strategy 1: The bucket can hold at the most <code>b</code> tokens. <code>c</code> &lt;= <code>b</code>. If a token arrives when the bucket is full, it is discarded.</li>
+<li>Strategy 2: The bucket can hold unlimited tokens</li>
+</ul>
+</li>
+<li>When n bytes/requests arrive, n tokens will be removed from the bucket, and the bytes/requests are sent to the network.</li>
+</ul>
+<p>There are four strategies for situations when <code>n</code> &gt; <code>c</code>.</p>
+<ol>
+<li>(simple and rudimentary) Consider the packet to be non-conformant, and discard the packet for now (availiable for request resubmit)</li>
+<li>(naive and impractical) Have the packet wait until enough tokens accumulated<ul>
+<li>simple waiting may block the workflow</li>
+<li>maybe lower the priority of the packet, but it still possibily will not be processed forever</li>
+</ul>
+</li>
+<li>(good for batch processing) Break the packet into smaller ones</li>
+<li>(google guava supports) Grant the packet <code>n</code> tokens for now, but will have to delay its further requests in order to make it up. This requires a service metering to keep track of hosts’ token usage. Google Guava <code>RateLimiter</code> supports this feature.</li>
+</ol>
+<h3 id="Statistics-1"><a href="#Statistics-1" class="headerlink" title="Statistics"></a>Statistics</h3><ul>
+<li>What’s the average allowed hit rate<ul>
+<li>the rate to issue tokens <code>r</code></li>
+</ul>
+</li>
+<li>How much is the max tolerable flood peak<ul>
+<li>if the flood peak comes when the token buckets are full, the volume of max tolerable flood peak = V + r. V - token bucket size, r - the rate to issue tokens</li>
+</ul>
+</li>
+</ul>
+<h3 id="Pros-1"><a href="#Pros-1" class="headerlink" title="Pros:"></a>Pros:</h3><ul>
+<li>Best used to control max concurrency</li>
+</ul>
+<h3 id="Cons-1"><a href="#Cons-1" class="headerlink" title="Cons:"></a>Cons:</h3><ul>
+<li>It really depends on which above strategy you choose</li>
+</ul>
+<h3 id="Use-Case-1"><a href="#Use-Case-1" class="headerlink" title="Use Case:"></a>Use Case:</h3><ul>
+<li>To address user requests flood</li>
+</ul>
+<h2 id="Difference-between-Leaky-Bucket-and-Token-Bucket"><a href="#Difference-between-Leaky-Bucket-and-Token-Bucket" class="headerlink" title="Difference between Leaky Bucket and Token Bucket"></a>Difference between Leaky Bucket and Token Bucket</h2><blockquote>
+<p>Leaky bucket strictly forces a fixed maximum rate of processing. In some circumstances, leaky bucket cannot effectively use the internet resources, because it only grants fixed rate of processing and thus cannot handle traffic floods.</p>
+</blockquote>
+<blockquote>
+<p>While token bucket not only limit the average rate of processing, it also allows systems to handle sudden flood peaks.</p>
+</blockquote>
+<p>Pratically, leaky bucket and token bucket algorithms are put together to provide a more powerful yet more flexible control over web traffic.</p>
+<hr>
+<p>References:</p>
+<ul>
+<li><p><a href="http://jm.taobao.org/2016/05/19/how-to-withstand-the-world-s-largest-traffic/" target="_blank" rel="noopener">http://jm.taobao.org/2016/05/19/how-to-withstand-the-world-s-largest-traffic/</a></p>
+</li>
+<li><p><a href="https://msdn.microsoft.com/en-us/library/dn589798.aspx" target="_blank" rel="noopener">https://msdn.microsoft.com/en-us/library/dn589798.aspx</a></p>
+</li>
+<li><p><a href="http://www.cnblogs.com/LBSer/p/4083131.html" target="_blank" rel="noopener">http://www.cnblogs.com/LBSer/p/4083131.html</a></p>
+</li>
+</ul>
+<ul>
+<li><a href="https://blog.jamespan.me/2015/10/19/traffic-shaping-with-token-bucket/" target="_blank" rel="noopener">https://blog.jamespan.me/2015/10/19/traffic-shaping-with-token-bucket/</a></li>
+</ul>
+<ul>
+<li><a href="https://msdn.microsoft.com/en-us/library/dn589783.aspx" target="_blank" rel="noopener">https://msdn.microsoft.com/en-us/library/dn589783.aspx</a></li>
+</ul>
+<ul>
+<li><a href="https://github.com/google/guava/blob/v18.0/guava/src/com/google/common/util/concurrent/RateLimiter.java" target="_blank" rel="noopener">https://github.com/google/guava/blob/v18.0/guava/src/com/google/common/util/concurrent/RateLimiter.java</a></li>
+<li><a href="https://github.com/google/guava/blob/v18.0/guava/src/com/google/common/util/concurrent/SmoothRateLimiter.java" target="_blank" rel="noopener">https://github.com/google/guava/blob/v18.0/guava/src/com/google/common/util/concurrent/SmoothRateLimiter.java</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/throttling/" rel="tag"># throttling</a>
+          
+            <a href="/tags/traffic-shaping/" rel="tag"># traffic shaping</a>
+          
+            <a href="/tags/leaky-bucket/" rel="tag"># leaky bucket</a>
+          
+            <a href="/tags/token-bucket/" rel="tag"># token bucket</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/03/distributed system/kafka/Putting-Apache-Kafka-To-Use-A-Practical-Guide-to-Building-a-Stream-Data-Platform-Part-2/" rel="next" title="Putting Apache Kafka To Use: A Practical Guide to Building a Stream Data Platform (Part 2)">
+                <i class="fa fa-chevron-left"></i> Putting Apache Kafka To Use: A Practical Guide to Building a Stream Data Platform (Part 2)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/06/distributed system/kafka/Apache-Kafka-Samza-and-the-Unix-Philosopy-of-Distributed-Data/" rel="prev" title="Apache Kafka, Samza, and the Unix Philosopy of Distributed Data">
+                Apache Kafka, Samza, and the Unix Philosopy of Distributed Data <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Throttling-and-Traffic-Shaping"><span class="nav-number">1.</span> <span class="nav-text">Throttling and Traffic Shaping</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Leaky-Bucket-Algorithm"><span class="nav-number">2.</span> <span class="nav-text">Leaky Bucket Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Statistics"><span class="nav-number">2.1.</span> <span class="nav-text">Statistics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pros"><span class="nav-number">2.2.</span> <span class="nav-text">Pros:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cons"><span class="nav-number">2.3.</span> <span class="nav-text">Cons:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case"><span class="nav-number">2.4.</span> <span class="nav-text">Use Case:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Token-Bucket-Algorithm"><span class="nav-number">3.</span> <span class="nav-text">Token Bucket Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Statistics-1"><span class="nav-number">3.1.</span> <span class="nav-text">Statistics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pros-1"><span class="nav-number">3.2.</span> <span class="nav-text">Pros:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cons-1"><span class="nav-number">3.3.</span> <span class="nav-text">Cons:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Case-1"><span class="nav-number">3.4.</span> <span class="nav-text">Use Case:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Difference-between-Leaky-Bucket-and-Token-Bucket"><span class="nav-number">4.</span> <span class="nav-text">Difference between Leaky Bucket and Token Bucket</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

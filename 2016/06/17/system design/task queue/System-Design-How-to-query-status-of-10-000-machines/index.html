@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="As promised in https://phoenixjiangnan.github.io/2016/07/01/system%20design/task%20queue/System-Design-Design-Task-Scheduling-System-in-Distributed-System/, I’m writing my experience and thoughts on t">
+<meta name="keywords" content="system design,task queue,interview questions">
+<meta property="og:type" content="article">
+<meta property="og:title" content="System Design - How to query status of 10,000 machines">
+<meta property="og:url" content="https://bowenli86.github.io/2016/06/17/system design/task queue/System-Design-How-to-query-status-of-10-000-machines/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="As promised in https://phoenixjiangnan.github.io/2016/07/01/system%20design/task%20queue/System-Design-Design-Task-Scheduling-System-in-Distributed-System/, I’m writing my experience and thoughts on t">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.549Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="System Design - How to query status of 10,000 machines">
+<meta name="twitter:description" content="As promised in https://phoenixjiangnan.github.io/2016/07/01/system%20design/task%20queue/System-Design-Design-Task-Scheduling-System-in-Distributed-System/, I’m writing my experience and thoughts on t">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/06/17/system design/task queue/System-Design-How-to-query-status-of-10-000-machines/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>System Design - How to query status of 10,000 machines | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/06/17/system design/task queue/System-Design-How-to-query-status-of-10-000-machines/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">System Design - How to query status of 10,000 machines</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-06-17T11:16:19-07:00">2016-06-17</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/system-design/task-queue/" itemprop="url" rel="index"><span itemprop="name">task queue</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>As promised in <a href="https://phoenixjiangnan.github.io/2016/07/01/system%20design/task%20queue/System-Design-Design-Task-Scheduling-System-in-Distributed-System/" target="_blank" rel="noopener">https://phoenixjiangnan.github.io/2016/07/01/system%20design/task%20queue/System-Design-Design-Task-Scheduling-System-in-Distributed-System/</a>, I’m writing my experience and thoughts on that problem, which I got interviewed with Palantir 2 years ago.</p>
+<p>To refresh your thoughts, the problem we are trying so solve looks like this.</p>
+<blockquote>
+<p>How to retrieve 10,000 machines’ health status (can be as simple as live or dead, or as complicated as checking a service is functioning or not) and show all status on a web UI.</p>
+</blockquote>
+<p>This is a pretty practical problem, just imagine how you see your EC2 machines’ status on AWS console.</p>
+<p>The general answer is to 1) maintain a queue of 10,000 jobs, each one is to query a machine’s status 2) have a bunch of worker machines run in parallel, retrieving and executing one status querying job at a time.</p>
+<p>Following are the steps of getting deeper in this question and ultimately reach a satisfying state.</p>
+<h2 id="Step-1-Naive-Approach"><a href="#Step-1-Naive-Approach" class="headerlink" title="Step 1 - Naive Approach"></a>Step 1 - Naive Approach</h2><p>A pitfall when the interviewer presents this question is that, he won’t tell you how many machines you can use to do such an operation. Thus, the first impression an inteviewee got is it can be a dead simple a loop.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">List&lt;Status&gt; <span class="title">getStatus</span><span class="params">(List&lt;Host&gt; hosts)</span> </span>&#123;</span><br><span class="line">    List&lt;Status&gt; status = Lists.newArrayList();</span><br><span class="line">    hosts.forEach(h -&gt; &#123;</span><br><span class="line">        status.add(h.getStatus());</span><br><span class="line">    &#125;)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="Step-2-this-is-not-an-algorithm-question-THIS-IS-A-SYSTEM-DESIGN-QUESTION"><a href="#Step-2-this-is-not-an-algorithm-question-THIS-IS-A-SYSTEM-DESIGN-QUESTION" class="headerlink" title="Step 2 - this is not an algorithm question, THIS IS A SYSTEM DESIGN QUESTION!"></a>Step 2 - this is not an algorithm question, THIS IS A SYSTEM DESIGN QUESTION!</h2><p>The inteviewer will attack you by asking the complexity of the above solution - it’s <code>O(N)</code>. You’ll doubt if there’s any better way. It seems not, because you have to visit each machine and O(N) is the best one you can think of. Can it be <code>O(logN)</code>??!!</p>
+<p>But wait, the only feasible answer is that… this is not an algorithm question, THIS IS A SYSTEM DESIGN QUESTION!</p>
+<p>Then it makes sense, since you can make it faster by enabling <code>Parallel Computing</code>!</p>
+<p>The naive parallel solution that comes right to your mind is, having multiple worker machines, say 100, each one querying 100 host machines (100 * 100 = 10,000) and forward the query results to UI.</p>
+<h2 id="Step-3-Naive-Parallelization"><a href="#Step-3-Naive-Parallelization" class="headerlink" title="Step 3 - Naive Parallelization"></a>Step 3 - Naive Parallelization</h2><p>But what if there are huge delays when querying a single machine? It’s not uncommon due to:</p>
+<ul>
+<li>huge network latency</li>
+<li>request timeout</li>
+<li>several host machines are actually dead!</li>
+</ul>
+<p>One of the worst case is that, 9000 host machines are healthy and the other 100 are dead, and it happens to be that one of the workers is responsible for querying the 1000 dead machines. Your UI would take forever to show the results!</p>
+<h2 id="Step-4-Determine-a-timeout"><a href="#Step-4-Determine-a-timeout" class="headerlink" title="Step 4 - Determine a timeout"></a>Step 4 - Determine a timeout</h2><p>We should have a timeout for each status query!</p>
+<ul>
+<li>Him: Well, how long is the timeout?</li>
+<li>You: If we have a collected history of how long each request takes, we can make the timeout such that, we can not only ensure most healthy calls are not missed, but also fail on dead machines fast enough</li>
+<li>Him: How can you do that? Let’s say we have a distribution graph for you, can you elaborate more?</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">|</span><br><span class="line">|</span><br><span class="line">|        /-----------\</span><br><span class="line">|      /               \</span><br><span class="line">|    /                   \</span><br><span class="line">|  /                       \</span><br><span class="line">|/___________________________\____</span><br></pre></td></tr></table></figure>
+<ul>
+<li>You: We can find out the 95 percentile of all successful requests, and make that the length of timeout</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">|</span><br><span class="line">|</span><br><span class="line">|        /-----------\</span><br><span class="line">|      /               \  |</span><br><span class="line">|    /                   \|</span><br><span class="line">|  /                      |\</span><br><span class="line">|/________________________|__\____</span><br><span class="line">                         95%</span><br></pre></td></tr></table></figure>
+<h2 id="Step-5-Cold-Start-and-Load-Balancing-Worker-and-Task-Queue-Paramdigm"><a href="#Step-5-Cold-Start-and-Load-Balancing-Worker-and-Task-Queue-Paramdigm" class="headerlink" title="Step 5 - Cold Start and Load Balancing? -Worker and Task Queue Paramdigm"></a>Step 5 - Cold Start and Load Balancing? -Worker and Task Queue Paramdigm</h2><p>There are two main problems with this above solution:</p>
+<ul>
+<li>1) what about <code>cold start</code>? What if there’s no historical data? When you are building this from scratch, not optimizing it, then no data is ready for you to reference.</li>
+<li>2) what about <code>load balancing</code>? What if some workers finished all their jobs very fast, and don’t have things to do, but some workers still have a ton of work remaining? This can happen easily when a worker gets assigned 100 healthy host machines, and another worker happens to get assigned 100 dead machines</li>
+</ul>
+<p>The only feasible way to go further now seems require changing the naive parallel computing paradigm.</p>
+<p>And the promising one is the <code>Worker and Task Queue Paradigm</code>, looks like this:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">                   task queue</span><br><span class="line">                   --------------------------</span><br><span class="line">                   | taskN - query machineN|</span><br><span class="line">                   | ---------------------- |</span><br><span class="line">                   |   ..................   |</span><br><span class="line">                   | ---------------------- |</span><br><span class="line">                   | task1 - query machine1 |</span><br><span class="line">                   | ---------------------- |</span><br><span class="line">                   | task0 - query machine0 |</span><br><span class="line">                   --------------------------</span><br><span class="line">                /      |       \</span><br><span class="line">              /        |         \</span><br><span class="line">            /          |           \</span><br><span class="line">-----------     -----------          -----------     </span><br><span class="line">| worker0 |     | worker1 |    ...   | workerM |</span><br><span class="line">-----------     -----------          -----------</span><br></pre></td></tr></table></figure>
+<p>Each worker pulls an uncompleted task from the task queue, and execute it. When finishing it, the worker pulls a new one.</p>
+<p>This parallel paradigm greatly reduces the chance of a worker got assigned all dead machines, and therefore greatly reduces the overall expected time for the whole job to finish.</p>
+<p>Let’s compare this with the former approach in Step 3 in the case of consecutive dead machines. We are counting how much time it cost to finish the whole job in both ways, based on the following assumption:</p>
+<ul>
+<li>Say the first 100 machines are dead, and the other 9900 are good.</li>
+<li>The time to process a health machine (time to send requests + double way network communication time + time to process response) is 1s, and that for a dead machine is 5s (because of the standard timeout). </li>
+<li>Ignore the time to actually retrieve a task from task queue</li>
+</ul>
+<p>In first approach, the worst scenario is that one worker gets all the 100 dead machines. That worker will take <code>100 * 5</code> sec to finish, and all the other 99 workers will take <code>100 * 1</code> to finish. So the total time to finish the job is <code>max(100 * 5, 100 * 1) = 500</code> sec.</p>
+<p>In the second approach: all 100 workers will pulls each of query job for a dead machine (100 in total), so it takes 5 sec to finish all the dead machine querying jobs in parallel. Then it takes <code>9900 / 100 = 99</code> sec to finish all the remaing jobs for healthy machines. The overall time is <code>5 + 99 = 104</code> sec, which is far less than 500 sec.</p>
+<h2 id="Step-6-Priority-Queue"><a href="#Step-6-Priority-Queue" class="headerlink" title="Step 6 - Priority Queue"></a>Step 6 - Priority Queue</h2><p>This is a kind of bonus answer to this specific problem, but is quite common and important to a general task queue. The incentive is about having tasks of different priorities.</p>
+<p>You can set the priority by considering weight of different elements.</p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>Finally, we came up with a quite sound solution for this question.</p>
+<ul>
+<li>Have a worker and task queue paradigm</li>
+<li>Maintain the queue as a priority queue</li>
+</ul>
+<p>Remember this paradigm in the future when you run into similar problems!</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/system-design/" rel="tag"># system design</a>
+          
+            <a href="/tags/task-queue/" rel="tag"># task queue</a>
+          
+            <a href="/tags/interview-questions/" rel="tag"># interview questions</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/16/java/reflection/Java-Reflection-and-the-Class-Objects/" rel="next" title="Java Reflection and the Class Objects">
+                <i class="fa fa-chevron-left"></i> Java Reflection and the Class Objects
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/20/ruby/Ruby-attr-accessor-attr-reader-and-attr-writer/" rel="prev" title="Ruby - attr_accessor, attr_reader, and attr_writer">
+                Ruby - attr_accessor, attr_reader, and attr_writer <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-1-Naive-Approach"><span class="nav-number">1.</span> <span class="nav-text">Step 1 - Naive Approach</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-2-this-is-not-an-algorithm-question-THIS-IS-A-SYSTEM-DESIGN-QUESTION"><span class="nav-number">2.</span> <span class="nav-text">Step 2 - this is not an algorithm question, THIS IS A SYSTEM DESIGN QUESTION!</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-3-Naive-Parallelization"><span class="nav-number">3.</span> <span class="nav-text">Step 3 - Naive Parallelization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-4-Determine-a-timeout"><span class="nav-number">4.</span> <span class="nav-text">Step 4 - Determine a timeout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-5-Cold-Start-and-Load-Balancing-Worker-and-Task-Queue-Paramdigm"><span class="nav-number">5.</span> <span class="nav-text">Step 5 - Cold Start and Load Balancing? -Worker and Task Queue Paramdigm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-6-Priority-Queue"><span class="nav-number">6.</span> <span class="nav-text">Step 6 - Priority Queue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">7.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

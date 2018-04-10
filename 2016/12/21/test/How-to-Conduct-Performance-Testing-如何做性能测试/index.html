@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="The original blog is http://coolshell.cn/articles/17381.html Some key take-aways are:  Average is not reliable, use Percentile.  E.g. 99.9% responses should be within 1ms.   Response Latency should be">
+<meta name="keywords" content="performance test,sock test,burst test">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to Conduct Performance Testing - 如何做性能测试">
+<meta property="og:url" content="https://bowenli86.github.io/2016/12/21/test/How-to-Conduct-Performance-Testing-如何做性能测试/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="The original blog is http://coolshell.cn/articles/17381.html Some key take-aways are:  Average is not reliable, use Percentile.  E.g. 99.9% responses should be within 1ms.   Response Latency should be">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.549Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to Conduct Performance Testing - 如何做性能测试">
+<meta name="twitter:description" content="The original blog is http://coolshell.cn/articles/17381.html Some key take-aways are:  Average is not reliable, use Percentile.  E.g. 99.9% responses should be within 1ms.   Response Latency should be">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/12/21/test/How-to-Conduct-Performance-Testing-如何做性能测试/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>How to Conduct Performance Testing - 如何做性能测试 | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/12/21/test/How-to-Conduct-Performance-Testing-如何做性能测试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">How to Conduct Performance Testing - 如何做性能测试</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-21T15:16:44-08:00">2016-12-21</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/test/" itemprop="url" rel="index"><span itemprop="name">test</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>The original blog is <a href="http://coolshell.cn/articles/17381.html" target="_blank" rel="noopener">http://coolshell.cn/articles/17381.html</a></p>
+<p>Some key take-aways are:</p>
+<ul>
+<li><strong>Average</strong> is not reliable, use <strong>Percentile</strong>. <ul>
+<li>E.g. 99.9% responses should be within 1ms.</li>
+</ul>
+</li>
+<li><strong>Response Latency</strong> should be related to <strong>Throughput</strong><ul>
+<li>E.g. When 99% responses are within 100ms, the max thoughput is 1000qps</li>
+</ul>
+</li>
+<li><strong>Throughput</strong> should be related to <strong>Success Rate</strong><ul>
+<li>E.g. for some critical system, the success rate should be 100%</li>
+</ul>
+</li>
+<li>How to do a strict performance test?<ol>
+<li>Define expected <strong>system response latency</strong> and <strong>success rate</strong></li>
+<li>Find the <strong>max throughput</strong> under those expected limitations</li>
+<li>Conduct <strong>soak test</strong>, that is for example put the <strong>max throughput</strong> on the system for 7 consecutive days</li>
+<li>Define and find the <strong>extreme throughput</strong> of the system. E.g. An extreme value can be defined as - the system’s throughput in 10 mins when success rate is 100%</li>
+<li>Conduct <strong>burst test</strong>, that is for example put <strong>max throughput</strong> on the system for 5 mins, put <strong>extreme throughput</strong> for 1 min, put <strong>max throughput</strong> for another 5 mins, put <strong>extreme throughput</strong> for another 1 min… back and forth for 2 days.</li>
+</ol>
+</li>
+</ul>
+<a id="more"></a>
+<hr>
+<p>偶然间看到了阿里中间件Dubbo的性能测试报告，我觉得这份性能测试报告让人觉得做这性能测试的人根本不懂性能测试，我觉得这份报告会把大众带沟里去，所以，想写下这篇文章，做一点科普。</p>
+<p>首先，这份测试报告里的主要问题如下：</p>
+<p>1）用的全是平均值。老实说，平均值是非常不靠谱的。</p>
+<p>2）响应时间没有和吞吐量 TPS/QPS 挂钩。 而只是测试了低速率的情况，这是完全错误的。</p>
+<p>3）响应时间和吞吐量没有和成功率挂钩。</p>
+<h2 id="为什么平均值不靠谱"><a href="#为什么平均值不靠谱" class="headerlink" title="为什么平均值不靠谱"></a>为什么平均值不靠谱</h2><p>关于平均值为什么不靠谱，我相信大家读新闻的时候经常可以看到，平均工资，平均房价，平均支出，等等这样的字眼，你就知道为什么平均值不靠谱了。（这些都是数学游戏，对于理工科的同学来说，天生应该有免疫力）</p>
+<p>软件的性能测试也一样，平均数也是不靠谱的，这里可以参看这篇详细的文章《<em>Why Averages Suck and Percentiles are Great</em>》，我在这里简单说一下。</p>
+<p>我们知道，性能测试时，测试得到的结果数据不总是一样的，而是有高有低的，如果算平均值就会出现这样的情况，假如，测试了10次，有9次是1ms，而有1次是1s，那么平均数据就是100ms，很明显，这完全不能反应性能测试的情况，也许那1s的请求就是一个不正常的值，是个噪点，应该去掉。所以，我们会在一些评委打分中看到要去掉一个最高分一个最低分，然后再算平均值。</p>
+<p>另外，中位数（Mean）可能会比平均数要稍微靠谱一些，所谓中位数的意就是把将一组数据按大小顺序排列，处在最中间位置的一个数叫做这组数据的中位数 ，这意味着至少有50%的数据低于或高于这个中位数。</p>
+<p>当然，最为正确的统计做法是用百分比分布统计。也就是英文中的TP – Top Percentile，TP50的意思在，50%的请求都小于某个值，TP90表示90%的请求小于某个时间。</p>
+<p>比如：我们有一组数据：[ 10ms,  1s, 200ms, 100ms]，我们把其从小到大排个序：[10ms, 100ms, 200ms, 1s]，于是我们知道，TP50，就是50%的请求ceil(4<em>0.5)=2时间是小于100ms的，TP90就是90%的请求ceil(4</em>0.9)=4时间小于1s。于是：TP50就是100ms，TP90就是1s。</p>
+<p>我以前在路透做的金融系统响应时间的性能测试的要求是这样的，99.9%的请求必须小于1ms，所有的平均时间必须小于1ms。两个条件的限制。</p>
+<p>为什么响应时间（latency）要和吞吐量（Thoughput）挂钩<br>系统的性能如果只看吞吐量，不看响应时间是没有意义的。我的系统可以顶10万请求，但是响应时间已经到了5秒钟，这样的系统已经不可用了，这样的吞吐量也是没有意义的。</p>
+<p>我们知道，当并发量（吞吐量）上涨的时候，系统会变得越来越不稳定，响应时间的波动也会越来越大，响应时间也会变得越来越慢，而吞吐率也越来越上不去（如下图所示），包括CPU的使用率情况也会如此。所以，当系统变得不稳定的时候，吞吐量已经没有意义了。吞吐量有意义的时候仅当系统稳定的时候。</p>
+<h2 id="Benchmark-Optimal-Rate"><a href="#Benchmark-Optimal-Rate" class="headerlink" title="Benchmark Optimal Rate"></a>Benchmark Optimal Rate</h2><p>所以，吞吐量的值必需有响应时间来卡。比如：TP99小于100ms的时候，系统可以承载的最大并发数是1000qps。这意味着，我们要不断的在不同的并发数上测试，以找到软件的最稳定时的最大吞吐量。</p>
+<p>为什么响应时间吞吐量和成功率要挂钩<br>我们这应该不难理解了，如果请求不成功的话，都还做毛的性能测试。比如，我说我的系统并发可以达到10万，但是失败率是</p>
+<p>40%，那么，这10万的并发完全就是一个笑话了。</p>
+<p>性能测试的失败率的容忍应该是非常低的。对于一些关键系统，成功请求数必须在100%，一点都不能含糊。</p>
+<h2 id="如何严谨地做性能测试"><a href="#如何严谨地做性能测试" class="headerlink" title="如何严谨地做性能测试"></a>如何严谨地做性能测试</h2><p>一般来说，性能测试要统一考虑这么几个因素：Thoughput吞吐量，Latency响应时间，资源利用（CPU/MEM/IO/Bandwidth…），成功率，系统稳定性。</p>
+<p>下面的这些性能测试的方式基本上来源自我的老老东家汤森路透，一家做real-time的金融数据系统的公司。</p>
+<p>一，你得定义一个系统的响应时间latency，建议是TP99，以及成功率。比如路透的定义：99.9%的响应时间必需在1ms之内，平均响应时间在1ms以内，100%的请求成功。</p>
+<p>二，在这个响应时间的限制下，找到最高的吞吐量。测试用的数据，需要有大中小各种尺寸的数据，并可以混合。最好使用生产线上的测试数据。</p>
+<p>三，在这个吞吐量做 Soak Test， 比如：使用第二步测试得到的吞吐量连续7天的不间断的压测系统。然后收集CPU，内存，硬盘/网络IO，等指标，查看系统是否稳定，比如，CPU是平稳的，内存使用也是平稳的。那么，这个值就是系统的性能</p>
+<p>四，找到系统的极限值。比如：在成功率100%的情况下（不考虑响应时间的长短），系统能坚持10分钟的吞吐量。</p>
+<p>五，做Burst Test。用第二步得到的吞吐量执行5分钟，然后在第四步得到的极限值执行1分钟，再回到第二步的吞吐量执行5钟，再到第四步的权限值执行1分钟，如此往复个一段时间，比如2天。收集系统数据：CPU、内存、硬盘/网络IO等，观察他们的曲线，以及相应的响应时间，确保系统是稳定的。</p>
+<p>六、低吞吐量和网络小包的测试。有时候，在低吞吐量的时候，可能会导致latency上升，比如TCP_NODELAY的参数没有开启会导致latency上升（详见TCP的那些事），而网络小包会导致带宽用不满也会导致性能上不去，所以，性能测试还需要根据实际情况有选择的测试一下这两咱场景。</p>
+<p>（注：在路透，路透会用第二步得到的吞吐量乘以66.7%来做为系统的软报警线，80%做为系统的硬报警线，而极限值仅仅用来扛突发的peak）</p>
+<p>是不是很繁锁？是的，只因为，这是工程，工程是一门科学，科学是严谨的。</p>
+<p>欢迎大家也分享一下你们性能测试的经验和方法。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/performance-test/" rel="tag"># performance test</a>
+          
+            <a href="/tags/sock-test/" rel="tag"># sock test</a>
+          
+            <a href="/tags/burst-test/" rel="tag"># burst test</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/19/tools/mac/bash-profile-and-how-to-permenantly-set-environment-variables-on-Mac/" rel="next" title=".bash_profile and how to permenantly set environment variables on Mac">
+                <i class="fa fa-chevron-left"></i> .bash_profile and how to permenantly set environment variables on Mac
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/29/tools/docker/Docker-Concept-Intro/" rel="prev" title="Docker - Concept Intro">
+                Docker - Concept Intro <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么平均值不靠谱"><span class="nav-number">1.</span> <span class="nav-text">为什么平均值不靠谱</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Benchmark-Optimal-Rate"><span class="nav-number">2.</span> <span class="nav-text">Benchmark Optimal Rate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何严谨地做性能测试"><span class="nav-number">3.</span> <span class="nav-text">如何严谨地做性能测试</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

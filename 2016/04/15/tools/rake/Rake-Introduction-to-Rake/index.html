@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Ruby code for build12345678910111213141516171819202122232425#!/usr/bin/env rubyrequire &apos;ftools&apos;def make_directories  File.makedirs &quot;html&quot;  File.makedirs &quot;html/images&quot;enddef copy_images  File.copy &quot;pic">
+<meta name="keywords" content="rake,rake build">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rake - Introduction to Rake">
+<meta property="og:url" content="https://bowenli86.github.io/2016/04/15/tools/rake/Rake-Introduction-to-Rake/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="Ruby code for build12345678910111213141516171819202122232425#!/usr/bin/env rubyrequire &apos;ftools&apos;def make_directories  File.makedirs &quot;html&quot;  File.makedirs &quot;html/images&quot;enddef copy_images  File.copy &quot;pic">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.553Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Rake - Introduction to Rake">
+<meta name="twitter:description" content="Ruby code for build12345678910111213141516171819202122232425#!/usr/bin/env rubyrequire &apos;ftools&apos;def make_directories  File.makedirs &quot;html&quot;  File.makedirs &quot;html/images&quot;enddef copy_images  File.copy &quot;pic">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/04/15/tools/rake/Rake-Introduction-to-Rake/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Rake - Introduction to Rake | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/04/15/tools/rake/Rake-Introduction-to-Rake/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Rake - Introduction to Rake</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-04-15T13:58:30-07:00">2016-04-15</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tools/rake/" itemprop="url" rel="index"><span itemprop="name">rake</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Ruby-code-for-build"><a href="#Ruby-code-for-build" class="headerlink" title="Ruby code for build"></a>Ruby code for build</h1><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env ruby</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">require</span> <span class="string">'ftools'</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_directories</span></span></span><br><span class="line">  File.makedirs <span class="string">"html"</span></span><br><span class="line">  File.makedirs <span class="string">"html/images"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">copy_images</span></span></span><br><span class="line">  File.copy <span class="string">"pics/rake.gif"</span>, <span class="string">"html/images/rake.gif"</span></span><br><span class="line">  File.copy <span class="string">"pics/target.jpg"</span>, <span class="string">"html/images/target.jpg"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_html</span></span></span><br><span class="line">  system <span class="string">%&#123;./runwpb rake.wpb&#125;</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build</span></span></span><br><span class="line">  make_directories</span><br><span class="line">  copy_images</span><br><span class="line">  generate_html</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">build</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h1 id="Task-Dependencies"><a href="#Task-Dependencies" class="headerlink" title="Task Dependencies"></a>Task Dependencies</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">      / Generate HTML \</span><br><span class="line">Build                   Create Directories</span><br><span class="line">      \ Copy Images   /</span><br></pre></td></tr></table></figure>
+<h2 id="Task-dependencies-in-a-Rakefile"><a href="#Task-dependencies-in-a-Rakefile" class="headerlink" title="Task dependencies in a Rakefile"></a>Task dependencies in a Rakefile</h2><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">task <span class="symbol">:build</span> =&gt; [<span class="symbol">:generate_html</span>, <span class="symbol">:copy_images</span>]</span><br><span class="line">task <span class="symbol">:generate_html</span> =&gt; [<span class="symbol">:create_directories</span>]</span><br><span class="line">task <span class="symbol">:copy_images</span> =&gt; [<span class="symbol">:create_directories</span>]</span><br><span class="line">task <span class="symbol">:create_directories</span></span><br></pre></td></tr></table></figure>
+<h2 id="Building-with-Rake"><a href="#Building-with-Rake" class="headerlink" title="Building with Rake"></a>Building with Rake</h2><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">task <span class="symbol">:build</span> =&gt; [<span class="symbol">:generate_html</span>, <span class="symbol">:copy_images</span>]</span><br><span class="line"></span><br><span class="line">task <span class="symbol">:generate_html</span> =&gt; [<span class="symbol">:create_directories</span>] <span class="keyword">do</span></span><br><span class="line">  system <span class="string">%&#123;./runwpb rake.wpb&#125;</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">task <span class="symbol">:copy_images</span> =&gt; [<span class="symbol">:create_directories</span>] <span class="keyword">do</span></span><br><span class="line">  File.copy <span class="string">"pics/rake.gif"</span>, <span class="string">"html/images/rake.gif"</span></span><br><span class="line">  File.copy <span class="string">"pics/target.jpg"</span>, <span class="string">"html/images/target.jpg"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">task <span class="symbol">:create_directories</span> <span class="keyword">do</span></span><br><span class="line">  File.makedirs <span class="string">"html"</span></span><br><span class="line">  File.makedirs <span class="string">"html/images"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h2 id="Tasks-are-like-Functions"><a href="#Tasks-are-like-Functions" class="headerlink" title="Tasks are like Functions"></a>Tasks are like Functions</h2><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># test_rake.rake</span></span><br><span class="line"><span class="comment"># Run with 'rake a'</span></span><br><span class="line">task <span class="symbol">:a</span> =&gt; [<span class="symbol">:b</span>, <span class="symbol">:c</span>] <span class="keyword">do</span> print <span class="string">"a"</span> <span class="keyword">end</span></span><br><span class="line">task <span class="symbol">:b</span> =&gt; [<span class="symbol">:d</span>]     <span class="keyword">do</span> print <span class="string">"b"</span> <span class="keyword">end</span></span><br><span class="line">task <span class="symbol">:c</span> =&gt; [<span class="symbol">:d</span>]     <span class="keyword">do</span> print <span class="string">"c"</span> <span class="keyword">end</span></span><br><span class="line">task <span class="symbol">:d</span>             <span class="keyword">do</span> print <span class="string">"d"</span> <span class="keyword">end</span></span><br><span class="line"><span class="comment"># Result: dbca</span></span><br></pre></td></tr></table></figure>
+<h2 id="Warning-Use-do-end"><a href="#Warning-Use-do-end" class="headerlink" title="Warning: Use do/end"></a>Warning: Use do/end</h2><p><code>Actions blocks</code> should be specified using <code>do/end</code>. </p>
+<ul>
+<li>Rakefile syntax takes advantage of Ruby’s flexible syntax</li>
+<li>Using {} for blocks could be ambiguous …</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">task :doit =&gt; calc_dependents &#123; actions &#125;</span><br></pre></td></tr></table></figure>
+<p>is parsed<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">task(:doit =&gt; (calc_dependents &#123; actions &#125;))</span><br></pre></td></tr></table></figure></p>
+<h1 id="Rules"><a href="#Rules" class="headerlink" title="Rules"></a>Rules</h1><p>Sometimes you don’t want to write rules for every single file task … so use a rule.</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rule <span class="string">'.o'</span> =&gt; [<span class="string">'.c'</span>] <span class="keyword">do</span> <span class="params">|t|</span></span><br><span class="line">    sh <span class="string">%&#123;cc <span class="subst">#&#123;t.source&#125;</span> -c -o <span class="subst">#&#123;t.name&#125;</span>&#125;</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>When you need to build a file named “main.o”</p>
+<ul>
+<li>And “main.o” doesn’t exist, But “main.c” does …</li>
+<li>Then synthesize a file task to build “main.o” from “main.c”</li>
+</ul>
+<h2 id="Rule-Limitations"><a href="#Rule-Limitations" class="headerlink" title="Rule Limitations"></a>Rule Limitations</h2><p>Rules will only do <code>one level of inference</code><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rule <span class="string">".c"</span> =&gt; [<span class="string">".y"</span>] <span class="keyword">do</span> <span class="params">|t|</span> yacc(t.source) <span class="keyword">end</span></span><br><span class="line">rule <span class="string">".o"</span> =&gt; [<span class="string">".c"</span>] <span class="keyword">do</span> <span class="params">|t|</span> compile_c(t.source) <span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>If lex.y exists … Rake will not build lex.c from lex.y and lex.o from lex.c.</p>
+<h1 id="Documenting-Tasks"><a href="#Documenting-Tasks" class="headerlink" title="Documenting Tasks"></a>Documenting Tasks</h1><p>Add a <code>desc</code> command before a task to describe it.<br>Use the <code>-T</code> flag to see the described tasks.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">desc &quot;Remove any temporary products&quot;</span><br><span class="line">task :clean do ... end</span><br><span class="line"></span><br><span class="line">desc &quot;Build the presentation&quot;</span><br><span class="line">task :presentation</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ rake -T</span><br><span class="line">(in /home/jim/working/doc/talks/buildingwithrake)</span><br><span class="line">rake archive                       # Copy directory to an archive.</span><br><span class="line">rake build                         # Build the presentation</span><br><span class="line">rake clean                         # Remove any temporary products.</span><br></pre></td></tr></table></figure>
+<h1 id="File-Lists"><a href="#File-Lists" class="headerlink" title="File Lists"></a>File Lists</h1><p><code>FileLists</code> are arrays with a few extras</p>
+<ul>
+<li>sub and sub! supported (no blocks)</li>
+<li>add(pattern) will add file matching the glob pattern</li>
+</ul>
+<h1 id="File-Utils"><a href="#File-Utils" class="headerlink" title="File Utils"></a>File Utils</h1><p>File Commands:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd pwd, mkdir, mkdir_p, rmdir, ln, ln_s, ln_sf, cp, cp_r, mv, rm, rm_r, rm_rf, install, chmod, touch</span><br></pre></td></tr></table></figure>
+<p>Most commands will work with a list of files</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp &quot;file1&quot;, &quot;file2&quot;, &quot;file3&quot;, &quot;destdir&quot;</span><br></pre></td></tr></table></figure>
+<p>Commands can take options</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp &quot;a&quot;, &quot;b&quot;, :verbose=&gt;true, :nowrite=&gt;true</span><br></pre></td></tr></table></figure>
+<h1 id="Extended-File-Utils"><a href="#Extended-File-Utils" class="headerlink" title="Extended File Utils"></a>Extended File Utils</h1><ul>
+<li>Functions verbose and nowrite control globally or locally.</li>
+</ul>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Verbose globally set</span></span><br><span class="line">verbose(<span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Verbose set while executing code</span></span><br><span class="line">verbose(<span class="literal">true</span>) &#123; code &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Two Commands added to FileUtils:</li>
+</ul>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Runs an external shell command</span></span><br><span class="line">sh <span class="string">%&#123;shell command&#125;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Runs an external ruby process</span></span><br><span class="line">ruby <span class="string">%&#123;ruby command line&#125;</span></span><br></pre></td></tr></table></figure>
+<h1 id="Task-Libraries"><a href="#Task-Libraries" class="headerlink" title="Task Libraries"></a>Task Libraries</h1><ul>
+<li>A Task Library <code>defines one or more related rake tasks</code>.</li>
+<li>The task library is configured by the user as needed.</li>
+</ul>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Rake::RDocTask.new &#123; <span class="params">|rdoc|</span></span><br><span class="line">  rdoc.rdoc_dir = <span class="string">'html'</span></span><br><span class="line">  rdoc.template = <span class="string">'kilmer'</span></span><br><span class="line">  rdoc.options &lt;&lt; <span class="string">'--line-numbers'</span></span><br><span class="line">  rdoc.rdoc_files.add(<span class="string">'README'</span>, <span class="string">'MIT-LICENSE'</span>, <span class="string">'TODO'</span>, <span class="string">'CHANGES'</span>)</span><br><span class="line">  rdoc.rdoc_files.add(<span class="string">'lib/**/*.rb'</span>, <span class="string">'doc/**/*.rdoc'</span>, <span class="string">'test/*.rb'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/rake/" rel="tag"># rake</a>
+          
+            <a href="/tags/rake-build/" rel="tag"># rake build</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/15/distributed system/thrift/Apache-Thrift-Detailed-Thrift-Examples/" rel="next" title="Apache Thrift - Detailed Thrift Examples">
+                <i class="fa fa-chevron-left"></i> Apache Thrift - Detailed Thrift Examples
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/17/test/jmockit/Unit-Test-JMockit-Capturing-Invocation-Arguments-for-Verification/" rel="prev" title="Unit Test - JMockit - Capturing Invocation Arguments for Verification">
+                Unit Test - JMockit - Capturing Invocation Arguments for Verification <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Ruby-code-for-build"><span class="nav-number">1.</span> <span class="nav-text">Ruby code for build</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Task-Dependencies"><span class="nav-number">2.</span> <span class="nav-text">Task Dependencies</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Task-dependencies-in-a-Rakefile"><span class="nav-number">2.1.</span> <span class="nav-text">Task dependencies in a Rakefile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Building-with-Rake"><span class="nav-number">2.2.</span> <span class="nav-text">Building with Rake</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tasks-are-like-Functions"><span class="nav-number">2.3.</span> <span class="nav-text">Tasks are like Functions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Warning-Use-do-end"><span class="nav-number">2.4.</span> <span class="nav-text">Warning: Use do/end</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Rules"><span class="nav-number">3.</span> <span class="nav-text">Rules</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Rule-Limitations"><span class="nav-number">3.1.</span> <span class="nav-text">Rule Limitations</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Documenting-Tasks"><span class="nav-number">4.</span> <span class="nav-text">Documenting Tasks</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#File-Lists"><span class="nav-number">5.</span> <span class="nav-text">File Lists</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#File-Utils"><span class="nav-number">6.</span> <span class="nav-text">File Utils</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Extended-File-Utils"><span class="nav-number">7.</span> <span class="nav-text">Extended File Utils</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Task-Libraries"><span class="nav-number">8.</span> <span class="nav-text">Task Libraries</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="A ZooKeeper client establishes a session with the ZooKeeper service by creating a handle to the service using a language binding. Session StatesOnce created, the handle starts of in the CONNECTING sta">
+<meta name="keywords" content="zookeepr session,zookeeper client session">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper - Sessions and Session Management">
+<meta property="og:url" content="https://bowenli86.github.io/2016/09/15/distributed system/zookeeper/ZooKeeper-Sessions-and-Session-Management/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="A ZooKeeper client establishes a session with the ZooKeeper service by creating a handle to the service using a language binding. Session StatesOnce created, the handle starts of in the CONNECTING sta">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://zookeeper.apache.org/doc/trunk/images/state_dia.jpg">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.526Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ZooKeeper - Sessions and Session Management">
+<meta name="twitter:description" content="A ZooKeeper client establishes a session with the ZooKeeper service by creating a handle to the service using a language binding. Session StatesOnce created, the handle starts of in the CONNECTING sta">
+<meta name="twitter:image" content="https://zookeeper.apache.org/doc/trunk/images/state_dia.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/09/15/distributed system/zookeeper/ZooKeeper-Sessions-and-Session-Management/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>ZooKeeper - Sessions and Session Management | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/09/15/distributed system/zookeeper/ZooKeeper-Sessions-and-Session-Management/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ZooKeeper - Sessions and Session Management</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-15T15:14:21-07:00">2016-09-15</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-system/" itemprop="url" rel="index"><span itemprop="name">distributed system</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-system/zookeeper/" itemprop="url" rel="index"><span itemprop="name">zookeeper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>A ZooKeeper client establishes a <code>session</code> with the ZooKeeper service by creating a handle to the service using a language binding.</p>
+<h2 id="Session-States"><a href="#Session-States" class="headerlink" title="Session States"></a>Session States</h2><p>Once created, the handle starts of in the <code>CONNECTING</code> state and the client library tries to connect to one of the servers that make up the ZooKeeper service at which point it switches to the <code>CONNECTED</code> state.</p>
+<p>During normal operation will be in one of these two states. If an unrecoverable error occurs, such as session expiration or authentication failure, or if the application explicitly closes the handle, the handle will move to the <code>CLOSED</code> state.</p>
+<p>The following figure shows the possible state transitions of a ZooKeeper client:</p>
+<p><img src="https://zookeeper.apache.org/doc/trunk/images/state_dia.jpg" alt="zookeeper session"></p>
+<h2 id="How-to-Create-A-Client-Session"><a href="#How-to-Create-A-Client-Session" class="headerlink" title="How to Create A Client Session"></a>How to Create A Client Session</h2><p>To create a client session, the application code must provide a string <code>(connection string)</code> containing a comma separated list of <code>host:port</code> pairs, each corresponding to a ZooKeeper server (e.g. <code>&quot;127.0.0.1:4545&quot;</code> or <code>&quot;127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002&quot;</code>).</p>
+<hr>
+<pre><code>Added in 3.2.0: 
+</code></pre><p>An optional <code>chroot</code> suffix may also be appended to the connection string. This will run the client commands while interpreting all paths relative to this root (similar to the unix chroot command). If used the example would look like: <code>127.0.0.1:4545/app/a</code> or <code>127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002/app/a</code> where the client would be rooted at “/app/a” and all paths would be relative to this root - ie getting/setting/etc… <code>/foo/bar</code> would result in operations being run on <code>/app/a/foo/bar</code> (from the server perspective). </p>
+<p>This feature is particularly useful <code>in multi-tenant environments</code> where each user of a particular ZooKeeper service could be rooted differently. This makes re-use much simpler as each user can code his/her application as if it were rooted at <code>/</code>, while actual location (say <code>/app/a</code>) could be determined at deployment time.</p>
+<hr>
+<h2 id="What-Happens-in-Session-Creation"><a href="#What-Happens-in-Session-Creation" class="headerlink" title="What Happens in Session Creation"></a>What Happens in Session Creation</h2><p>The ZooKeeper client library will pick an arbitrary server <code>(Note! Not necessarily the local server if there&#39;s one running along the client!)</code> and try to connect to it. If this connection fails, or if the client becomes disconnected from the server for any reason, the client will automatically try the next server in the list, until a connection is (re-)established.</p>
+<h3 id="Server-creates-Session-Id"><a href="#Server-creates-Session-Id" class="headerlink" title="Server creates Session Id"></a>Server creates <code>Session Id</code></h3><p>When a client gets a handle to the ZooKeeper service, ZooKeeper creates a ZooKeeper <code>session</code>, <code>represented as a 64-bit number</code>, that it assigns to the client.</p>
+<h3 id="Server-creates-password-and-send-it-to-client"><a href="#Server-creates-password-and-send-it-to-client" class="headerlink" title="Server creates password and send it to client"></a>Server creates <code>password</code> and send it to client</h3><p>If the client connects to a different ZooKeeper server, it will send the <code>session id</code> as a part of the connection handshake. As a security measure, the server creates a <code>password</code> for the <code>session id</code> that any ZooKeeper server can validate.The password is sent to the client with the session id when the client establishes the session. The client sends this password with the session id whenever it reestablishes the session with a new server.</p>
+<h3 id="Client-specifies-timeout"><a href="#Client-specifies-timeout" class="headerlink" title="Client specifies timeout"></a>Client specifies timeout</h3><p>One of the parameters to the ZooKeeper client library call to create a ZooKeeper session is <code>the session timeout in milliseconds</code>. The client sends a requested timeout, the server responds with the timeout that it can give the client. The current implementation requires that the timeout be <code>a minimum of 2 times the tickTime</code> (as set in the server configuration) and <code>a maximum of 20 times the tickTime</code>.</p>
+<a id="more"></a>
+<h3 id="Session-re-establishment"><a href="#Session-re-establishment" class="headerlink" title="Session re-establishment"></a>Session re-establishment</h3><p>When a client (session) becomes partitioned from the ZK serving cluster it will begin searching the list of servers that were specified during session creation. Eventually, when connectivity between the client and at least one of the servers is re-established, the session will either again transition to the <code>connected</code> state (if reconnected within the session timeout value) or it will transition to the <code>expired</code> state (if reconnected after the session timeout).</p>
+<p>It is not advisable to create a new session object (a new <code>ZooKeeper.class</code> or zookeeper handle in the c binding) for disconnection. The ZK client library will handle reconnect for you. In particular we have heuristics built into the client library to handle things like <code>herd effect</code>, etc… Only create a new session when you are notified of session expiration (mandatory).</p>
+<h3 id="Session-Expiration"><a href="#Session-Expiration" class="headerlink" title="Session Expiration"></a>Session Expiration</h3><pre><code>Session expiration is managed by the ZooKeeper cluster itself, not by the client.
+</code></pre><p>When the ZK client establishes a session with the cluster it provides a <code>timeout</code> value detailed above. This value is used by the cluster to determine when the client’s session expires.</p>
+<pre><code>Expirations happens when the cluster does not hear from the client within the specified session timeout period (i.e. no heartbeat).
+</code></pre><p>At session expiration the cluster will delete any/all ephemeral nodes owned by that session and immediately notify any/all connected clients of the change (anyone watching those znodes).</p>
+<blockquote>
+<p>At this point the client of the expired session is still disconnected from the cluster, it will not be notified of the session expiration until/unless it is able to re-establish a connection to the cluster. The client will stay in disconnected state until the TCP connection is re-established with the cluster, at which point the watcher of the expired session will receive the <code>session expired</code> notification.</p>
+</blockquote>
+<p>Example state transitions for an expired session as seen by the expired session’s watcher:</p>
+<ol>
+<li><code>connected</code> : session is established and client is communicating with cluster (client/server communication is operating properly)</li>
+<li>…. client is partitioned from the cluster</li>
+<li><code>disconnected</code> : client has lost connectivity with the cluster</li>
+<li>…. time elapses, after ‘timeout’ period the cluster expires the session, nothing is seen by client as it is disconnected from cluster</li>
+<li>…. time elapses, the client regains network level connectivity with the cluster</li>
+<li><code>expired</code> : eventually the client reconnects to the cluster, it is then notified of the expiration</li>
+</ol>
+<h2 id="Default-Watcher"><a href="#Default-Watcher" class="headerlink" title="Default Watcher"></a>Default Watcher</h2><p>Another parameter to the ZooKeeper session establishment call is <code>the default watcher</code>. Watchers are notified when any state change occurs in the client. For example if the client loses connectivity to the server the client will be notified, or if the client’s session expires, etc…</p>
+<p>This watcher should consider the initial state to be <code>disconnected</code> (i.e. before any state changes events are sent to the watcher by the client lib). In the case of a new connection, the first event sent to the watcher is typically the session connection event.</p>
+<h3 id="Client-Heartbeat"><a href="#Client-Heartbeat" class="headerlink" title="Client Heartbeat"></a>Client Heartbeat</h3><p>The session is kept alive by requests sent by the client. If the session is idle for a period of time that would timeout the session, the client will send <code>a PING request</code> to keep the session alive.</p>
+<p>This PING request not only allows the ZooKeeper server to know that the client is still active, but it also allows the client to verify that its connection to the ZooKeeper server is still active. The timing of the PING is conservative enough to ensure reasonable time to detect a dead connection and reconnect to a new server.</p>
+<p>Once a connection to the server is successfully established <code>connected</code> there are basically two cases where the client lib generates <code>connectionloss</code> (the result code in c binding, exception in Java – see the API documentation for binding specific details) when either a synchronous or asynchronous operation is performed and one of the following holds:</p>
+<ul>
+<li>The application calls an operation on a session that is no longer alive/valid</li>
+<li>The ZooKeeper client disconnects from a server when there are pending operations to that server, i.e., there is a pending asynchronous call.</li>
+</ul>
+<hr>
+<pre><code>Added in 3.2.0 -- SessionMovedException.
+</code></pre><p>There is an internal exception that is generally not seen by clients called the <code>SessionMovedException</code>. This exception occurs because a request was received on a connection for a session which has been reestablished on a different server. The normal cause of this error is a client that sends a request to a server, but the network packet gets delayed, so the client times out and connects to a new server. When the delayed packet arrives at the first server, the old server detects that the session has moved, and closes the client connection.</p>
+<p>Clients normally do not see this error since they do not read from those old connections. (Old connections are usually closed.) One situation in which this condition can be seen is when two clients try to reestablish the same connection using a saved session id and password. One of the clients will reestablish the connection and the second client will be disconnected (causing the pair to attempt to re-establish its connection/session indefinitely).</p>
+<hr>
+<h2 id="Updating-the-List-of-Servers"><a href="#Updating-the-List-of-Servers" class="headerlink" title="Updating the List of Servers"></a>Updating the List of Servers</h2><p>Updating the list of servers. We allow a client to update the connection string by providing a new comma separated list of <code>host:port</code> pairs, each corresponding to a ZooKeeper server.</p>
+<p>The function invokes a probabilistic load-balancing algorithm which may cause the client to disconnect from its current host with the goal to achieve expected uniform number of connections per server in the new list. In case the current host to which the client is connected is not in the new list this call will always cause the connection to be dropped. Otherwise, the decision is based on whether the number of servers has increased or decreased and by how much.</p>
+<p>For example, if the previous connection string contained 3 hosts and now the list contains these 3 hosts and 2 more hosts, 40% of clients connected to each of the 3 hosts will move to one of the new hosts in order to balance the load. The algorithm will cause the client to drop its connection to the current host to which it is connected with probability 0.4 and in this case cause the client to connect to one of the 2 new hosts, chosen at random.</p>
+<p>Another example – suppose we have 5 hosts and now update the list to remove 2 of the hosts, the clients connected to the 3 remaining hosts will stay connected, whereas all clients connected to the 2 removed hosts will need to move to one of the 3 hosts, chosen at random. If the connection is dropped, the client moves to a special mode where he chooses a new server to connect to using the probabilistic algorithm, and not just round robin.</p>
+<p>In the first example, each client decides to disconnect with probability 0.4 but once the decision is made, it will try to connect to a random new server and only if it cannot connect to any of the new servers will it try to connect to the old ones. After finding a server, or trying all servers in the new list and failing to connect, the client moves back to the normal mode of operation where it picks an arbitrary server from the <code>connectString</code> and attempt to connect to it. If that fails, is will continue trying different random servers in round robin. (see above the algorithm used to initially choose a server)</p>
+<hr>
+<p>Reference: <a href="https://zookeeper.apache.org/doc/trunk/zookeeperProgrammers.html#ch_zkSessions" target="_blank" rel="noopener">https://zookeeper.apache.org/doc/trunk/zookeeperProgrammers.html#ch_zkSessions</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zookeepr-session/" rel="tag"># zookeepr session</a>
+          
+            <a href="/tags/zookeeper-client-session/" rel="tag"># zookeeper client session</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/14/system design/projects/How-did-I-develop-a-crypto-service-for-Tableau-Server/" rel="next" title="How did I develop a crypto service">
+                <i class="fa fa-chevron-left"></i> How did I develop a crypto service
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/16/distributed system/thrift/Apache-Thrift-Introduction/" rel="prev" title="Apache Thrift - Introduction">
+                Apache Thrift - Introduction <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Session-States"><span class="nav-number">1.</span> <span class="nav-text">Session States</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-Create-A-Client-Session"><span class="nav-number">2.</span> <span class="nav-text">How to Create A Client Session</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-Happens-in-Session-Creation"><span class="nav-number">3.</span> <span class="nav-text">What Happens in Session Creation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Server-creates-Session-Id"><span class="nav-number">3.1.</span> <span class="nav-text">Server creates Session Id</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Server-creates-password-and-send-it-to-client"><span class="nav-number">3.2.</span> <span class="nav-text">Server creates password and send it to client</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Client-specifies-timeout"><span class="nav-number">3.3.</span> <span class="nav-text">Client specifies timeout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Session-re-establishment"><span class="nav-number">3.4.</span> <span class="nav-text">Session re-establishment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Session-Expiration"><span class="nav-number">3.5.</span> <span class="nav-text">Session Expiration</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Default-Watcher"><span class="nav-number">4.</span> <span class="nav-text">Default Watcher</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Client-Heartbeat"><span class="nav-number">4.1.</span> <span class="nav-text">Client Heartbeat</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Updating-the-List-of-Servers"><span class="nav-number">5.</span> <span class="nav-text">Updating the List of Servers</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

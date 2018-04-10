@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="What is ReflectionJava Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also po">
+<meta name="keywords" content="java refelction,java class object">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Reflection and the Class Objects">
+<meta property="og:url" content="https://bowenli86.github.io/2016/06/16/java/reflection/Java-Reflection-and-the-Class-Objects/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="What is ReflectionJava Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also po">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.537Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java Reflection and the Class Objects">
+<meta name="twitter:description" content="What is ReflectionJava Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also po">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/06/16/java/reflection/Java-Reflection-and-the-Class-Objects/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java Reflection and the Class Objects | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/06/16/java/reflection/Java-Reflection-and-the-Class-Objects/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java Reflection and the Class Objects</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-06-16T12:00:45-07:00">2016-06-16</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/reflection/" itemprop="url" rel="index"><span itemprop="name">reflection</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="What-is-Reflection"><a href="#What-is-Reflection" class="headerlink" title="What is Reflection"></a>What is Reflection</h1><p>Java Reflection makes it possible to inspect classes, interfaces, fields and methods at runtime, without knowing the names of the classes, methods etc. at compile time. It is also possible to instantiate new objects, invoke methods and get/set field values using reflection.</p>
+<h1 id="Uses-of-Reflection"><a href="#Uses-of-Reflection" class="headerlink" title="Uses of Reflection"></a>Uses of Reflection</h1><p>Reflection is commonly used by programs which require the ability to examine or modify the runtime behavior of applications running in the Java virtual machine. This is a relatively advanced feature and should be used only by developers who have a strong grasp of the fundamentals of the language. With that caveat in mind, reflection is a powerful technique and can enable applications to perform operations which would otherwise be impossible.</p>
+<p>Using Java Reflection you can inspect Java classes <code>at runtime</code>. Inspecting classes is often the first thing you do when using Reflection. From the classes you can obtain information about</p>
+<ul>
+<li>Class Name</li>
+<li>Class Modifies (public, private, synchronized etc.)</li>
+<li>Package Info</li>
+<li>Superclass</li>
+<li>Implemented Interfaces</li>
+<li>Constructors</li>
+<li>Methods</li>
+<li>Fields</li>
+<li>Annotations</li>
+</ul>
+<a id="more"></a>
+<h2 id="1-Extensibility-Features"><a href="#1-Extensibility-Features" class="headerlink" title="1. Extensibility Features"></a>1. Extensibility Features</h2><p>An application may make use of external, user-defined classes by creating instances of extensibility objects using their fully-qualified names.</p>
+<h2 id="2-Class-Browsers-and-Visual-Development-Environments"><a href="#2-Class-Browsers-and-Visual-Development-Environments" class="headerlink" title="2. Class Browsers and Visual Development Environments"></a>2. Class Browsers and Visual Development Environments</h2><p>A class browser needs to be able to enumerate the members of classes. Visual development environments can benefit from making use of type information available in reflection to aid the developer in writing correct code.</p>
+<h2 id="3-Debuggers-and-Test-Tools"><a href="#3-Debuggers-and-Test-Tools" class="headerlink" title="3. Debuggers and Test Tools"></a>3. Debuggers and Test Tools</h2><p>Debuggers need to be able to examine private members on classes. Test harnesses can make use of reflection to systematically call a discoverable set APIs defined on a class, to insure a high level of code coverage in a test suite.</p>
+<h1 id="Drawbacks-of-Reflection"><a href="#Drawbacks-of-Reflection" class="headerlink" title="Drawbacks of Reflection"></a>Drawbacks of Reflection</h1><p>Reflection is powerful, but should not be used indiscriminately. If it is possible to perform an operation without using reflection, then it is preferable to avoid using it. The following concerns should be kept in mind when accessing code via reflection.</p>
+<h2 id="1-Performance-Overhead"><a href="#1-Performance-Overhead" class="headerlink" title="1. Performance Overhead"></a>1. Performance Overhead</h2><p>Because reflection involves types that are dynamically resolved, certain Java virtual machine optimizations can not be performed. Consequently, <code>reflective operations have slower performance than their non-reflective counterparts</code>, and should be avoided in sections of code which are called frequently in performance-sensitive applications.</p>
+<h2 id="2-Security-Restrictions"><a href="#2-Security-Restrictions" class="headerlink" title="2. Security Restrictions"></a>2. Security Restrictions</h2><p>Reflection requires a runtime permission which may not be present when running under a security manager. This is in an important consideration for code which has to run in a restricted security context, such as in an Applet.</p>
+<h2 id="3-Exposure-of-Internals"><a href="#3-Exposure-of-Internals" class="headerlink" title="3. Exposure of Internals"></a>3. Exposure of Internals</h2><p>Since reflection allows code to perform operations that would be illegal in non-reflective code, such as accessing private fields and methods, the use of reflection can result in unexpected side-effects, which may render code dysfunctional and may destroy portability. Reflective code breaks abstractions and therefore may change behavior with upgrades of the platform.</p>
+<h1 id="java-lang-Class-Objects"><a href="#java-lang-Class-Objects" class="headerlink" title="java.lang.Class Objects"></a>java.lang.Class Objects</h1><p><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Official declaration</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Class</span>&lt;<span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="keyword">extends</span> <span class="title">Object</span></span></span><br><span class="line"><span class="class"><span class="keyword">implements</span> <span class="title">Serializable</span>, <span class="title">GenericDeclaration</span>, <span class="title">Type</span>, <span class="title">AnnotatedElement</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Instances of the class <code>Class</code> represent classes and interfaces in a running Java application. An enum is a kind of class and an annotation is a kind of interface. Every array also belongs to a class that is reflected as a <code>Class</code> object that is shared by all arrays with the same element type and number of dimensions. The <code>primitive Java types (boolean, byte, char, short, int, long, float, and double)</code>, and the keyword <code>void</code> are also represented as <code>Class</code> objects.</p>
+</blockquote>
+<blockquote>
+<p><code>Class</code> has no public constructor. Instead <code>Class</code> objects are constructed automatically by the Java Virtual Machine as classes are loaded and by calls to the <code>defineClass</code> method in the class loader.</p>
+</blockquote>
+<blockquote>
+<p>The following example uses a <code>Class</code> object to print the class name of an object:</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printClassName</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"The class of "</span> + obj +</span><br><span class="line">                <span class="string">" is "</span> + obj.getClass().getName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>It is also possible to get the <code>Class</code> object for a named type (or for void) using a class literal.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">"The name of class Foo is: "</span> + Foo.class.getName());</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Constructor&lt;?&gt;[]	getConstructors()</span><br><span class="line">Returns an array containing Constructor objects reflecting all the public constructors of the class represented by this Class object.</span><br></pre></td></tr></table></figure>
+<p>该类就可以获取字节码文件中的所有内容，反射就是依靠该类完成的；想要对一个类文件进行解剖，只要获取到该类的字节码文件对象即可</p>
+<h2 id="How-to-get-Class-objects"><a href="#How-to-get-Class-objects" class="headerlink" title="How to get Class objects"></a>How to get Class objects</h2><h3 id="1-through-getClass"><a href="#1-through-getClass" class="headerlink" title="1. through getClass()"></a>1. through getClass()</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getClassObject_1</span><span class="params">()</span></span>&#123;</span><br><span class="line">	Person p1 = <span class="keyword">new</span> Person();</span><br><span class="line">	Class c1 = p1.getClass();</span><br><span class="line">	</span><br><span class="line">	Person p2 = <span class="keyword">new</span> Person();</span><br><span class="line">	Class c2 = p2.getClass();</span><br><span class="line">	</span><br><span class="line">	System.out.println(c1==c2); <span class="comment">// true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-through-class-static-field"><a href="#2-through-class-static-field" class="headerlink" title="2. through .class static field"></a>2. through .class static field</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getClassObject_2</span><span class="params">()</span></span>&#123;</span><br><span class="line">	Class c1 = Person.class;</span><br><span class="line">	Class c2 = Person.class;</span><br><span class="line">	</span><br><span class="line">	System.out.println(c1==c2); <span class="comment">// true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-through-Class-forName-static-methods"><a href="#3-through-Class-forName-static-methods" class="headerlink" title="3. through Class.forName() static methods"></a>3. through Class.forName() static methods</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getClassObject_3</span><span class="params">()</span> <span class="keyword">throws</span> ClassNotFoundException</span>&#123;</span><br><span class="line">	String className = <span class="string">"Person"</span>;</span><br><span class="line">	Class clazz = Class.forName(className);</span><br><span class="line">	</span><br><span class="line">	System.out.println(clazz); <span class="comment">// Person</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>The <code>Class.forName()</code> method may throw a <code>ClassNotFoundException</code> if the class cannot be found on the classpath at runtime.</p>
+<h1 id="What-can-you-get-from-Class-objects"><a href="#What-can-you-get-from-Class-objects" class="headerlink" title="What can you get from Class objects"></a>What can you get from <code>Class</code> objects</h1><p>There are two types of methods in <code>Class</code> objects. </p>
+<ul>
+<li><code>getXxx()</code></li>
+<li><code>getDeclaredXxx()</code></li>
+</ul>
+<p>The difference between them is <code>getXxx()</code> will only return <code>public</code> attributes, while <code>getDeclaredXxx()</code> will return all attributes.</p>
+<p>Taking constructors for example. <code>Person.getConstructors()</code> will return <code>all public</code> constructors of Person, while <code>Person.getDeclaredConstructors()</code> will return <code>all</code> constructors with all kinds of visibilities (public, protected, package private, and private)</p>
+<p>For simplicity, I will only talk about <code>getXxx()</code> in the following content. You can try to figure out the <code>getDeclaredXxx()</code> by yourself (Easy!).</p>
+<h2 id="1-Constructors"><a href="#1-Constructors" class="headerlink" title="1. Constructors"></a>1. Constructors</h2><ul>
+<li>Returns a Constructor object that reflects the specified public constructor of the class represented by this Class object.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Constructor&lt;T&gt; <span class="title">getConstructor</span><span class="params">(Class&lt;?&gt;... parameterTypes)</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>Returns an array containing Constructor objects reflecting all the public constructors of the class represented by this Class object.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Constructor&lt;?&gt;[] getConstructors()</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getSpecificConstructor</span><span class="params">()</span> <span class="keyword">throws</span> ClassNotFoundException</span>&#123;</span><br><span class="line">	Class c = Class.forName(<span class="string">"Person"</span>);</span><br><span class="line">	</span><br><span class="line">	Constructor con = c.getConstructor(String.class, <span class="keyword">int</span>.class);</span><br><span class="line">	<span class="comment">// Constructor con = c.getConstructor(new Class[]&#123;String.class,int.class&#125;); </span></span><br><span class="line"></span><br><span class="line">	Object obj = con.newInstance(<span class="string">"John"</span>, <span class="number">22</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">listConstructors</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">	Class c = obj.getClass();</span><br><span class="line">	Constructor[] cons = c.getConstructors();</span><br><span class="line">	<span class="keyword">for</span>(Constructor con:cons)</span><br><span class="line">		System.out.println(con);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-Fields"><a href="#2-Fields" class="headerlink" title="2. Fields"></a>2. Fields</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getSpecificField</span><span class="params">()</span> <span class="keyword">throws</span> ClassNotFoundException</span>&#123;</span><br><span class="line">	Class c = Class.forName(<span class="string">"Person"</span>);</span><br><span class="line"></span><br><span class="line">	Field field = c.getField(<span class="string">"age"</span>); </span><br><span class="line">	field = c.getDeclaredField(<span class="string">"age"</span>);</span><br><span class="line">	</span><br><span class="line">	System.out.println(field); <span class="comment">// Output：private int Person.age</span></span><br><span class="line"></span><br><span class="line">	field.setAccessible(<span class="keyword">true</span>); <span class="comment">// 对私有字段的访问取消权限检查</span></span><br><span class="line">	</span><br><span class="line">	Object obj = c.newInstance();</span><br><span class="line">	Object f = field.get(obj);</span><br><span class="line">	System.out.println(f);  </span><br><span class="line">		</span><br><span class="line">	<span class="comment">/* </span></span><br><span class="line"><span class="comment">     * Output:</span></span><br><span class="line"><span class="comment">     * Person run   </span></span><br><span class="line"><span class="comment">     * 0</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line"></span><br><span class="line">	field.set(obj,<span class="number">88</span>);</span><br><span class="line">	Object f = field.get(obj);</span><br><span class="line">	System.out.println(f);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* </span></span><br><span class="line"><span class="comment">     * Output:</span></span><br><span class="line"><span class="comment">     * private int Person.age   </span></span><br><span class="line"><span class="comment">     * Person run</span></span><br><span class="line"><span class="comment">     * 88</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">listFields</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">	Class c = obj.getClass();</span><br><span class="line"></span><br><span class="line">	Field[] fields = c.getDeclaredFields();</span><br><span class="line">	<span class="keyword">for</span>(Field f:fields)</span><br><span class="line">		System.out.println(f);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"Person run"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-Methods"><a href="#3-Methods" class="headerlink" title="3. Methods"></a>3. Methods</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getSpecificMethod</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">	Class c = Class.forName(<span class="string">"Person"</span>);</span><br><span class="line">	Method method = c.getMethod(<span class="string">"show"</span>,<span class="keyword">null</span>); <span class="comment">// Get the method with no args</span></span><br><span class="line">	</span><br><span class="line">	Object obj = c.newInstance(); </span><br><span class="line">	method.invoke(obj,<span class="keyword">null</span>);  <span class="comment">// Invoke the method on that object</span></span><br><span class="line">	<span class="comment">/*      </span></span><br><span class="line"><span class="comment">		Output:     </span></span><br><span class="line"><span class="comment">		Person run</span></span><br><span class="line"><span class="comment">		null...show run...0</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	</span><br><span class="line">	Constructor cons = c.getConstructor(String.class, <span class="keyword">int</span>.class);</span><br><span class="line">	Object obj = cons.newInstance(<span class="string">"John"</span>,<span class="number">45</span>);</span><br><span class="line">	method.invoke(obj,<span class="keyword">null</span>);  <span class="comment">// Invoke the method on that object</span></span><br><span class="line">	<span class="comment">/* Output: </span></span><br><span class="line"><span class="comment">		Person run</span></span><br><span class="line"><span class="comment">		John : 45</span></span><br><span class="line"><span class="comment">		John...show </span></span><br><span class="line"><span class="comment">		run...45</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getSpecificMethodDemo_2</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">	Class c = Class.forName(<span class="string">"Person"</span>);</span><br><span class="line">	Method method = c.getMethod(<span class="string">"paraMethod"</span>,String.class, <span class="keyword">int</span>.class); <span class="comment">// Get the method with two args, String and int</span></span><br><span class="line">	Object obj = c.newInstance();</span><br><span class="line">	method.invoke(obj,<span class="string">"XXX"</span>,<span class="number">33</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* Output: </span></span><br><span class="line"><span class="comment">		Person 1 run</span></span><br><span class="line"><span class="comment">		paraMethod run...</span></span><br><span class="line"><span class="comment">		XXX : 33</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line"><span class="comment">// Get all the public methods</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">listMethods</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">	Class c = Class.forName(<span class="string">"Person"</span>);</span><br><span class="line">	Method[] method1 = c.getMethods();</span><br><span class="line">	<span class="keyword">for</span>(Method m:method1)</span><br><span class="line">		System.out.println(m);</span><br><span class="line">		</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 获取本类中的所有方法，包括私有的</span></span><br><span class="line">	Method[] method2 = c.getDeclaredMethods();</span><br><span class="line">	<span class="keyword">for</span>(Method m:method2)</span><br><span class="line">		System.out.println(m);</span><br><span class="line">	<span class="comment">/* </span></span><br><span class="line"><span class="comment">	 Output:</span></span><br><span class="line"><span class="comment"> 	 public void Person.paraMethod(java.lang.String,int)</span></span><br><span class="line"><span class="comment">	 public static void Person.staticMethod()</span></span><br><span class="line"><span class="comment">	 public void Person.show()</span></span><br><span class="line"><span class="comment">     ……   </span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="4-Superclass"><a href="#4-Superclass" class="headerlink" title="4. Superclass"></a>4. Superclass</h2><p>List all constructors, fields, and methods of sepecific class and its superclass</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">listSuperclassFields</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">	Class c = obj.getClass();</span><br><span class="line">	Class superClazz = c.getSuperclass();</span><br><span class="line">	Field[] fields = superClazz.getDeclaredFields();</span><br><span class="line">	<span class="keyword">for</span>(Field f:fields)</span><br><span class="line">		System.out.println(f);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	* private static final long java.lang.Number.serialVersionUID</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">listSuperclassConstructors</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">	Class c = obj.getClass();</span><br><span class="line">	Class superClazz = c.getSuperclass();</span><br><span class="line">	Constructor[] cons = superClazz.getConstructors();</span><br><span class="line">	<span class="keyword">for</span>(Constructor con:cons)</span><br><span class="line">		System.out.println(con);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	* public java.lang.Number()</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">listSuperclassMethods</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">	Class c = obj.getClass();</span><br><span class="line">	Class superClazz = c.getSuperclass();</span><br><span class="line">	Method[] methods = superClazz.getDeclaredMethods();</span><br><span class="line">	<span class="keyword">for</span>(Method method:methods)</span><br><span class="line">		System.out.println(method);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	public byte java.lang.Number.byteValue()</span></span><br><span class="line"><span class="comment">	public short java.lang.Number.shortValue()</span></span><br><span class="line"><span class="comment">	public abstract int java.lang.Number.intValue()</span></span><br><span class="line"><span class="comment">	...</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5-Implemented-Interfaces"><a href="#5-Implemented-Interfaces" class="headerlink" title="5. Implemented Interfaces"></a>5. Implemented Interfaces</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class  aClass = ... <span class="comment">//obtain Class object. See prev. section</span></span><br><span class="line">Class[] interfaces = aClass.getInterfaces();</span><br></pre></td></tr></table></figure>
+<h2 id="Exercise"><a href="#Exercise" class="headerlink" title="Exercise"></a>Exercise</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayGrow</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		Class c1 = <span class="keyword">int</span>.class;</span><br><span class="line">		System.out.println(c1.isArray());  <span class="comment">// false</span></span><br><span class="line">		System.out.println(c1.getComponentType()); <span class="comment">// null</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">int</span>[][] j2 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>][<span class="number">3</span>];</span><br><span class="line">		Class c2 = j2.getClass();</span><br><span class="line">		System.out.println(c2.isArray());  <span class="comment">// true</span></span><br><span class="line">		System.out.println(c2.getComponentType().getComponentType()); <span class="comment">// int</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">int</span>[][][] j3 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>][<span class="number">3</span>][<span class="number">3</span>];</span><br><span class="line">		Class c3 = j3.getClass();</span><br><span class="line">		System.out.println(c3.isArray());  <span class="comment">// true</span></span><br><span class="line">		System.out.println(c3.getComponentType().getComponentType().getComponentType()); <span class="comment">// int</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">arrayGrow</span><span class="params">(Object obj)</span></span>&#123;</span><br><span class="line">		Class clazz = obj.getClass();</span><br><span class="line">		<span class="comment">// Is a an array object?</span></span><br><span class="line">		<span class="keyword">if</span>(!clazz.isArray())</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">			</span><br><span class="line">		<span class="comment">// An array of what?</span></span><br><span class="line">		Class arrayType = clazz.getComponentType();</span><br><span class="line">		<span class="keyword">int</span> length = Array.getLength(obj);</span><br><span class="line">		<span class="keyword">int</span> newLength = length * <span class="number">11</span>/<span class="number">10</span> + <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">		Object newArray = Array.newInstance(arrayType, newLength);</span><br><span class="line">		System.arraycopy(obj, <span class="number">0</span>, newArray, <span class="number">0</span>, length);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> newArray;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodPointerTest</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	    <span class="comment">// get method pointers to the square and sqrt methods</span></span><br><span class="line">	    Method square = MethodPointerTest.class.getMethod(<span class="string">"square"</span>, <span class="keyword">new</span> Class[]&#123;<span class="keyword">double</span>.class&#125;);</span><br><span class="line">	    Method sqrt = java.lang.Math.class.getMethod(<span class="string">"sqrt"</span>, <span class="keyword">new</span> Class[]&#123;<span class="keyword">double</span>.class&#125;);</span><br><span class="line">	    </span><br><span class="line">	    <span class="comment">/*</span></span><br><span class="line"><span class="comment">	    Class clazz1 = MethodPointerTest.class;</span></span><br><span class="line"><span class="comment">	    Method square = clazz1.getMethod("square", new Class[]&#123;double.class&#125;);</span></span><br><span class="line"><span class="comment">	    Class clazz2 = java.lang.Math.class;</span></span><br><span class="line"><span class="comment">	    Method sqrt = clazz2.getMethod("sqrt", new Class[]&#123;double.class&#125;);</span></span><br><span class="line"><span class="comment">	    */</span></span><br><span class="line"></span><br><span class="line">	    <span class="comment">// print tables of x- and y-values</span></span><br><span class="line">	    printTable(<span class="number">1</span>, <span class="number">10</span>, <span class="number">10</span>, square);</span><br><span class="line">	    printTable(<span class="number">1</span>, <span class="number">10</span>, <span class="number">10</span>, sqrt);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">square</span><span class="params">(<span class="keyword">double</span> x)</span></span>&#123;</span><br><span class="line">	    <span class="keyword">return</span> x*x;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printTable</span><span class="params">(<span class="keyword">double</span> from, <span class="keyword">double</span> to, <span class="keyword">int</span> n, Method f)</span></span>&#123;</span><br><span class="line">	    System.out.println(f);</span><br><span class="line"></span><br><span class="line">	    <span class="comment">// construct formatter to print with 4 digit precision</span></span><br><span class="line">	    NumberFormat formatter = NumberFormat.getInstance();</span><br><span class="line">	    formatter.setMinimumFractionDigits(<span class="number">4</span>);</span><br><span class="line">	    formatter.setMaximumFractionDigits(<span class="number">4</span>);</span><br><span class="line">	    <span class="keyword">double</span> dx = (to - from) / (n-<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">for</span>(<span class="keyword">double</span> x = from; x &lt;= to; x += dx) &#123;</span><br><span class="line">	        <span class="comment">// print x-value</span></span><br><span class="line">	        String output = formatter.format(x);</span><br><span class="line">	        <span class="comment">// pad with spaces to field width of 10</span></span><br><span class="line">	        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">10</span> - output.length(); i &gt; <span class="number">0</span>; i--)</span><br><span class="line">	            System.out.print(<span class="string">" "</span>);</span><br><span class="line">	        System.out.print(output + <span class="string">" |"</span>);</span><br><span class="line"></span><br><span class="line">	        <span class="keyword">try</span>&#123;</span><br><span class="line">		        <span class="comment">// invoke method and print y-value</span></span><br><span class="line">		        <span class="comment">//Object[] args = &#123;new Double(x)&#125;;</span></span><br><span class="line">		        <span class="comment">//Double d = (Double)f.invoke(null, args); // because square method is static method, we don’t need to call object to invoke the method</span></span><br><span class="line">		       </span><br><span class="line">		        Double d = (Double)f.invoke(<span class="keyword">null</span>, <span class="keyword">new</span> Double(x)); </span><br><span class="line">		        <span class="keyword">double</span> y = d.doubleValue();</span><br><span class="line">		        output = formatter.format(y);</span><br><span class="line">		        <span class="comment">// pad with spaces to field with of 10</span></span><br><span class="line">		        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">10</span> - output.length(); i &gt; <span class="number">0</span>; i--)</span><br><span class="line">		            System.out.print(<span class="string">" "</span>);</span><br><span class="line"></span><br><span class="line">		        System.out.println(output);</span><br><span class="line">	        &#125;<span class="keyword">catch</span> (Exception e)&#123; </span><br><span class="line">	        	  e.printStackTrace(); </span><br><span class="line">	        &#125;</span><br><span class="line">		</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReflectTest</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		Mainboard mb = <span class="keyword">new</span> Mainboard();</span><br><span class="line">		mb.run();</span><br><span class="line"> </span><br><span class="line">		<span class="comment">//每次添加一个设备都要修改代码创建一个新创建的对象</span></span><br><span class="line">		<span class="comment">//mb.usePCI(new SoundCard());</span></span><br><span class="line">	 </span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 previously, it finds `Class` objects when calling `new Xxx()`. Now we are 'newing' objects with `Class`</span></span><br><span class="line"><span class="comment">		 Can we make it?</span></span><br><span class="line"><span class="comment">		*/</span></span><br><span class="line">	 	<span class="comment">// Read config file</span></span><br><span class="line">		File conf = <span class="keyword">new</span> File(<span class="string">"pci.properties"</span>);</span><br><span class="line">		FileInputStream fis = <span class="keyword">new</span> FileInputStream(conf);</span><br><span class="line"></span><br><span class="line">		Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">		prop.load(fis);</span><br><span class="line">		 </span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; prop.size(); i++)&#123;</span><br><span class="line">			String pciName = prop.getProperty(<span class="string">"pci"</span>+(i+<span class="number">1</span>));</span><br><span class="line">			<span class="comment">// Use Class objects to load the subclass of pci</span></span><br><span class="line">			Class c = Class.forName(pciName);</span><br><span class="line">			PCI p = (PCI)c.newInstance();</span><br><span class="line">			mb.usePCI(p);</span><br><span class="line">		&#125;</span><br><span class="line">	 </span><br><span class="line">		fis.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">	 </span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">PCI</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line">	 </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mainboard</span></span>&#123; </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"My Mainboard run ...."</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">/*  </span></span><br><span class="line"><span class="comment">	public void useSound(SoundCard c)&#123;</span></span><br><span class="line"><span class="comment">		c.open();        </span></span><br><span class="line"><span class="comment">		c.close();        </span></span><br><span class="line"><span class="comment">	&#125;</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">usePCI</span><span class="params">(PCI p)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(p!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			p.open();</span><br><span class="line">			p.close();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SoundCard</span> <span class="keyword">implements</span> <span class="title">PCI</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"sound open"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"sound close"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NetCard</span> <span class="keyword">implements</span> <span class="title">PCI</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"net open"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"net close"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//pci.properties</span></span><br><span class="line">pci1=SoundCard</span><br><span class="line">pci2=NetCard</span><br></pre></td></tr></table></figure>
+<p>References:</p>
+<ul>
+<li><a href="https://docs.oracle.com/javase/tutorial/reflect/" target="_blank" rel="noopener">https://docs.oracle.com/javase/tutorial/reflect/</a></li>
+<li><a href="http://tutorials.jenkov.com/java-reflection/index.html" target="_blank" rel="noopener">http://tutorials.jenkov.com/java-reflection/index.html</a></li>
+<li><a href="http://tutorials.jenkov.com/java-reflection/classes.html" target="_blank" rel="noopener">http://tutorials.jenkov.com/java-reflection/classes.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java-refelction/" rel="tag"># java refelction</a>
+          
+            <a href="/tags/java-class-object/" rel="tag"># java class object</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/11/web development/Web-Development-TCP-Transportation/" rel="next" title="Web Development - TCP Transportation">
+                <i class="fa fa-chevron-left"></i> Web Development - TCP Transportation
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/17/system design/task queue/System-Design-How-to-query-status-of-10-000-machines/" rel="prev" title="System Design - How to query status of 10,000 machines">
+                System Design - How to query status of 10,000 machines <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#What-is-Reflection"><span class="nav-number">1.</span> <span class="nav-text">What is Reflection</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Uses-of-Reflection"><span class="nav-number">2.</span> <span class="nav-text">Uses of Reflection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Extensibility-Features"><span class="nav-number">2.1.</span> <span class="nav-text">1. Extensibility Features</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Class-Browsers-and-Visual-Development-Environments"><span class="nav-number">2.2.</span> <span class="nav-text">2. Class Browsers and Visual Development Environments</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Debuggers-and-Test-Tools"><span class="nav-number">2.3.</span> <span class="nav-text">3. Debuggers and Test Tools</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Drawbacks-of-Reflection"><span class="nav-number">3.</span> <span class="nav-text">Drawbacks of Reflection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Performance-Overhead"><span class="nav-number">3.1.</span> <span class="nav-text">1. Performance Overhead</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Security-Restrictions"><span class="nav-number">3.2.</span> <span class="nav-text">2. Security Restrictions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Exposure-of-Internals"><span class="nav-number">3.3.</span> <span class="nav-text">3. Exposure of Internals</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#java-lang-Class-Objects"><span class="nav-number">4.</span> <span class="nav-text">java.lang.Class Objects</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-get-Class-objects"><span class="nav-number">4.1.</span> <span class="nav-text">How to get Class objects</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-through-getClass"><span class="nav-number">4.1.1.</span> <span class="nav-text">1. through getClass()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-through-class-static-field"><span class="nav-number">4.1.2.</span> <span class="nav-text">2. through .class static field</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-through-Class-forName-static-methods"><span class="nav-number">4.1.3.</span> <span class="nav-text">3. through Class.forName() static methods</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#What-can-you-get-from-Class-objects"><span class="nav-number">5.</span> <span class="nav-text">What can you get from Class objects</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Constructors"><span class="nav-number">5.1.</span> <span class="nav-text">1. Constructors</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Fields"><span class="nav-number">5.2.</span> <span class="nav-text">2. Fields</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Methods"><span class="nav-number">5.3.</span> <span class="nav-text">3. Methods</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Superclass"><span class="nav-number">5.4.</span> <span class="nav-text">4. Superclass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Implemented-Interfaces"><span class="nav-number">5.5.</span> <span class="nav-text">5. Implemented Interfaces</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exercise"><span class="nav-number">5.6.</span> <span class="nav-text">Exercise</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

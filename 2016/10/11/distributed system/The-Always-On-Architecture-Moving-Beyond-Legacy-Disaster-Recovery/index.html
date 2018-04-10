@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="This post caught my eyes immediatelly when I browsed my Feedly. I’ve been working on Tableau Server, an on-premise data analytics and visualization platform for enterprise, for about two years. We use">
+<meta name="keywords" content="always on architecture,failover">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Always On Architecture - Moving Beyond Legacy Disaster Recovery">
+<meta property="og:url" content="https://bowenli86.github.io/2016/10/11/distributed system/The-Always-On-Architecture-Moving-Beyond-Legacy-Disaster-Recovery/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="This post caught my eyes immediatelly when I browsed my Feedly. I’ve been working on Tableau Server, an on-premise data analytics and visualization platform for enterprise, for about two years. We use">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://c2.staticflickr.com/2/1510/25190447426_c478660902_o.png">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.520Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Always On Architecture - Moving Beyond Legacy Disaster Recovery">
+<meta name="twitter:description" content="This post caught my eyes immediatelly when I browsed my Feedly. I’ve been working on Tableau Server, an on-premise data analytics and visualization platform for enterprise, for about two years. We use">
+<meta name="twitter:image" content="https://c2.staticflickr.com/2/1510/25190447426_c478660902_o.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/10/11/distributed system/The-Always-On-Architecture-Moving-Beyond-Legacy-Disaster-Recovery/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>The Always On Architecture - Moving Beyond Legacy Disaster Recovery | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/10/11/distributed system/The-Always-On-Architecture-Moving-Beyond-Legacy-Disaster-Recovery/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">The Always On Architecture - Moving Beyond Legacy Disaster Recovery</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-10-11T00:49:59-07:00">2016-10-11</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-system/" itemprop="url" rel="index"><span itemprop="name">distributed system</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>This post caught my eyes immediatelly when I browsed my <a href="http://feedly.com/" target="_blank" rel="noopener">Feedly</a>.</p>
+<p>I’ve been working on Tableau Server, an on-premise data analytics and visualization platform for enterprise, for about two years. We used a Postgres failover approach in Tableau Server, as described in <a href="https://phoenixjiangnan.github.io/2016/07/26/system%20design/project%20experience/How-did-I-reduce-Tableau-Server-s-downtime-in-a-Postgres-failover-from-3-min-to-1-sec/" target="_blank" rel="noopener">this post</a>, and I’ve been fixing bugs for the failover mechanism for a while. The experience and pain from fixing those bugs have made me fully realized how outdated the failover approach is, while we don’t have a good solution because we are building an expensive on-premise software with so many limitations around it. We cannot assume all customers can use AWS RDS (although Tableau is making it possible so that you can if you want to), we cannot assume customers can deploy Tableau Server in more than one data center, we cannot assume a ton of things….. Those limitations have made me quite tired of my work, because they restrict my imaginations and innovations, distort the optimal way to fix problems, impede our efforts of debugging, and prevent us from adopting best practices in the industry.</p>
+<p>Yeah, if you are developing an open-source project, those problems might not be big things because your project is FREE and how can customers complain about you! </p>
+<p>After some careful thoughts, I believe I need a change in my career. This post is one of the triggers.</p>
+<hr>
+<p><a href="http://highscalability.com/blog/2016/8/23/the-always-on-architecture-moving-beyond-legacy-disaster-rec.html" target="_blank" rel="noopener">The original post</a></p>
+<hr>
+<blockquote>
+<p>Failover does not cut it anymore. You need an <code>ALWAYS ON</code> architecture with multiple data centers.<br>– Martin Van Ryswyk, VP of Engineering at DataStax</p>
+</blockquote>
+<p>Failover, switching to a redundant or standby system when a component fails, has a long and checkered history as a way of dealing with failure. The reason is your failover mechanism becomes a single point of failure that often fails just when it’s needed most. Having worked on a few telecom systems that used a failover strategy I know exactly how stressful failover events can be and how stupid you feel when your failover fails. If you have a double or triple fault in your system, failover is exactly the time when it will happen. </p>
+<p>For a long time the only real trick we had for achieving fault tolerance was to have a hot, warm, or cold standby (disk, interface, card, server, router, generator, datacenter, etc.) and failover to it when there’s a problem. This old style of Disaster Recovery planning is no longer adequate or necessary.</p>
+<p>Now, thanks to cloud infrastructures, at least at a software system level, we have an alternative: <strong>an always on architecture</strong>. Google calls this <strong>a natively multihomed architecture</strong>. You can distribute data across multiple datacenters in such away that all your datacenters are always active. Each datacenter can automatically scale capacity up and down depending on what happens to other datacenters. You know, the usual sort of cloud propaganda. Robin Schumacher makes a good case here: Long live Dear CXO – When Will What Happened to Delta Happen to You?</p>
+<a id="more"></a>
+<h2 id="Recent-Problems-With-Disaster-Recovery"><a href="#Recent-Problems-With-Disaster-Recovery" class="headerlink" title="Recent Problems With Disaster !Recovery"></a>Recent Problems With Disaster !Recovery</h2><p>Southwest had a service disruption a year ago and again was recently bit by a “once in a thousand-year event” that caused a service outage (doesn’t it seem like once in 1000 year events happen a lot more lately?). The first incident was blamed on “legacy systems” that could no longer handle the increased load of a now much larger airline. The most recent problem was caused by a router partially failed so the failover mechanism didn’t kick in. 2,300 flights were canceled over four days at cost of perhaps $10 million. When you do your system’s engineering review do you consider partial failures? Probably not. Yet they happen and are notoriously hard to detect and deal with.</p>
+<p>Sprint has also experienced bad backup problems:</p>
+<pre><code>Sprint said a fire in D.C. caused problems at Sprint&apos;s data center in Reston, VA. How a fire across the street from Sprint&apos;s switch in D.C. caused issues 20 miles away wasn&apos;t quite clear, but apparently, emergency Sprint generators in D.C. didn&apos;t kick in as they were supposed to and, as so often happens, one thing led to another.
+</code></pre><p>And unless you were on Mars, you will have heard Delta recently experienced their own failover problems:</p>
+<pre><code>According to the flight captain of JFK-SLC this morning, a routine scheduled switch to the backup generator this morning at 2:30am caused a fire that destroyed both the backup and the primary. Firefighters took a while to extinguish the fire. Power is now back up and 400 out of the 500 servers rebooted, still waiting for the last 100 to have the whole system fully functional
+</code></pre><p>Delta has come under a lot of criticism. Why was the backup generator so close to the primary that a fire could destroy both? Why is the entire worldwide system running in a single datacenter? Why don’t they test more? Why don’t they have full failover to a backup datacenter? Why are they more interested in cutting costs the building a reliable system? Why do they still use those old mainframes? Why does a company that earns $42 billion a year have such crappy systems? It’s only 500 servers, why not convert it to a cluster already? Why does management only care about their bonuses and cutting IT costs? Isn’t that what you get from years out of outsourcing IT?</p>
+<p>There’s a lot of venom, as you might expect. If you want a little background on Delta’s systems then here’s a good article: <a href="http://www.wsj.com/articles/SB10001424052702303480304579575891541812918" target="_blank" rel="noopener">Delta Air Lines to Take Control of Its Data Systems</a>. It appears that as of 2014 Delta spun in all its passenger-service and flight operations systems. They had 180 proprietary Delta technology applications controlling their ticketing, website, flight check-in, crew scheduling and more. And they spent about $250 million a year on IT.</p>
+<h2 id="Does-The-Whole-System-Need-A-Refactoring"><a href="#Does-The-Whole-System-Need-A-Refactoring" class="headerlink" title="Does The Whole System Need A Refactoring?"></a>Does The Whole System Need A Refactoring?</h2><p>Interesting comment on the technology involved in these systems from FormerRTCoverageAA: </p>
+<pre><code>My advice is for ALL the major airlines to each put in about 10 million dollars (20-30 airlines would put a fund together about 200-300 million) to modernize and work on the Interfaces between them, and the hotel and car rental systems, tours, and other functions that SABRE/Amadeus/Apollo/etc. interface to. This would fund a research consortium to look at the current technology, and DEFINE THE INTERFACES for the next generation system. Maybe HP and IBM and Microsoft and whoever else wants to play could put in some money too. The key for this consortium is to have the INTERFACES defined. Give the specifications to the vendors (HP, IBM, Microsoft, Google, Priceline, Hilton, Hertz, whoever) that want to build the next generation reservations system. Then let them have 1 year and all have to work to inter-operate on the specification (just like they do on the “old” specs today for things like teletype, and last seat availability).
+
+This has worked well in the healthcare space in getting payers and providers to work together. Each potential vendor needs to plan to spend 10-50 million dollars on their proposed solution. Then, we have the inter-operability technology fair (I would make it 2 weeks to 1 month) and each vendor can pitch to each airline, car rental, hotel, tour company, Uber, etc. Let each vendor do what he wants as long as the requirements for the specifications are met. Let the best tech vendor win.
+
+It’s far past time to update these systems. Otherwise, more heartache pain and probably government bailouts to come. Possibly even larger travel and freight interruptions. A longer term blow up could put an airline out of business. Remember Eastern? I do….
+</code></pre><p>This all sounds like a great idea, but what could Delta do with its own architecture?</p>
+<h2 id="The-Always-On-Architecture"><a href="#The-Always-On-Architecture" class="headerlink" title="The Always On Architecture"></a>The Always On Architecture</h2><p>Earlier this year I wrote on article on a paper from Google: <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/44686.pdf" target="_blank" rel="noopener">High-Availability at Massive Scale: Building Google’s Data Infrastructure for Ads</a> that explains their history with Always On. It seems appropriate. Here’s the article:</p>
+<p><img src="https://c2.staticflickr.com/2/1510/25190447426_c478660902_o.png" alt=""></p>
+<p>The main idea of the paper is that <a href="https://en.wikipedia.org/wiki/Failover" target="_blank" rel="noopener">the typical failover</a> architecture used when moving from a single datacenter to multiple datacenters doesn’t work well in practice. What does work, where work means using fewer resources while providing high availability and consistency, is a <strong>natively multihomed architecture</strong>:</p>
+<blockquote>
+<p>Our current approach is to build natively multihomed systems. Such systems <strong>run hot in multiple datacenters all the time, and adaptively move load between datacenters, with the ability to handle outages of any scale completely transparently</strong>. Additionally, planned datacenter outages and maintenance events are completely transparent, causing minimal disruption to the operational systems. In the past, such events required labor-intensive efforts to move operational systems from one datacenter to another</p>
+</blockquote>
+<p>The use of “multihoming” in this context may be confusing because <a href="https://en.wikipedia.org/wiki/Multihoming" target="_blank" rel="noopener">multihoming</a> usually refers to a computer connected to more than one network. At Google scale perhaps it’s just as natural to talk about connecting to multiple datacenters.</p>
+<p>Google has built several multi-homed systems to guarantee high availability (4 to 5 nines) and consistency in the presence of datacenter level outages: <a href="http://research.google.com/pubs/pub38125.html" target="_blank" rel="noopener">F1 / Spanner: Relational Database</a>; <a href="http://research.google.com/pubs/pub41318.html" target="_blank" rel="noopener">Photon: Joining Continuous Data Streams</a>; <a href="http://research.google.com/pubs/pub42851.html" target="_blank" rel="noopener">Mesa: Data Warehousing</a>. The approach taken by each of these systems is discussed in the paper, as are the many challenges is building a multi-homed system: Synchronous Global State; What to Checkpoint; Repeatable Input; Exactly Once Output.</p>
+<p>The huge constraint here is <strong>having availability and consistency</strong>. This highlights the refreshing and continued emphasis Google puts on making even these complex systems <strong>easy for programmers to use</strong>:</p>
+<blockquote>
+<p>The simplicity of a multi-homed system is particularly valuable for users. Without multi-homing, failover, recovery, and dealing with inconsistency are all application problems. With multi-homing, these hard problems are solved by the infrastructure, so the application developer gets high availability and consistency for free and can focus instead on building their application.</p>
+</blockquote>
+<p>The biggest surprise in the paper was the idea that a <strong>multihomed system can actually take far fewer resources than a failover system</strong>:</p>
+<blockquote>
+<p>In a multi-homed system deployed in three datacenters with 20% total catchup capacity, the total resource footprint is 170% of steady state. This is dramatically less than the 300% required in the failover design above</p>
+</blockquote>
+<h2 id="What’s-Wrong-With-Failover"><a href="#What’s-Wrong-With-Failover" class="headerlink" title="What’s Wrong With Failover?"></a>What’s Wrong With Failover?</h2><blockquote>
+<p>Failover-based approaches, however, do not truly achieve high availability, and can have excessive cost due to the deployment of standby resources.</p>
+</blockquote>
+<blockquote>
+<p>Our teams have had several bad experiences dealing with failover-based systems in the past. Since unplanned outages are rare, failover procedures were often added as an afterthought, not automated and not well tested. On multiple occasions, teams spent days recovering from an outage, bringing systems back online component by component, recovering state with ad hoc tools like custom MapReduces, and gradually tuning the system as it tried to catch up processing the backlog starting from the initial outage. These situations not only cause extended unavailability, but are also extremely stressful for the teams running complex mission-critical systems.</p>
+</blockquote>
+<h2 id="How-Do-Multihomed-Systems-Work"><a href="#How-Do-Multihomed-Systems-Work" class="headerlink" title="How Do Multihomed Systems Work?"></a>How Do Multihomed Systems Work?</h2><blockquote>
+<p>In contrast, multi-homed systems are designed to run in multiple datacenters as a core design property, so there is no on-the-side failover concept. A multi-homed system runs live in multiple datacenters all the time. Each datacenter processes work all the time, and work is dynamically shared between datacenters to balance load. When one datacenter is slow, some fraction of work automatically moves to faster datacenters. When a datacenter is completely unavailable, all its work is automatically distributed to other datacenters.</p>
+</blockquote>
+<blockquote>
+<p>There is no failover process other than the continuous dynamic load balancing. Multi-homed systems coordinate work across datacenters using shared global state that must be updated synchronously. All critical system state is replicated so that any work can be restarted in an alternate datacenter at any point, while still guaranteeing exactly once semantics. Multi-homed systems are uniquely able to provide high availability and full consistency in the presence of datacenter level failures.</p>
+</blockquote>
+<blockquote>
+<p>In any of our typical streaming system, the events being processed are based on user interactions, and logged by systems serving user traffic in many datacenters around the world. A log collection service gathers these logs globally and copies them to two or more specific logs datacenters. Each logs datacenter gets a complete copy of the logs, with the guarantee that all events copied to any one datacenter will (eventually) be copied to all logs datacenters. The stream processing systems run in one or more of the logs datacenters and processes all events. Output from the stream processing system is usually stored into some globally replicated system so that the output can be consumed reliably from anywhere.</p>
+</blockquote>
+<blockquote>
+<p>In a multi-homed system, all datacenters are live and processing all the time. Deploying three datacenters is typical. In steady state, each of the three datacenters process 33% of the traffic. After a failure where one datacenter is lost, the two remaining datacenters each process 50% of the traffic. </p>
+</blockquote>
+<p>Obviously Delta and other companies with extensive legacy systems are in a difficult position for this kind of approach. But if you consider IT something other than a cost center, and you plan to stay around for the long haul, and whole nations rely on the quality of your infrastructure, it’s probably something you should consider. We have the technology.</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/always-on-architecture/" rel="tag"># always on architecture</a>
+          
+            <a href="/tags/failover/" rel="tag"># failover</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/10/career and leadership/Repost-Job-Hopping-and-Salary-Raise-跳槽加薪/" rel="next" title="Repost - Job-Hopping and Salary Raise 跳槽加薪">
+                <i class="fa fa-chevron-left"></i> Repost - Job-Hopping and Salary Raise 跳槽加薪
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/19/hexo/Hexo-SEO-Hexo-SEO-Tutorial/" rel="prev" title="Hexo SEO | Hexo SEO Tutorial">
+                Hexo SEO | Hexo SEO Tutorial <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Recent-Problems-With-Disaster-Recovery"><span class="nav-number">1.</span> <span class="nav-text">Recent Problems With Disaster !Recovery</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Does-The-Whole-System-Need-A-Refactoring"><span class="nav-number">2.</span> <span class="nav-text">Does The Whole System Need A Refactoring?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Always-On-Architecture"><span class="nav-number">3.</span> <span class="nav-text">The Always On Architecture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What’s-Wrong-With-Failover"><span class="nav-number">4.</span> <span class="nav-text">What’s Wrong With Failover?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-Do-Multihomed-Systems-Work"><span class="nav-number">5.</span> <span class="nav-text">How Do Multihomed Systems Work?</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

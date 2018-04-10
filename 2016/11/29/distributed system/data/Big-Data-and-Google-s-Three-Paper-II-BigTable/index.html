@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="oISntcv5wYv-gFzCbOejeG4TxriAsyU0TghcNXvJUUw" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="The following ideas are from a ‘blog’ of one of my friends. He posted this ‘blog’ on Wechat, and Wechat doesn’t provide url or allow external users to access it. So I can’t referenece a link here.  Bi">
+<meta name="keywords" content="bigtable,leveldb,rocksdb,lsm-tree">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Big Data and Google&#39;s Three Paper II - BigTable">
+<meta property="og:url" content="https://bowenli86.github.io/2016/11/29/distributed system/data/Big-Data-and-Google-s-Three-Paper-II-BigTable/index.html">
+<meta property="og:site_name" content="Bowen&#39;s blog">
+<meta property="og:description" content="The following ideas are from a ‘blog’ of one of my friends. He posted this ‘blog’ on Wechat, and Wechat doesn’t provide url or allow external users to access it. So I can’t referenece a link here.  Bi">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-04-10T04:29:25.521Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Big Data and Google&#39;s Three Paper II - BigTable">
+<meta name="twitter:description" content="The following ideas are from a ‘blog’ of one of my friends. He posted this ‘blog’ on Wechat, and Wechat doesn’t provide url or allow external users to access it. So I can’t referenece a link here.  Bi">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Bowen's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="canonical" href="https://bowenli86.github.io/2016/11/29/distributed system/data/Big-Data-and-Google-s-Three-Paper-II-BigTable/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Big Data and Google's Three Paper II - BigTable | Bowen's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40978428-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-40978428-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Bowen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">keep learning - learning notes and blogs</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+</li>
+
+      
+        
+        
+          
+  
+  <li class="menu-item menu-item-sitemap">
+    <a href="/sitemap.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />Sitemap</a>
+</li>
+
+      
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bowenli86.github.io/2016/11/29/distributed system/data/Big-Data-and-Google-s-Three-Paper-II-BigTable/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Bowen Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Bowen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Big Data and Google's Three Paper II - BigTable</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-11-29T00:42:41-08:00">2016-11-29</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-syste/" itemprop="url" rel="index"><span itemprop="name">distributed syste</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/distributed-syste/data/" itemprop="url" rel="index"><span itemprop="name">data</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>The following ideas are from a ‘blog’ of one of my friends. He posted this ‘blog’ on Wechat, and Wechat doesn’t provide url or allow external users to access it. So I can’t referenece a link here.</p>
+<hr>
+<p>BigTable is most diffult to understand paper because it 1) names lots of its terminologies quite misleadingly 2) barely illustrated any detail.</p>
+<h2 id="1-Misleading-Names-Let’s-rephrase-and-better-understand-them"><a href="#1-Misleading-Names-Let’s-rephrase-and-better-understand-them" class="headerlink" title="1. Misleading Names - Let’s rephrase and better understand them"></a>1. Misleading Names - Let’s rephrase and better understand them</h2><p>I’ve been confused of BigTable, until one day I read a blog called <a href="http://jimbojw.com/wiki/index.php?title=Understanding_Hbase_and_BigTable" target="_blank" rel="noopener">Understanding HBase and BigTable</a>. I strongly recommending everyone find and read that blog.</p>
+<p>Here is the first sentence of the “Data Model” section:</p>
+<pre><code>&gt; A Bigtable is a sparse, distributed, persistent multidimensional sorted map.
+</code></pre><p>So, BigTable is a <strong>Map</strong>, not a <strong>Table</strong>! Right, you’ve been misleaded to associate BigTable with a database table because of namings. What is a map? A map is key-value data structure! Thus, BigTable is a key-value store. Probably Google should better name it <strong>BigMap</strong> instead of <strong>BigTable</strong>!</p>
+<p>The BigTable paper continues, explaining that:</p>
+<pre><code>&gt; The map is indexed by a row key, column key, and a timestamp; each value in the map is an uninterpreted array of bytes.
+</code></pre><p>So how’s the map look like? The Map’s value is an array of bytes. Fairly simple. Map’s key as <code>&lt;key1, key2, key3&gt;</code> is a combination of <code>&lt;row, column, timestamp&gt;</code>, <code>row</code> and <code>column</code> as both string, <code>timestamp</code> as a 64 bit number.</p>
+<p>The <code>column</code> key is more complex, it’s formatted as <code>column</code> = <code>prefix:suffix</code>. <code>prefix</code> is called <strong>column family</strong>, which is of limited number in each BigMap. <code>suffix</code> can be of unlimited number.</p>
+<p>Till now, you can tell that <strong>BigTable</strong> has nothing to do with a regular table in transactional database. It’s key-value data model.</p>
+<a id="more"></a>
+<h3 id="Sorted"><a href="#Sorted" class="headerlink" title="Sorted"></a>Sorted</h3><p>BigMap is a SortedMap, not a HashMap. HBase/BigTable the key/value pairs are kept in strict alphabetical order.</p>
+<p>Because these systems tend to be so huge and distributed, this sorting feature is actually very important. The spacial propinquity of rows with like keys ensures that when you must scan the table, the items of greatest interest to you are near each other.</p>
+<p>This is important when choosing a row key convention. For example, consider a table whose keys are domain names. It makes the most sense to list them in reverse notation (so <strong>“com.jimbojw.www”</strong> rather than <strong>“<a href="http://www.jimbojw.com&quot;" target="_blank" rel="noopener">www.jimbojw.com&quot;</a></strong>) so that rows about a subdomain will be near the parent domain row.</p>
+<p>Continuing the domain example, the row for the domain <strong>“mail.jimbojw.com”</strong> would be right next to the row for <strong>“<a href="http://www.jimbojw.com&quot;" target="_blank" rel="noopener">www.jimbojw.com&quot;</a></strong> rather than say <strong>“mail.xyz.com”</strong> which would happen if the keys were regular domain notation.</p>
+<p>It’s important to note that the term “sorted” when applied to HBase/BigTable does not mean that “values” are sorted. There is no automatic indexing of anything other than the keys, just as it would be in a plain-old map implementation.</p>
+<h3 id="Persistent"><a href="#Persistent" class="headerlink" title="Persistent"></a>Persistent</h3><p>Persistence merely means that the data you put in this special map “persists” after the program that created or accessed it is finished. This is no different in concept than any other kind of persistent storage such as a file on a filesystem.</p>
+<h3 id="Sparse"><a href="#Sparse" class="headerlink" title="Sparse"></a>Sparse</h3><p>As already mentioned, a given row can have any number of columns in each column family, or none at all. The other type of sparseness is row-based gaps, which merely means that there may be gaps between keys.</p>
+<p>This, of course, makes perfect sense if you’ve been thinking about HBase/BigTable in the map-based terms of this article rather than perceived similar concepts in RDBMS’s.</p>
+<p>BigTable provides several ways of searching</p>
+<ul>
+<li>Given <code>row</code>, <code>column</code>, and <code>timestamp</code>, return the largest element that is less than <code>timestamp</code></li>
+<li>Given <code>row</code> and <code>column</code>, return the element with largest <code>timestamp</code></li>
+<li>Given <code>prefix</code> of <code>column</code>, return all elements with the same <code>prefix</code></li>
+</ul>
+<h2 id="Implementation-Details-LSM-Tree"><a href="#Implementation-Details-LSM-Tree" class="headerlink" title="Implementation Details - LSM Tree"></a>Implementation Details - LSM Tree</h2><p>Though there’s not much details in BigTable paper. Luckily, Google open-sourced <strong>LevelDB</strong>, a key-value store which is well recognized as the implementation of BigTable on a single node. Thus, <strong>LevelDB</strong> can be a pretty authentic source for us to learn implementation details of BigTable.</p>
+<p>BigTable is composed of a <strong>client library</strong>, a <strong>Master Server</strong>, and lots of <strong>Tablet Servers</strong>. A concrete BigTable would be broken into tablets of size from 100MB to 200MB, and those tablets will be distributed to some <strong>Tablet Servers</strong> to <strong>server client</strong> requests.</p>
+<p>When system runs, the number of <strong>Tablet Servers</strong> is not fixed. The number will scale up and down according to the actual workload, and is controlled by the <strong>Master Server</strong>. <strong>Tablet Server</strong> doesn’t store any actual files - they act as a service and proxy to visit actual files in <strong>Google File System</strong> (See the foundamental impact of GFS/HDFS?).</p>
+<p>Unlike <strong>Tablet Server</strong>, <strong>Master Server</strong> always exists. <strong>Master Server</strong> stores the metadata of which tablet is distributed to which <strong>Tablet Server</strong>, whether scale up or down <strong>Tablet Servers</strong>, and how to load balance among all <strong>Tablet Servers</strong>. Adding new <strong>Tables</strong> or modifying existing <strong>Tables</strong>, for instance adding a new <strong>column family</strong>, is all handled by <strong>Master Server</strong> through <strong>Tablet Server</strong>. While <strong>Master Server</strong> is not responsible for managing any Tablet.</p>
+<p>Well, unlike what most people imagne, clients doesn’t need to talk to <strong>Master Server</strong> when it tries to visit a BigTable. This design greatly mitigates the load of <strong>Master Server</strong>. So, how does client visit BigTable? It uses Chubby!</p>
+<p><strong>Chubby</strong> is a highly-available distributed lock service. The open-source ZooKeeper project is a copycat of it. <strong>Chubby</strong> implements a file-system-like structure. Clients can visit those files to get lock of the visited object. According to the BigTable paper, <strong>Chubby</strong> is used by BigTable clients to locate <strong>Tablet</strong> and by <strong>Master Server</strong> to monitor <strong>Tablet Servers</strong>.</p>
+<h3 id="How-do-clients-manipulate-BigTable-data"><a href="#How-do-clients-manipulate-BigTable-data" class="headerlink" title="How do clients manipulate BigTable data?"></a>How do clients manipulate BigTable data?</h3><p>The most important for us to know is how clients manipulate BigTable data?</p>
+<p>The first step is to visit metadata in three layers. First layer is a <strong>Chubby file</strong>. Through that <strong>Chubby file</strong>, clients can locate <strong>Root Tablet</strong>, which is the second layer. What’s special about <strong>Root Tablet</strong> is that is’s never partitioned. The last layer is all <strong>Metadata Tablets</strong> hold by <strong>Root Tablet</strong>. Thus, generally speaking, clients can locate data by visiting a <strong>Chubby file</strong>, a <strong>Root Tablet</strong>, and a <strong>Metadata Tablet</strong>.</p>
+<p>Clients will cache the metadata it has found for future reference, but caching is not required. Besides, because of <strong>Chubby</strong>, <strong>Master Server</strong> doesn’t take any responsibilities in data locating, thus it’s workload is quite small.</p>
+<p>The paper doesn’t talk about what’s the format of BigTable’s metadata. The most detailed description is this - “The METADATA table stores the location of a tablet under a row key that is an encoding of the tablet’s table identifier and its end row.” Well, it’s actually not important. Engineers can always come up with their own formats.</p>
+<h3 id="LSM-Tree"><a href="#LSM-Tree" class="headerlink" title="LSM-Tree"></a>LSM-Tree</h3><p>In BigTable, <strong>SSTable (Sorted Strings Table)</strong> is a basic unit. Each <strong>Tablet</strong> has several <strong>SSTables</strong>. Paper doesn’t reveal how SSTable is implemented. But, we can deduce that based on our understanding of the open-sourced LevelDB. The implementation brings back to life a data structure called LSM-Tree developed by Patrick O’Neil, a retired professor from UMass Boston. Here’s the paper <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.44.2782&amp;rep=rep1&amp;type=ps" target="_blank" rel="noopener">The Log-Structured Merge-Tree (LSM-Tree)</a>.</p>
+<p><strong>SSTable</strong> in LevelDB is composed of 1) <strong>memTable</strong> and 2) <strong>SSTable</strong> on disk. In memory, it uses <a href="https://en.wikipedia.org/wiki/Skip_list" target="_blank" rel="noopener">skip list</a>. Thus, write is only towards memory, and is very very fast. When memory is full, a <strong>memTable</strong> is turned into an <strong>immutable memTable</strong>. Then LevelDB opens a new writable <strong>memTable</strong>, and starts a new process to write the <strong>immutable memTable</strong> to disk as a <strong>SSTable</strong>. When this step finishes, space of the <strong>immutable memTable</strong> in memory is released. Over and over, disk accumulates lots of <strong>SSTables</strong>, and here comes the compaction. <strong>SSTables</strong> have different levels, like level1, level2, etc. <strong>SSTables</strong> that are of level1 will go through compaction called <strong>minor compact</strong>. There’s major compact in further levels. From level2, no more two <strong>SSTable</strong> will have overlapped keys in their trees, which is not guaranteed in level1.</p>
+<p>Therefore, a read request needs to access memTable, immutable memTable, tree in level1, and one tree for any further level after and including level2. This indicates that a read transaction is more expensive than a write transaction. </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">    memTable</span><br><span class="line">        |</span><br><span class="line">immutable memTable</span><br><span class="line">        |</span><br><span class="line">    tree in level1</span><br><span class="line">    / |  |  | \</span><br><span class="line">      |                    trees in level2</span><br><span class="line">    tree in level2</span><br><span class="line">    / |  |  | \</span><br><span class="line">         |</span><br><span class="line">        tree in level3</span><br><span class="line">        / | | | \</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+<p>Well, another noticeable thing is that, if clients try to access latest data, that data might be in memory. Thus, LevelDB’s design optimizes read for data of new version by sacrificing read for cold data.</p>
+<p>BTW, one of biggest differences between LevelDB and RocksDB, a Facebook’s copycat of LevelDB, is that RocksDB introduced something called <strong>universal compact</strong>. I’m not familiar with what it is.</p>
+<p>Of course, like lots of other similar system, BigTable’s recovery strategy is based on logs. All write transactions are persisted in logs before going into memory. LevelDB’s log format is of the classic <strong>append only</strong> strategy.</p>
+<p>What’s funny yet sad is that LSM-Tree is such a gorgeous invention but its author hasn’t earned the matching reputation.</p>
+<hr>
+<p>References:</p>
+<ul>
+<li><p><a href="http://jimbojw.com/wiki/index.php?title=Understanding_Hbase_and_BigTable" target="_blank" rel="noopener">http://jimbojw.com/wiki/index.php?title=Understanding_Hbase_and_BigTable</a></p>
+</li>
+<li><p><a href="http://rocksdb.org/" target="_blank" rel="noopener">http://rocksdb.org/</a></p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/bigtable/" rel="tag"># bigtable</a>
+          
+            <a href="/tags/leveldb/" rel="tag"># leveldb</a>
+          
+            <a href="/tags/rocksdb/" rel="tag"># rocksdb</a>
+          
+            <a href="/tags/lsm-tree/" rel="tag"># lsm-tree</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/16/distributed system/CAP-and-Evetual-Consistency/" rel="next" title="CAP and Evetual Consistency">
+                <i class="fa fa-chevron-left"></i> CAP and Evetual Consistency
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/05/java/exception and error/OutOfMemoryError-and-StackOverflowError/" rel="prev" title="OutOfMemoryError and StackOverflowError">
+                OutOfMemoryError and StackOverflowError <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Bowen Li</p>
+              <p class="site-description motion-element" itemprop="description">keep learning - learning notes and blogs</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">119</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">295</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/bowenli86" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/yourname" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/phoenixjiangnan" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.linkedin.com/in/bowenli90" target="_blank" title="Linkedin"><i class="fa fa-fw fa-linkedin"></i>Linkedin</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Misleading-Names-Let’s-rephrase-and-better-understand-them"><span class="nav-number">1.</span> <span class="nav-text">1. Misleading Names - Let’s rephrase and better understand them</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sorted"><span class="nav-number">1.1.</span> <span class="nav-text">Sorted</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Persistent"><span class="nav-number">1.2.</span> <span class="nav-text">Persistent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sparse"><span class="nav-number">1.3.</span> <span class="nav-text">Sparse</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implementation-Details-LSM-Tree"><span class="nav-number">2.</span> <span class="nav-text">Implementation Details - LSM Tree</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#How-do-clients-manipulate-BigTable-data"><span class="nav-number">2.1.</span> <span class="nav-text">How do clients manipulate BigTable data?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LSM-Tree"><span class="nav-number">2.2.</span> <span class="nav-text">LSM-Tree</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bowen Li</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
